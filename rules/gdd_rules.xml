@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Sagacious Matter//DTD PLIST 1.0//EN" "http://sagaciousmatter.org/DTDs/RuleList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>1</key>
+	<string>If AB ∠ BC, then Collinear(A,B,C).</string>
+	<key>2</key>
+	<array>
+		<string>For any two angles ∠[l1,l2], ∠[l3,l4]. If l1 = l3 and l2 ‖ l4, then ∠[l1,l2] = ∠[l3,l4].</string>
+		<example>For example, in parallelogram ABCD, AD ‖ BC and AC = CA, hence ∠[CAD] = ∠[ACB].</example>
+	</array>
+	<key>3</key>
+	<string>if AB ‖ CD and E is the intersection of AC and BD, then EA / EC = EB / ED.</string>
+	<key>4</key>
+	<string>If AB ‖ CD and CD ⊥ EF, then AB ⊥ EF.</string>
+	<key>5</key>
+	<string>If AB ⊥ CD, then ∠[AB,CD] = [1]</string>
+	<key>6</key>
+	<string>In right triangle ACB with ∠C = [1], if E is the midpoint of AB, then E is the circumcenter of (A,B,C) and EA = EB = EC.</string>
+	<key>7</key>
+	<string>If AB ⊥ CD and CD ⊥ EF, then AB ∠ EF.</string>
+	<key>8</key>
+	<string>For four points A,B,C,D, if AC ⊥ BC and AD ⊥ BD, then Cyclic(A,B,C,D).</string>
+	<key>9</key>
+	<string>For a circle c(O,AB) and a point C on Circle c, if Collinear(A,B,O), then AC ⊥ BC and ∠ACB = [1].</string>
+	<key>10</key>
+	<string>If AB is the Diameter of a circle and point C is on the circle, then AC ⊥ BC.</string>
+	<key>11</key>
+	<string>Angle of circumference equals to half of angle of center.</string>
+	<key>12</key>
+	<string>If AB ‖ CD and Cyclic(A,B,C,D), then ∠ABC = ∠DAB.</string>
+	<key>13</key>
+	<string>∠ADB = ∠ACB iff Cyclic(A,B,C,D).</string>
+	<key>14</key>
+	<string>Chord tangent angle.</string>
+	<key>15</key>
+	<string>Line passing the centers of two circles is perpendicular to the common chord of two circles.</string>
+	<key>16</key>
+	<array>
+		<name>Addition of Full Angles</name>
+		<string>If ∠[l1,l2] = ∠[l3,l4] and ∠[l5,l6] = ∠[l7,l8], and l2 = l6 and l4 = l7, then ∠[l1,l4] = ∠[l5,l8].</string>
+	</array>
+	<key>17</key>
+	<array>
+		<string>If ∠[l1,l2] = ∠[l3,l4] and l1 ‖ l2, then l3 ‖ l4.</string>
+		<example>Because if l1 ∠ l2, ∠[l1,l2] = [0]. Hence ∠[l3,l4] = [0].</example>
+	</array>
+	<key>18</key>
+	<string>If ∠[l1,l2] = ∠[l3,l4] and l1 ‖ l3, then l2 ‖ l4.</string>
+	<key>19</key>
+	<string>If ∠[l1,l2] = ∠[l3,l4] and l1 ⊥  l2, then l3 ⊥  l4.</string>
+	<key>20</key>
+	<string>If ∠[l1,l2] = ∠[l3,l4] and l1 ⊥  l3, then l2 ⊥  l4.</string>
+	<key>21</key>
+	<name>Special Angles</name>
+	<key>22</key>
+	<name>Supplementary Angle</name>
+	<key>23</key>
+	<name>Isoceles Triangle</name>
+	<key>24</key>
+	<array>
+		<name>Isoceles Triangle Theorem</name>
+		<string>For a isoceles triangle ABC and a point D on line BC, if any one of following is true, the other two are also true: 1. AD ⊥ BC     2. D is the midpoint of BC   3. ∠BAD = ∠DAC.</string>
+	</array>
+	<key>25</key>
+	<array>
+		<name>Congruent Triangle</name>
+		<string>Triangles are called congruent if they have the same size and shape. That is, corresponding angles have the same measure, and corresponding sides have the same length.</string>
+	</array>
+	<key>26</key>
+	<array>
+		<name>Angle-Side-Angle Congruence</name>
+		<string>Two triangles are congruent if a pair of corresponding angles and the included side are equal.</string>
+	</array>
+	<key>27</key>
+	<array>
+		<name>Side-Angle-Side Congruence</name>
+		<string>Two triangles are congruent if a pair of corresponding sides and the included angle are equal.</string>
+	</array>
+	<key>28</key>
+	<array>
+		<name>Side-Side-Side Congruence</name>
+		<string>Two triangles are congruent if their corresponding sides are equal.</string>
+	</array>
+	<key>29</key>
+	<array>
+		<name>Similar Triangles</name>
+		<string>Two right triangle are congruent if their two corresponding cartesian edges are equal.</string>
+	</array>
+	<key>30</key>
+	<array>
+		<name>Angle-Side-Angle Similarity</name>
+		<string>Similar triangles are triangles that have the same shape but possibly different size. In particular, corresponding angles are congruent, and corresponding sides are in proportion.</string>
+	</array>
+	<key>31</key>
+	<array>
+		<name>Angle-Angle-Angle Similarity</name>
+		<string>If two triangles have two corresponding angles that are congruent, then the triangles are similar. Because the sum of the angles in a triangle must be PI, we really only need to know that two pairs of corresponding angles are congruent to know the triangles are similar.</string>
+	</array>
+	<key>32</key>
+	<array>
+		<name>Side-Angle-Side Similarity</name>
+		<string>If two triangles have two pairs of sides that are proportional and the included angles are congruent, then the triangles are similar. </string>
+	</array>
+	<key>33</key>
+	<array>
+		<name>Side-Side-Side Similarity</name>
+		<string>If two triangles have all three pairs of sides in proportion, the triangles are similar.</string>
+	</array>
+	<key>34</key>
+	<string>Ratio by similarity</string>
+	<key>35</key>
+<array><name>Middle Connection Theorem for Triangles</name>
+	<string>The line connect the midpoints of two sides of triangle is parallel to the third side of the triangle.</string>
+	</array>
+	<key>36</key>
+	<string>The hypotenuse of a right triangle is the diameter of the circumscribed circle of the triangle, and the midpoint of the hypotenuse is the center of the circle. For a right triangle ACB, if AC ⊥ BC and D is the midpoint of AB, then DC = DA = DB, D is the center of circle ABC.</string>
+	<key>37</key>
+	<array>
+		<name>Equilateral Triangle</name>
+		<string>An equilateral triangle is a triangle in which all three sides have equal lengths.</string>
+	</array>
+	<key>38</key>
+	<array>
+		<name>Pythagorean Theorem</name>
+		<string>In any right triangle, the area of the square whose side is the hypotenuse (the side of a right triangle opposite the right angle) is equal to the sum of areas of the squares whose sides are the two legs (i.e. the two sides other than the hypotenuse). </string>
+	</array>
+	<key>39</key>
+		<string>The sum of three interior angles of a triangle is [0].</string>
+	<key>40</key>
+	<array>
+		<name>Definition of Parallelogram</name>
+		<string>A parallelogram is a quadrilateral with two sets of opposite parallel sides.</string>
+	</array>
+	<key>41</key>
+	<name>Middle Connection Theorem for Trapezoid</name>
+	<key>42</key>
+	<string>Use Ratio in Deductive Database Method.</string>
+	<key>43</key>
+	<array>
+		<name>Ratio by Angle Bisector</name>
+		<string>In triangle ABC, if AD is the bisector of angle A, and D is on line BC, then AB/BD = AC/DC.</string>
+	</array>
+</dict>
+</plist>
