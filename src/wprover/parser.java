@@ -10,14 +10,14 @@ import maths.TMono;
  * Time: 10:10:17
  * To change this template use File | Settings | File Templates.
  */
-public class parser {
+public class Parser {
     TMono m1;
     String sname;
     String sfunc;
     int id;
     int param;
 
-    public parser(String n, String f, int x) {
+    public Parser(String n, String f, int x) {
         m1 = null;
         sname = n;
         sfunc = f;

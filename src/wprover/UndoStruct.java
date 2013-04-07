@@ -35,14 +35,14 @@ class UndoStruct {
 
         m_type = T_UNDO_NODE;
         paraCounter = pc;
-        id = CMisc.id_count;
+        id = UtilityMiscellaneous.id_count;
     }
 
     public UndoStruct(int type, int pc) {
         m_id = INDEX++;
         m_type = type;
         paraCounter = pc;
-        id = CMisc.id_count;
+        id = UtilityMiscellaneous.id_count;
     }
 
     int m_id;
@@ -75,7 +75,7 @@ class UndoStruct {
     ArrayList<GELine> linelist = new ArrayList<GELine>();
     ArrayList<GECircle> circlelist = new ArrayList<GECircle>();
     ArrayList<GEAngle> anglelist = new ArrayList<GEAngle>();
-    ArrayList<constraint> constraintlist = new ArrayList<constraint>();
+    ArrayList<Constraint> constraintlist = new ArrayList<Constraint>();
     ArrayList<GEDistance> distancelist = new ArrayList<GEDistance>();
     ArrayList<GEPolygon> polygonlist = new ArrayList<GEPolygon>();
     ArrayList<GEText> textlist = new ArrayList<GEText>();
@@ -98,14 +98,14 @@ class UndoStruct {
         if (dlist.isEmpty()) {
             return msg;
         } else {
-            if (action == drawbase.D_PARELINE) {
+            if (action == DrawPanelBase.D_PARELINE) {
                 GELine ln1 = ((GELine) dlist.get(0));
                 GELine ln2 = ((GELine) dlist.get(1));
                 GEPoint p = ((GEPoint) dlist.get(2));
                 return ln1.getDescription2() + " paral " + ln2.getDescription2() +
                         " passing " + p.getname();
 
-            } else if (action == drawbase.D_PERPLINE) {
+            } else if (action == DrawPanelBase.D_PERPLINE) {
                 GELine ln1 = ((GELine) dlist.get(0));
                 GELine ln2 = ((GELine) dlist.get(1));
                 GEPoint p = ((GEPoint) dlist.get(2));
@@ -236,18 +236,18 @@ class UndoStruct {
 	}
     }
 
-    public void getAllObjects(drawProcess dp, ArrayList<GraphicEntity> v) {
+    public void getAllObjects(DrawPanel dp, ArrayList<GraphicEntity> v) {
 
         if (this.m_type == T_UNDO_NODE) {
-            drawProcess.selectUndoObjectFromList(v, dp.pointlist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.linelist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.circlelist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.anglelist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.distancelist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.polygonlist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.textlist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.tracelist, id, id_b);
-            drawProcess.selectUndoObjectFromList(v, dp.otherlist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.pointlist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.linelist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.circlelist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.anglelist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.distancelist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.polygonlist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.textlist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.tracelist, id, id_b);
+            DrawPanel.selectUndoObjectFromList(v, dp.otherlist, id, id_b);
 
         } else if (this.m_type == UndoStruct.T_COMBINED_NODE) {
             for (int i = 0; i < childundolist.size(); i++) {
@@ -274,7 +274,7 @@ class UndoStruct {
             out.writeInt(cc.m_id);
     }
 
-    public static void ReadList(DataInputStream in, drawProcess dp, ArrayList<GraphicEntity> list) throws IOException {
+    public static void ReadList(DataInputStream in, DrawPanel dp, ArrayList<GraphicEntity> list) throws IOException {
         int size = in.readInt();
 
         for (int i = 0; i < size; i++) {
@@ -370,24 +370,24 @@ class UndoStruct {
         }
     }
 
-    public void Load(DataInputStream in, drawProcess dp) throws IOException {
-        if (CMisc.version_load_now >= 0.019) {
+    public void Load(DataInputStream in, DrawPanel dp) throws IOException {
+        if (UtilityMiscellaneous.version_load_now >= 0.019) {
             m_id = in.readInt();
 
         } else {
-            m_id = CMisc.id_count++;
+            m_id = UtilityMiscellaneous.id_count++;
         }
 
-        if (CMisc.version_load_now >= 0.015) {
+        if (UtilityMiscellaneous.version_load_now >= 0.015) {
             m_type = in.readInt();
         }
-        if (CMisc.version_load_now > 0.01) {
+        if (UtilityMiscellaneous.version_load_now > 0.01) {
             this.done = in.readBoolean();
             this.flash = in.readBoolean();
             action = in.readInt();
         }
 
-        if (CMisc.version_load_now < 0.01) {
+        if (UtilityMiscellaneous.version_load_now < 0.01) {
             int size = in.readInt();
             byte[] str = new byte[size];
             in.read(str, 0, size);
@@ -400,7 +400,7 @@ class UndoStruct {
         pcircleCounter = in.readInt();
 
         // for 0.01
-        if (CMisc.version_load_now > 0.010) {
+        if (UtilityMiscellaneous.version_load_now > 0.010) {
             int size = in.readInt();
             if (size > 0) {
                 byte[] str = new byte[size];
@@ -415,11 +415,11 @@ class UndoStruct {
         plineCounter_b = in.readInt();
         pcircleCounter_b = in.readInt();
 
-        if (CMisc.version_load_now >= 0.016) {
+        if (UtilityMiscellaneous.version_load_now >= 0.016) {
 	    ReadList(in, dp, objectlist);
         }
 
-        if (CMisc.version_load_now >= 0.012) {
+        if (UtilityMiscellaneous.version_load_now >= 0.012) {
             int size = in.readInt();
             for (int i = 0; i < size; i++) {
                 UndoStruct u = new UndoStruct(-1, -1);

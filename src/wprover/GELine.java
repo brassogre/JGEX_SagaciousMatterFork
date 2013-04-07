@@ -27,8 +27,8 @@ public class GELine extends GraphicEntity implements Pointed {
     final public static int NTALine = 5;
     final public static int ALine = 6;
     final public static int SALine = 7;
-    final public static int ABLine = 8;
-    final public static int TCLine = 9;
+    final public static int ABLine = 8; // Angle bisector?
+    final public static int TCLine = 9; // Tangent to a circle
 
 
     final public static int ET_NORMAL = 0;
@@ -37,19 +37,19 @@ public class GELine extends GraphicEntity implements Pointed {
 
     int linetype = 0; // linetype: 1)LLine 2)PLine 3)TLine 4)BLine, etc.
     int ext_type = 0; // 0: normal, 1: extension ; 2: endless.
-    int extent = CMisc.LINDE_DRAW_EXT;
+    int extent = UtilityMiscellaneous.LINDE_DRAW_EXT;
 
 
     ArrayList<GEPoint> points = new ArrayList<GEPoint>();
-    private ArrayList<constraint> cons = new ArrayList<constraint>();
+    private ArrayList<Constraint> cons = new ArrayList<Constraint>();
     private HashSet<Integer> setConstraintIndices = new HashSet<Integer>();
 
     final static int Width = 3000;
     final static int Height = 2000; // should be modified here.
 
-    /* (non-Javadoc)
+    /**
 	 * @see java.lang.Object#hashCode()
-	 */
+	 **/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -59,16 +59,13 @@ public class GELine extends GraphicEntity implements Pointed {
 		result = prime * result + extent;
 		result = prime * result + linetype;
 		result = prime * result + ((points == null) ? 0 : points.hashCode());
-		result = prime
-				* result
-				+ ((setConstraintIndices == null) ? 0 : setConstraintIndices
-						.hashCode());
+		result = prime * result + ((setConstraintIndices == null) ? 0 : setConstraintIndices.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	 **/
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -140,10 +137,10 @@ public class GELine extends GraphicEntity implements Pointed {
 		final GEPoint[] pl = getMaxMinPoint();
 		table.setValueAt(getAllPointNames(), 1, 1);
 		if (pl != null) {
-			table.setValueAt(new Double(CProperty.round(pl[0].getx())), 2, 1);
-			table.setValueAt(new Double(CProperty.round(pl[0].gety())), 3, 1);
-			table.setValueAt(new Double(CProperty.round(pl[1].getx())), 4, 1);
-			table.setValueAt(new Double(CProperty.round(pl[1].gety())), 5, 1);
+			table.setValueAt(new Double(PanelProperty.round(pl[0].getx())), 2, 1);
+			table.setValueAt(new Double(PanelProperty.round(pl[0].gety())), 3, 1);
+			table.setValueAt(new Double(PanelProperty.round(pl[1].getx())), 4, 1);
+			table.setValueAt(new Double(PanelProperty.round(pl[1].gety())), 5, 1);
 		}
 		button1.setBackground((ext_type == 0) ? Color.lightGray: Color.white);
 		button2.setBackground((ext_type == 1) ? Color.lightGray: Color.white);
@@ -178,7 +175,7 @@ public class GELine extends GraphicEntity implements Pointed {
     }
     
     public void draw(Graphics2D g2, boolean selected) {
-        //if (!isdraw()) return;
+        if (!isdraw()) return;
 
         if (selected) {
             prepareToBeDrawnAsSelected(g2);
@@ -293,7 +290,7 @@ public class GELine extends GraphicEntity implements Pointed {
             drawLLine(line, g2);
             return;
         }
-        constraint cs = line.getConstraintByType(constraint.BLINE);
+        Constraint cs = line.getConstraintByType(Constraint.BLINE);
         GEPoint p1 = (GEPoint) cs.getelement(1);
         GEPoint p2 = (GEPoint) cs.getelement(2);
 
@@ -308,10 +305,10 @@ public class GELine extends GraphicEntity implements Pointed {
             drawLLine(line, g2);
             return;
         }
-        constraint cs = null;
+        Constraint cs = null;
         for (int i = 0; i < line.cons.size(); i++) {
             cs = line.getcons(i);
-            if (cs.GetConstraintType() == constraint.CCLine)
+            if (cs.GetConstraintType() == Constraint.CCLine)
                 break;
         }
         if (cs == null) return;
@@ -335,7 +332,7 @@ public class GELine extends GraphicEntity implements Pointed {
         double a = (x1 * x1 - x2 * x2 + y1 * y1 - y2 * y2 - r1 * r1 + r2 * r2);
 
         double ya, yb;
-        if (Math.abs(y1 - y2) < CMisc.ZERO) {
+        if (Math.abs(y1 - y2) < UtilityMiscellaneous.ZERO) {
             xa = xb = -(a) / (2 * (x2 - x1));
             ya = 0;
             yb = Height;
@@ -352,24 +349,22 @@ public class GELine extends GraphicEntity implements Pointed {
             drawLLine(line, g2);
             return;
         }
-        constraint cs = line.getcons(0);
-        //CLine l = (CLine) cs.getelement(0);
+        Constraint cs = line.getcons(0);
+        //GELine l = (GELine) cs.getelement(0);
         GELine l1 = (GELine) cs.getelement(1);
         GEPoint p = l1.getfirstPoint();
 
         double k = line.getK();
         drawXLine(p.getx(), p.gety(), k, g2);
-
-
     }
 
     public static void drawXLine(double x0, double y0, double k, Graphics2D g2) {
-        if (Math.abs(1 / k) < CMisc.ZERO) {
+        if (Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
             double x = x0;
             double y1 = 0;
             double y2 = Height;
             g2.drawLine((int) x, (int) y1, (int) x, (int) y2);
-        } else if (Math.abs(k) < CMisc.ZERO) {
+        } else if (Math.abs(k) < UtilityMiscellaneous.ZERO) {
             g2.drawLine(0, (int) y0, Width, (int) y0);
         } else {
             double y1 = 0;
@@ -386,7 +381,7 @@ public class GELine extends GraphicEntity implements Pointed {
             return;
         }
 
-        constraint cs = line.getcons(0);
+        Constraint cs = line.getcons(0);
         GELine l = (GELine) cs.getelement(1);
         GEPoint p = line.points.get(0);
         double k = l.getK();
@@ -399,7 +394,7 @@ public class GELine extends GraphicEntity implements Pointed {
             return;
         }
 
-        constraint cs = line.getcons(0);
+        Constraint cs = line.getcons(0);
         GELine l = (GELine) cs.getelement(1);
         if (line.points.size() == 0)
             return;
@@ -542,8 +537,8 @@ public class GELine extends GraphicEntity implements Pointed {
 
     public boolean isParallel(GELine line) {
         if (linetype == PLine) {
-	        for (constraint cs : cons) {
-	            if (cs.GetConstraintType() == constraint.PARALLEL) {
+	        for (Constraint cs : cons) {
+	            if (cs.GetConstraintType() == Constraint.PARALLEL) {
 		            GELine line1 = (GELine) cs.getelement(0);
 		            GELine line2 = (GELine) cs.getelement(1);
 		            if (line2 == this) {
@@ -560,8 +555,8 @@ public class GELine extends GraphicEntity implements Pointed {
     }
 
     public boolean isVertical(GELine line) {
-        for (constraint cs : cons) {
-            if (cs.GetConstraintType() == constraint.PERPENDICULAR) {
+        for (Constraint cs : cons) {
+            if (cs.GetConstraintType() == Constraint.PERPENDICULAR) {
 	            GELine line1 = (GELine) cs.getelement(0);
 	            GELine line2 = (GELine) cs.getelement(1);
 	            if (line2 == this) {
@@ -660,7 +655,7 @@ public class GELine extends GraphicEntity implements Pointed {
         if (p1.x1 == null || p2 == null || p2.x1 == null)
         	return null;
 
-        if (Math.abs(p1.x1.value - p2.x1.value) < CMisc.ZERO) {
+        if (Math.abs(p1.x1.value - p2.x1.value) < UtilityMiscellaneous.ZERO) {
             p1 = points.get(0);
             p2 = null;
             for (int i = 1; i < points.size(); ++i) {
@@ -684,12 +679,12 @@ public class GELine extends GraphicEntity implements Pointed {
         return pl;
     }
 
-    public constraint getcons(int i) {
+    public Constraint getcons(int i) {
     	return (i >= 0 && cons != null && i < cons.size()) ? cons.get(i) : null;
     }
 
-    public constraint getConstraintByType(int t) {
-        for (constraint c : cons) {
+    public Constraint getConstraintByType(int t) {
+        for (Constraint c : cons) {
             if (c.GetConstraintType() == t)
             	return c;
         }
@@ -721,30 +716,30 @@ public class GELine extends GraphicEntity implements Pointed {
         if (points != null && points.size() >= 2) {
             GEPoint p1 = points.get(0);
             GEPoint p2 = points.get(1);
-            return (Math.abs(p2.getx() - p1.getx()) < CMisc.HV_ZERO);
+            return (Math.abs(p2.getx() - p1.getx()) < UtilityMiscellaneous.HV_ZERO);
         }
 
-        for (constraint cs : cons) {
+        for (Constraint cs : cons) {
             switch (cs.GetConstraintType()) {
-                case constraint.PARALLEL: {
+                case Constraint.PARALLEL: {
                     GELine line = (GELine) cs.getelement(1);
                     return line.isVertical();
                 }
-                case constraint.PERPENDICULAR: {
+                case Constraint.PERPENDICULAR: {
                     GELine line = (GELine) cs.getelement(1);
                     return line.isHorizonal();
                 }
-                case constraint.CCLine: {
+                case Constraint.CCLine: {
                     GECircle c1 = (GECircle) cs.getelement(1);
                     GECircle c2 = (GECircle) cs.getelement(2);
-                    return (Math.abs(c1.o.getx() - c2.o.getx()) < CMisc.HV_ZERO);
+                    return (Math.abs(c1.o.getx() - c2.o.getx()) < UtilityMiscellaneous.HV_ZERO);
                 }
-                case constraint.ALINE: {
+                case Constraint.ALINE: {
                     GELine ln0 = (GELine) cs.getelement(0);
                     GELine ln1 = (GELine) cs.getelement(1);
                     GELine ln2 = (GELine) cs.getelement(2);
                     double k = GELine.getALineK(ln0, ln1, ln2);
-                    return (Math.abs(k) > CMisc.MAX_K);
+                    return (Math.abs(k) > UtilityMiscellaneous.MAX_K);
                 }
             }
         }
@@ -755,23 +750,23 @@ public class GELine extends GraphicEntity implements Pointed {
         if (linetype == GELine.LLine && points != null && points.size() >= 2) {
             GEPoint p1 = points.get(0);
             GEPoint p2 = points.get(1);
-            return (Math.abs(p2.gety() - p1.gety()) < CMisc.HV_ZERO);
+            return (Math.abs(p2.gety() - p1.gety()) < UtilityMiscellaneous.HV_ZERO);
         }
 
-        for (constraint cs : cons) {
+        for (Constraint cs : cons) {
             switch (cs.GetConstraintType()) {
-                case constraint.PARALLEL: {
+                case Constraint.PARALLEL: {
                     GELine line = (GELine) cs.getelement(1);
                     return line.isHorizonal();
                 }
-                case constraint.PERPENDICULAR: {
+                case Constraint.PERPENDICULAR: {
                     GELine line = (GELine) cs.getelement(1);
                     return line.isVertical();
                 }
-                case constraint.CCLine: {
+                case Constraint.CCLine: {
                     GECircle c1 = (GECircle) cs.getelement(1);
                     GECircle c2 = (GECircle) cs.getelement(2);
-                    return (Math.abs(c1.o.gety() - c2.o.gety()) < CMisc.HV_ZERO);
+                    return (Math.abs(c1.o.gety() - c2.o.gety()) < UtilityMiscellaneous.HV_ZERO);
                 }
             }
         }
@@ -788,29 +783,29 @@ public class GELine extends GraphicEntity implements Pointed {
             return (p2.gety() - p1.gety()) / (p2.getx() - p1.getx());
         }
 
-        for (constraint cs : cons) {
+        for (Constraint cs : cons) {
             switch (cs.GetConstraintType()) {
-                case constraint.PARALLEL: {
+                case Constraint.PARALLEL: {
                     GELine line = (GELine) cs.getelement(1);
                     return line.getK();
                 }
-                case constraint.PERPENDICULAR: {
+                case Constraint.PERPENDICULAR: {
                     GELine line = (GELine) cs.getelement(1);
                     return -1.0 / line.getK();
                 }
-                case constraint.CCLine: {
+                case Constraint.CCLine: {
                     GECircle c1 = (GECircle) cs.getelement(1);
                     GECircle c2 = (GECircle) cs.getelement(2);
                     return ((c1.o.getx() - c2.o.getx()) / (c1.o.gety() - c2.o.gety()));
                 }
-                case constraint.ALINE: {
+                case Constraint.ALINE: {
                     GELine ln0 = (GELine) cs.getelement(0);
                     GELine ln1 = (GELine) cs.getelement(1);
                     GELine ln2 = (GELine) cs.getelement(2);
                     double k = GELine.getALineK(ln0, ln1, ln2);
                     return k;
                 }
-                case constraint.NTANGLE: {
+                case Constraint.NTANGLE: {
                     GELine ln = (GELine) cs.getelement(0);
                     GELine ln1 = (GELine) cs.getelement(1);
                     GELine ln2 = (GELine) cs.getelement(2);
@@ -828,45 +823,45 @@ public class GELine extends GraphicEntity implements Pointed {
                     double k = (k3 * k2 * k1 + k3 + k2 - k1) / (1 + k3 * k1 + k2 * k1 - k3 * k2);
                     return k;
                 }
-                case constraint.SANGLE: {
+                case Constraint.SANGLE: {
                     GELine ln = (GELine) cs.getelement(0);
                     Integer I = (Integer) cs.getelement(2);
                     double k = ln.getK();
                     int v = I.intValue();
-                    double k1 = -constraint.get_sp_ag_value(v);
+                    double k1 = -Constraint.getSpecifiedAnglesMagnitude(v);
                     if (ln.isVertical()) {
                         return -1 / k1;
                     } else
                         return (k1 + k) / (1 - k1 * k);
                 }
-                case constraint.BLINE: {
+                case Constraint.BLINE: {
                     GEPoint p1 = (GEPoint) cs.getelement(1);
                     GEPoint p2 = (GEPoint) cs.getelement(2);
                     return -(p1.getx() - p2.getx()) / (p1.gety() - p2.gety());
                 }
-                case constraint.TCLINE: {
+                case Constraint.TCLINE: {
                     //CLine ln = (CLine) cs.getelement(1);
                     GECircle c = (GECircle) cs.getelement(0);
                     GEPoint p2 = (GEPoint) cs.getelement(2);
                     GEPoint p1 = c.o;
                     return -(p1.getx() - p2.getx()) / (p1.gety() - p2.gety());
                 }
-                case constraint.ANGLE_BISECTOR:
+                case Constraint.ANGLE_BISECTOR:
                     GEPoint p1 = (GEPoint) cs.getelement(0);
                     GEPoint p2 = (GEPoint) cs.getelement(1);
                     GEPoint p3 = (GEPoint) cs.getelement(2);
 
                     double k1 = (p2.gety() - p1.gety()) / (p2.getx() - p1.getx());
                     double k2 = (p2.gety() - p3.gety()) / (p2.getx() - p3.getx());
-                    if (k1 > CMisc.MAX_SLOPE)
-                        k1 = CMisc.MAX_SLOPE;
-                    else if (k1 < -CMisc.MAX_SLOPE)
-                        k1 = -CMisc.MAX_SLOPE;
+                    if (k1 > UtilityMiscellaneous.MAX_SLOPE)
+                        k1 = UtilityMiscellaneous.MAX_SLOPE;
+                    else if (k1 < -UtilityMiscellaneous.MAX_SLOPE)
+                        k1 = -UtilityMiscellaneous.MAX_SLOPE;
 
-                    if (k2 > CMisc.MAX_SLOPE)
-                        k2 = CMisc.MAX_SLOPE;
-                    else if (k2 < -CMisc.MAX_SLOPE)
-                        k2 = -CMisc.MAX_SLOPE;
+                    if (k2 > UtilityMiscellaneous.MAX_SLOPE)
+                        k2 = UtilityMiscellaneous.MAX_SLOPE;
+                    else if (k2 < -UtilityMiscellaneous.MAX_SLOPE)
+                        k2 = -UtilityMiscellaneous.MAX_SLOPE;
                     double a = k1 + k2;
                     if (a == 0) {
                         a = 10E-6;
@@ -931,10 +926,10 @@ public class GELine extends GraphicEntity implements Pointed {
         }
     }
 
-    public void addConstraint(constraint cs) {
+    public void addConstraint(Constraint cs) {
         if (cs != null) {
         	if (cons == null)
-        		cons = new ArrayList<constraint>();
+        		cons = new ArrayList<Constraint>();
         	if (!cons.contains(cs))
                 cons.add(cs);
         }
@@ -968,12 +963,12 @@ public class GELine extends GraphicEntity implements Pointed {
         }
     }
     
-    public GELine(drawProcess dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+    public GELine(DrawPanel dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
     	super(dp, thisElement);
 
-    	linetype = GExpert.safeParseInt(thisElement.getAttribute("line_type"), 0);
-		ext_type = GExpert.safeParseInt(thisElement.getAttribute("ext_type"), 0);
-		extent = GExpert.safeParseInt(thisElement.getAttribute("extent"), 50);
+    	linetype = DrawPanelFrame.safeParseInt(thisElement.getAttribute("line_type"), 0);
+		ext_type = DrawPanelFrame.safeParseInt(thisElement.getAttribute("ext_type"), 0);
+		extent = DrawPanelFrame.safeParseInt(thisElement.getAttribute("extent"), 50);
 		NodeList elist = thisElement.getChildNodes();
 		
 		for (int i = 0; i < elist.getLength(); ++i) {
@@ -987,7 +982,7 @@ public class GELine extends GraphicEntity implements Pointed {
                         if (nnn != null && nnn instanceof Element) {
                         	s = nnn.getNodeName();
                         	if (s.equalsIgnoreCase("constraint")) {
-                        		int cIndex = GExpert.safeParseInt(((Element)nnn).getTextContent(), 0);
+                        		int cIndex = DrawPanelFrame.safeParseInt(((Element)nnn).getTextContent(), 0);
                         		setConstraintIndices.add(cIndex);
                         	}
                         }
@@ -1000,7 +995,7 @@ public class GELine extends GraphicEntity implements Pointed {
                         if (nnn != null && nnn instanceof Element) {
                         	s = nnn.getNodeName();
                         	if (s.equalsIgnoreCase("point")) {
-                        		int pIndex = GExpert.safeParseInt(((Element)nnn).getTextContent(), 0);
+                        		int pIndex = DrawPanelFrame.safeParseInt(((Element)nnn).getTextContent(), 0);
 			            		GraphicEntity p = mapGE.get(pIndex);
 			            		bIsValidEntity &= (p != null);
 		                        if (p != null && !points.contains(p) && p instanceof GEPoint) {
@@ -1029,11 +1024,11 @@ public class GELine extends GraphicEntity implements Pointed {
     }
 
     public final boolean pointOnLineN(GEPoint p) {
-        return distance(p.getx(), p.gety()) < CMisc.ZERO;
+        return distance(p.getx(), p.gety()) < UtilityMiscellaneous.ZERO;
     }
 
     public final boolean pointOnLine(double x, double y) {
-        return distance(x, y) < CMisc.ZERO;
+        return distance(x, y) < UtilityMiscellaneous.ZERO;
     }
 
     public final static boolean isEqual(GEPoint A, GEPoint B) {
@@ -1053,11 +1048,11 @@ public class GELine extends GraphicEntity implements Pointed {
     public static boolean mouse_on_line(double x, double y, double x1, double y1, double x2, double y2) {
         double k = -(y2 - y1) / (x2 - x1);
 
-        if (Math.abs(k) > CMisc.ZERO && Math.abs(1 / k) < CMisc.ZERO) {
-            return Math.abs(x - x1) < CMisc.PIXEPS;
+        if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
+            return Math.abs(x - x1) < UtilityMiscellaneous.PIXEPS;
         }
         double len = Math.abs(y + k * x - y1 - k * x1) / Math.sqrt(1 + k * k);
-        return len < CMisc.PIXEPS;
+        return len < UtilityMiscellaneous.PIXEPS;
     }
 
     public final static double distanceToPoint(GELine ln, double x, double y) {
@@ -1065,9 +1060,9 @@ public class GELine extends GraphicEntity implements Pointed {
         int n = ln.getPtsSize();
         if (n < 2) {
             if (ln.linetype == CCLine) {
-            	constraint cs = null;
-                for (constraint cs1 : ln.cons) {
-                	if (cs1.GetConstraintType() == constraint.CCLine)
+            	Constraint cs = null;
+                for (Constraint cs1 : ln.cons) {
+                	if (cs1.GetConstraintType() == Constraint.CCLine)
                 		cs = cs1;
                 }
                 if (cs == null)
@@ -1088,14 +1083,14 @@ public class GELine extends GraphicEntity implements Pointed {
                 r = r / (2 * Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
                 return r;
             } else if (ln.linetype == BLine) {
-                constraint cs = ln.getConstraintByType(constraint.BLINE);
+                Constraint cs = ln.getConstraintByType(Constraint.BLINE);
                 GEPoint p1 = (GEPoint) cs.getelement(1);
                 GEPoint p2 = (GEPoint) cs.getelement(2);
                 double x0 = (p1.getx() + p2.getx()) / 2;
                 double y0 = (p1.gety() + p2.gety()) / 2;
 
                 double k = -ln.getK();
-                if (Math.abs(k) > CMisc.ZERO && Math.abs(1 / k) < CMisc.ZERO) {
+                if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
                     return Math.abs(x - x0);
                 }
                 double len = Math.abs(y + k * x - y0 - k * x0) / Math.sqrt(1 + k * k);
@@ -1109,7 +1104,7 @@ public class GELine extends GraphicEntity implements Pointed {
         }
         double k = -ln.getK();
 
-        if (Math.abs(k) > CMisc.ZERO && Math.abs(1 / k) < CMisc.ZERO) {
+        if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
             return Math.abs(x - pt.getx());
         }
         double len = Math.abs(y + k * x - pt.gety() - k * pt.getx()) / Math.sqrt(1 + k * k);
@@ -1125,7 +1120,7 @@ public class GELine extends GraphicEntity implements Pointed {
     public final static double distanceToPoint(double x1, double y1, double k, double x, double y) {
         k = -k;
 
-        if (Math.abs(k) > CMisc.ZERO && Math.abs(1 / k) < CMisc.ZERO) {
+        if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
             return Math.abs(x - x1);
         }
         double len = Math.abs(y + k * x - y1 - k * x1) / Math.sqrt(1 + k * k);
@@ -1169,9 +1164,9 @@ public class GELine extends GraphicEntity implements Pointed {
         double e1 = (x - x1) * (x - x2);
         double e2 = (y - y1) * (y - y2);
 
-        if (Math.abs(e1) < CMisc.ZERO && Math.abs(e2) < CMisc.ZERO)
+        if (Math.abs(e1) < UtilityMiscellaneous.ZERO && Math.abs(e2) < UtilityMiscellaneous.ZERO)
             return true;
-        if (Math.abs(e1) < CMisc.ZERO && e2 < 0 || Math.abs(e2) < CMisc.ZERO && e1 < 0)
+        if (Math.abs(e1) < UtilityMiscellaneous.ZERO && e2 < 0 || Math.abs(e2) < UtilityMiscellaneous.ZERO && e1 < 0)
             return true;
         return (e1 <= 0 && e2 <= 0);
     }
@@ -1222,15 +1217,15 @@ public class GELine extends GraphicEntity implements Pointed {
     }
 
     public final boolean nearline(double x, double y) {     // is the point near the line
-        return distanceToPoint(this, x, y) < CMisc.PIXEPS;
+        return distanceToPoint(this, x, y) < UtilityMiscellaneous.PIXEPS;
     }
 
     public boolean isLocatedNear(double x, double y) {
         if (!bVisible) return false;
 
-        if (inside(x, y, CMisc.PIXEPS)) {
+        if (inside(x, y, UtilityMiscellaneous.PIXEPS)) {
             double d = distanceToPoint(this, x, y);
-            if (d < CMisc.PIXEPS)
+            if (d < UtilityMiscellaneous.PIXEPS)
                 return true;
         }
         return false;
@@ -1248,11 +1243,11 @@ public class GELine extends GraphicEntity implements Pointed {
 
         double dx = (p1.getx() + p2.getx()) / 2;
         double dy = (p1.gety() + p2.gety()) / 2;
-        if (Math.abs(p1.getx() - p2.getx()) < CMisc.PIXEPS &&
-                Math.abs(p1.gety() - p2.gety()) < CMisc.PIXEPS)
+        if (Math.abs(p1.getx() - p2.getx()) < UtilityMiscellaneous.PIXEPS &&
+                Math.abs(p1.gety() - p2.gety()) < UtilityMiscellaneous.PIXEPS)
             return false;
 
-        return Math.abs(x - dx) < CMisc.PIXEPS && Math.abs(y - dy) < CMisc.PIXEPS;
+        return Math.abs(x - dx) < UtilityMiscellaneous.PIXEPS && Math.abs(y - dy) < UtilityMiscellaneous.PIXEPS;
     }
 
     public final boolean pointonMiddle(GEPoint pt) {
@@ -1263,11 +1258,11 @@ public class GELine extends GraphicEntity implements Pointed {
 
         double dx = (p1.getx() + p2.getx()) / 2;
         double dy = (p1.gety() + p2.gety()) / 2;
-        if (Math.abs(p1.getx() - p2.getx()) < CMisc.PIXEPS &&
-                Math.abs(p1.gety() - p2.gety()) < CMisc.PIXEPS)
+        if (Math.abs(p1.getx() - p2.getx()) < UtilityMiscellaneous.PIXEPS &&
+                Math.abs(p1.gety() - p2.gety()) < UtilityMiscellaneous.PIXEPS)
             return false;
 
-        if (!(Math.abs(pt.getx() - dx) < CMisc.PIXEPS && Math.abs(pt.gety() - dy) < CMisc.PIXEPS))
+        if (!(Math.abs(pt.getx() - dx) < UtilityMiscellaneous.PIXEPS && Math.abs(pt.gety() - dy) < UtilityMiscellaneous.PIXEPS))
             return false;
         pt.setXY(dx, dy);
         return true;
@@ -1283,7 +1278,7 @@ public class GELine extends GraphicEntity implements Pointed {
         x1 = y1 = 0;
         if (p == null) {
             if (linetype == BLine) {
-                constraint cs = getConstraintByType(constraint.BLINE);
+                Constraint cs = getConstraintByType(Constraint.BLINE);
                 GEPoint p1 = (GEPoint) cs.getelement(1);
                 GEPoint p2 = (GEPoint) cs.getelement(2);
                 x1 = (p1.getx() + p2.getx()) / 2;
@@ -1379,8 +1374,8 @@ public class GELine extends GraphicEntity implements Pointed {
 
     public static double[] Intersect(GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4) {
         double result[] = new double[2];
-        if (Math.abs(p1.getx() - p2.getx()) < CMisc.ZERO) {
-            if (Math.abs(p3.getx() - p4.getx()) < CMisc.ZERO)
+        if (Math.abs(p1.getx() - p2.getx()) < UtilityMiscellaneous.ZERO) {
+            if (Math.abs(p3.getx() - p4.getx()) < UtilityMiscellaneous.ZERO)
                 return null;
 
             double k = (p4.gety() - p3.gety()) / (p4.getx() - p3.getx());
@@ -1388,7 +1383,7 @@ public class GELine extends GraphicEntity implements Pointed {
             result[1] = k * (p1.getx() - p3.getx()) + p3.gety();
             return result;
         }
-        if (Math.abs(p3.getx() - p4.getx()) < CMisc.ZERO) {
+        if (Math.abs(p3.getx() - p4.getx()) < UtilityMiscellaneous.ZERO) {
             double k0 = (p2.gety() - p1.gety()) / (p2.getx() - p1.getx());
             result[0] = p3.getx();
             result[1] = k0 * (p3.getx() - p1.getx()) + p1.gety();
@@ -1404,7 +1399,7 @@ public class GELine extends GraphicEntity implements Pointed {
     }
 
     public static boolean isVerticalSlop(double r) {
-        return Math.abs(r) > CMisc.MAX_SLOPE;
+        return Math.abs(r) > UtilityMiscellaneous.MAX_SLOPE;
     }
 
     public static boolean isPerp(GELine line0, GELine line1) {
@@ -1412,12 +1407,12 @@ public class GELine extends GraphicEntity implements Pointed {
             return false;
         double k0 = line0.getK();
         double k1 = line1.getK();
-        if (Math.abs(k0) < CMisc.ZERO) {
+        if (Math.abs(k0) < UtilityMiscellaneous.ZERO) {
             return Math.abs(k1) > 99;
         }
-        if (Math.abs(k1) < CMisc.ZERO)
+        if (Math.abs(k1) < UtilityMiscellaneous.ZERO)
             return Math.abs(k0) > 99;
-        return Math.abs(k0 * k1 + 1) < CMisc.ZERO;
+        return Math.abs(k0 * k1 + 1) < UtilityMiscellaneous.ZERO;
     }
 
     public static double[] Intersect(GELine line0, GELine line1) {
@@ -1450,7 +1445,7 @@ public class GELine extends GraphicEntity implements Pointed {
 
         GEPoint p0 = line0.getfirstPoint();
         GEPoint p1 = line1.getfirstPoint();
-        if (Math.abs(k0 - k1) > CMisc.ZERO) {
+        if (Math.abs(k0 - k1) > UtilityMiscellaneous.ZERO) {
             double x = (p1.gety() - p0.gety() + k0 * p0.getx() - k1 * p1.getx()) / (k0 - k1);
             double y = k0 * (x - p0.getx()) + p0.gety();
             result[0] = x;
@@ -1508,7 +1503,7 @@ public Element saveIntoXMLDocument(Element rootElement, String sTypeName) {
 			Element eCons = doc.createElement("constraints");
     		elementThis.appendChild(eCons);
     		
-    		for (constraint cs : cons) {
+    		for (Constraint cs : cons) {
     			if (cs != null) {
     				Element child = doc.createElement("constraint");
     				child.setTextContent(String.valueOf(cs.id));
@@ -1521,12 +1516,12 @@ public Element saveIntoXMLDocument(Element rootElement, String sTypeName) {
 	return null;
 }
 
-public boolean setConstraints(Map<Integer, constraint> mapConstraints) {
+public boolean setConstraints(Map<Integer, Constraint> mapConstraints) {
 	assert(mapConstraints != null);
 	boolean bAllConstraintsFoundInMap = true;
 	if (mapConstraints != null) {
 		for (Integer Index : setConstraintIndices) {
-			constraint cs = mapConstraints.get(Index);
+			Constraint cs = mapConstraints.get(Index);
 			if (cs == null) {
 				bAllConstraintsFoundInMap = false;
 				System.err.println("Null constraint added.");

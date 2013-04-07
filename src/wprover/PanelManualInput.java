@@ -30,7 +30,7 @@ public class PanelManualInput extends JPanel implements ActionListener {
     JComboBox<String> comb_ind;
     JList<String> list_select;
     JButton BOK, BCANCEL, BEDIT, BADD, BNEXT;
-    TreeCellOpaqueRender trender;
+    PanelTreeCellOpaqueRender trender;
     JButton BsetAttr;
     JPopupMenu popup;
 
@@ -104,7 +104,7 @@ public class PanelManualInput extends JPanel implements ActionListener {
                 return dm;
             }
         });
-        panel1.add(new ColorButtonPanel(20, 20));
+        panel1.add(new PanelColorButton(20, 20));
         panel.add(panel1);
         String[] simage = {"bc.gif", "ind.gif", "etri.gif", "squa.gif"};
 
@@ -121,7 +121,7 @@ public class PanelManualInput extends JPanel implements ActionListener {
             }
         };
 
-        trender = new TreeCellOpaqueRender();
+        trender = new PanelTreeCellOpaqueRender();
        // trender.setComponentAt(1, "tri ABC = tri CDE");
         trender.setBorder(new LineBorder(Color.gray, 1));
 
@@ -141,7 +141,7 @@ public class PanelManualInput extends JPanel implements ActionListener {
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(label);
 
-        panel.add(new TreeCellOpaqueRender());
+        panel.add(new PanelTreeCellOpaqueRender());
         String[] s = {"aaaa", "bbbb", "ccccc"};
         list_select = new JList<String>(s);
         //panel.add(new JScrollPane(list_select));
@@ -220,7 +220,7 @@ public class PanelManualInput extends JPanel implements ActionListener {
             }
 
             //Set the icon and text.  If icon was null, say so.
-            Icon icon = GExpert.createImageIcon("images/dtree/" + value);
+            Icon icon = DrawPanelFrame.createImageIcon("images/dtree/" + value);
             setIcon(icon);
             if (icon != null) {
             } else {

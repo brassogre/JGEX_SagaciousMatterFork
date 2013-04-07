@@ -3,7 +3,7 @@ package maths;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import wprover.GExpert;
+import wprover.DrawPanelFrame;
 
 public class param extends Object {
     /* (non-Javadoc)
@@ -14,7 +14,6 @@ public class param extends Object {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (Solved ? 1231 : 1237);
-		result = prime * result + type;
 		long temp;
 		temp = Double.doubleToLongBits(value);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -37,8 +36,6 @@ public class param extends Object {
 		param other = (param) obj;
 		if (Solved != other.Solved)
 			return false;
-		if (type != other.type)
-			return false;
 		if (Double.doubleToLongBits(value) != Double
 				.doubleToLongBits(other.value))
 			return false;
@@ -47,10 +44,10 @@ public class param extends Object {
 		return true;
 	}
 
-	public static final int VARIABLE = 0;
-    public static final int STATIC = 1;
+	//public static final int VARIABLE = 0;
+    //public static final int STATIC = 1;
 
-    public int type;
+    //private int type; // angularDegrees
     public int xindex;
     public double value;
 
@@ -58,13 +55,13 @@ public class param extends Object {
     public TMono m = null; // This is used only in drawProcess.java, PolyBasic.java, and LeadVariableDialog.java
 
     public param() {
-		type = VARIABLE;
+		//type = VARIABLE;
         xindex = 0;
         value = 0;
     }
 
     public param(int index, double val) {
-    	type = VARIABLE;
+    	//type = VARIABLE;
         xindex = index;
         value = val;
     }
@@ -73,18 +70,21 @@ public class param extends Object {
     	this();
     	assert(thisElement != null);
     	if (thisElement != null) {
-    		type = GExpert.safeParseInt(thisElement.getAttribute("parameter_type"), VARIABLE);
-    		xindex = GExpert.safeParseInt(thisElement.getAttribute("x"), 0);
-    		value = GExpert.safeParseDouble(thisElement.getAttribute("value"), 0);
-    		Solved = GExpert.safeParseBoolean(thisElement.getAttribute("solved"), false);
+    		// type = GExpert.safeParseInt(thisElement.getAttribute("parameter_type"), VARIABLE);
+    		xindex = DrawPanelFrame.safeParseInt(thisElement.getAttribute("x"), 0);
+    		value = DrawPanelFrame.safeParseDouble(thisElement.getAttribute("value"), 0);
+    		Solved = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("solved"), false);
     	}
-        assert(value == value);
     }
     
-    public void setParameterStatic() {
-        type = STATIC;
-    }
+//    public void setParameterStatic() {
+//        type = STATIC;
+//    }
 
+//    public int angle() {
+//    	return (int) value;
+//    }
+    
     @Override
     public String toString() {
         assert(value == value);
@@ -106,7 +106,7 @@ public class param extends Object {
     		Element elementThis = doc.createElement("parameter");
     		rootElement.appendChild(elementThis);
 
-    		elementThis.setAttribute("type", String.valueOf(type));
+    		//elementThis.setAttribute("type", String.valueOf(type));
     		elementThis.setAttribute("x", String.valueOf(xindex));
     		elementThis.setAttribute("value", String.valueOf(value));
     		elementThis.setAttribute("solved", String.valueOf(Solved));

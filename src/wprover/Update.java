@@ -18,14 +18,14 @@ public class Update implements ActionListener, Runnable {
     final public static String srclg = "http://www.cs.wichita.edu/~ye/install/log.txt";
     final public static String srcgx = "http://www.cs.wichita.edu/~ye/install/jgex.zip";
 
-    GExpert gxInstance;
+    DrawPanelFrame gxInstance;
     ProgressDialog dlg;
     float version = 0;
     int size = 0;
     String localFile = null;
 
 
-    public Update(GExpert gx) {
+    public Update(DrawPanelFrame gx) {
         gxInstance = gx;
     }
 
@@ -67,8 +67,8 @@ public class Update implements ActionListener, Runnable {
             bSuccess = true;
         } catch (Exception exception) {
             JOptionPane.showMessageDialog(gxInstance,
-                    GExpert.getLanguage(1055, "Connection failed: Please check your network connection and try again."),
-                    GExpert.getLanguage(1054, "Connection Failed"),
+                    DrawPanelFrame.getLanguage(1055, "Connection failed: Please check your network connection and try again."),
+                    DrawPanelFrame.getLanguage(1054, "Connection Failed"),
                     JOptionPane.WARNING_MESSAGE);
             bSuccess = false;
         }
@@ -112,19 +112,19 @@ public class Update implements ActionListener, Runnable {
             size = it.intValue();
             version = f1;
 
-            if (Version.getVersionf() < f1)
+            if (UtilityVersion.getVersionf() < f1)
                 return 1;    //true, need to update
 
         } catch (IOException ee) {
             JOptionPane.showMessageDialog(gxInstance,
-                    GExpert.getLanguage(1055, "Connection failed: Please check your network connection and try again."),
-                    GExpert.getLanguage(1054, "Connection Failed"),
+                    DrawPanelFrame.getLanguage(1055, "Connection failed: Please check your network connection and try again."),
+                    DrawPanelFrame.getLanguage(1054, "Connection Failed"),
                     JOptionPane.WARNING_MESSAGE);
             return -1;
 
         } catch (Exception ee) {
             JOptionPane.showMessageDialog(gxInstance,
-                    ee.getMessage(), GExpert.getLanguage(302, "Warning"),
+                    ee.getMessage(), DrawPanelFrame.getLanguage(302, "Warning"),
                     JOptionPane.WARNING_MESSAGE);
             return -1;
 
@@ -137,17 +137,17 @@ public class Update implements ActionListener, Runnable {
         if (0 == rs) {
             JOptionPane.showConfirmDialog(gxInstance, "You version of JGEX is already up to date."
                     ,
-                    GExpert.getLanguage(1060, "Update Information"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                    DrawPanelFrame.getLanguage(1060, "Update Information"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
             return false;
         } else if (-1 == rs)
             return false;
 
         int n = JOptionPane.showConfirmDialog(gxInstance,
-                GExpert.getLanguage(1056, "A New version is available on the server, \ndo you want to update?") + "\n\n" +
-                        GExpert.getLanguage(1057, "Your current JGEX version") + ":  " + Version.getVersionf() + "\n"
-                        + GExpert.getLanguage(1058, "Available JGEX version") + ":    " + version + "\n\n"
-                        + GExpert.getLanguage(1059, "Press OK to update."),
-                GExpert.getLanguage(1060, "Update Information"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                DrawPanelFrame.getLanguage(1056, "A New version is available on the server, \ndo you want to update?") + "\n\n" +
+                        DrawPanelFrame.getLanguage(1057, "Your current JGEX version") + ":  " + UtilityVersion.getVersionf() + "\n"
+                        + DrawPanelFrame.getLanguage(1058, "Available JGEX version") + ":    " + version + "\n\n"
+                        + DrawPanelFrame.getLanguage(1059, "Press OK to update."),
+                DrawPanelFrame.getLanguage(1060, "Update Information"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
         if (n == JOptionPane.OK_OPTION) {
             start();
         } else return false;
@@ -156,7 +156,7 @@ public class Update implements ActionListener, Runnable {
     }
 
 
-    class ProgressDialog extends JBaseDialog {
+    class ProgressDialog extends DialogBase {
         /**
 		 * 
 		 */
@@ -169,7 +169,7 @@ public class Update implements ActionListener, Runnable {
 
         public ProgressDialog(Frame frame) {
             super(frame, false);
-            title = GExpert.getLanguage(1061, "JGEX Update");
+            title = DrawPanelFrame.getLanguage(1061, "JGEX Update");
             this.setTitle(title);
 
             JPanel panel = new JPanel();
@@ -188,9 +188,9 @@ public class Update implements ActionListener, Runnable {
 
             JPanel panel1 = new JPanel();
             panel1.setLayout(new FlowLayout());
-            b1 = new JButton(GExpert.getLanguage(3205, "Cancel"));
-            b2 = new JButton(GExpert.getLanguage(3204, "OK"));
-            b3 = new JButton(GExpert.getLanguage("Hide"));
+            b1 = new JButton(DrawPanelFrame.getLanguage(3205, "Cancel"));
+            b2 = new JButton(DrawPanelFrame.getLanguage(3204, "OK"));
+            b3 = new JButton(DrawPanelFrame.getLanguage("Hide"));
             b1.setActionCommand("Cancel");
             b2.setActionCommand("OK");
             b3.setActionCommand("Hide");
@@ -247,15 +247,15 @@ public class Update implements ActionListener, Runnable {
         } else if (s.equalsIgnoreCase("OK")) {
             dlg.setVisible(false);
             dlg.setStart();
-            int n = JOptionPane.showConfirmDialog(gxInstance, GExpert.getLanguage(1063, "File downloaded! \nTo update JGEX, " +
+            int n = JOptionPane.showConfirmDialog(gxInstance, DrawPanelFrame.getLanguage(1063, "File downloaded! \nTo update JGEX, " +
                     "the program will be exited and restarted"),
-                    GExpert.getLanguage(1061, "JGEX Update"), JOptionPane.OK_CANCEL_OPTION);
+                    DrawPanelFrame.getLanguage(1061, "JGEX Update"), JOptionPane.OK_CANCEL_OPTION);
             if (n == JOptionPane.OK_OPTION) {
 
                 try {
                     if (gxInstance.saveBeforeExit()) {
-                        String sp = GExpert.getFileSeparator();
-                        String command = "java -jar " + GExpert.getUserDir() + sp + "update.jar";
+                        String sp = DrawPanelFrame.getFileSeparator();
+                        String command = "java -jar " + DrawPanelFrame.getUserDir() + sp + "update.jar";
                         Runtime.getRuntime().exec(command);
                         System.exit(0);
                     }

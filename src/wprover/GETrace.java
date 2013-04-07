@@ -130,8 +130,8 @@ public class GETrace extends GraphicEntity {
         int radius = Radius;
 
         if (selected) {
-            g2.setColor(CMisc.SelectObjectColor);
-            g2.setStroke(CMisc.SelectObjectStroke);
+            g2.setColor(UtilityMiscellaneous.SelectObjectColor);
+            g2.setStroke(UtilityMiscellaneous.SelectObjectStroke);
             radius = Radius + 2;
         } else
             prepareToBeDrawnAsUnselected(g2);
@@ -179,7 +179,7 @@ public class GETrace extends GraphicEntity {
 
     public boolean isLocatedNear(double x, double y) {
         if (!isdraw()) return false;
-        double r2 = CMisc.PIXEPS * CMisc.PIXEPS;
+        double r2 = UtilityMiscellaneous.PIXEPS * UtilityMiscellaneous.PIXEPS;
 
         for (int i = 0; i < Num; i++)
             if (Math.pow(PX[i] - x, 2) + Math.pow(PY[i] - y, 2) < r2)
@@ -218,14 +218,14 @@ public class GETrace extends GraphicEntity {
         }
     }
 
-    public GETrace(drawProcess dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+    public GETrace(DrawPanel dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
     	super(dp, thisElement);
 
-		Num = GExpert.safeParseInt(thisElement.getAttribute("number"), 40, 10, 1000);
-		Radius = GExpert.safeParseInt(thisElement.getAttribute("radius"), 2);
-		dlns = GExpert.safeParseBoolean(thisElement.getAttribute("draw_lines"), true);
+		Num = DrawPanelFrame.safeParseInt(thisElement.getAttribute("number"), 40, 10, 1000);
+		Radius = DrawPanelFrame.safeParseInt(thisElement.getAttribute("radius"), 2);
+		dlns = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("draw_lines"), true);
 		
-		int index = GExpert.safeParseInt(thisElement.getAttribute("oObj"), 0);
+		int index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("oObj"), 0);
 		GraphicEntity ge = mapGE.get(index);
 		po = null;
 		oObj = null;
@@ -238,7 +238,7 @@ public class GETrace extends GraphicEntity {
 		if (ge == null)
 			bIsValidEntity = false;
 		
-		index = GExpert.safeParseInt(thisElement.getAttribute("point"), 0);
+		index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("point"), 0);
 		ge = mapGE.get(index);
 		if (ge != null && ge instanceof GEPoint)
 			point = (GEPoint)ge;
@@ -260,8 +260,8 @@ public class GETrace extends GraphicEntity {
                         if (nn2 != null) { 
                         	String s2 = nn2.getNodeName();
                         	if (s2.equalsIgnoreCase("trace_location")) {
-                        		PX[i2] = GExpert.safeParseInt(thisElement.getAttribute("x"), 0);
-                        		PY[i2] = GExpert.safeParseInt(thisElement.getAttribute("y"), 0);
+                        		PX[i2] = DrawPanelFrame.safeParseInt(thisElement.getAttribute("x"), 0);
+                        		PY[i2] = DrawPanelFrame.safeParseInt(thisElement.getAttribute("y"), 0);
                         	}
                         }
             		}

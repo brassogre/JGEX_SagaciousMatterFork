@@ -20,7 +20,7 @@ public class GETMark extends GraphicEntity {
         super(TMARK);
         m_color = 3;
         m_dash = 0;
-        m_color = drawData.RED;
+        m_color = DrawData.RED;
     }
 
     public GETMark(GELine ln1, GELine ln2) {
@@ -129,7 +129,7 @@ public class GETMark extends GraphicEntity {
         double ddy1 = dy - r[1];
 
         if (ddx * ddx1 < 0 && ddy * ddy1 < 0)
-            length = CMisc.FOOT_MARK_LENGTH;
+            length = UtilityMiscellaneous.FOOT_MARK_LENGTH;
         else if (len > 10 && len < 40)
             length = len;
     }
@@ -157,7 +157,7 @@ public class GETMark extends GraphicEntity {
 
     @Override
     public boolean isLocatedNear(double x, double y) {
-        boolean xr = Math.pow(tx - x, 2) + Math.pow(ty - y, 2) < CMisc.PIXEPS * CMisc.PIXEPS;
+        boolean xr = Math.pow(tx - x, 2) + Math.pow(ty - y, 2) < UtilityMiscellaneous.PIXEPS * UtilityMiscellaneous.PIXEPS;
         return xr;
     }
 
@@ -177,7 +177,7 @@ public class GETMark extends GraphicEntity {
     public void drawTTFoot(Graphics2D g2, double x, double y, GEPoint p1, GEPoint p2, boolean select) {
         if (p1 == null || p2 == null) return;
 
-        double step = CMisc.FOOT_MARK_LENGTH;
+        double step = UtilityMiscellaneous.FOOT_MARK_LENGTH;
         if (length > 0)
             step = length;
 

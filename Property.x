@@ -8,10 +8,10 @@ GridColor : -2302756
 NameTextShown : true
 ShowAngleText : true
 ShowAngleType : 2
-FlashMoveStep : 8
+FlashMoveStep : 6
 FootMarkLength : 10
 footMarkShown : true
-AngleType : 1
+AngleType : 2
 AntiAlias : true
 LookAndFeel : Default
 angleNameFont : Futura 0 12

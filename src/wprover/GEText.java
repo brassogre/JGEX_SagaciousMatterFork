@@ -44,9 +44,9 @@ public class GEText extends GraphicEntity {
 			final int t) {
 		super(GraphicEntity.TEXT);
 		str = new String();
-		m_color = drawData.getColorIndex(Color.black);
+		m_color = DrawData.getColorIndex(Color.black);
 		type = t;
-		font = CMisc.nameFont;
+		font = UtilityMiscellaneous.nameFont;
 		x += dx;
 		y += dy;
 		father = f;
@@ -253,7 +253,7 @@ public class GEText extends GraphicEntity {
 		svalue = s;
 	}
 
-	public boolean nameTextShown = CMisc.nameTextShown;
+	public boolean nameTextShown = UtilityMiscellaneous.nameTextShown;
 
 	@Override
 	public boolean isdraw() {
@@ -262,9 +262,9 @@ public class GEText extends GraphicEntity {
 		if ((father != null) && !father.isdraw())
 			return false;
 
-		if (CMisc.isApplication()) {
+		if (UtilityMiscellaneous.isApplication()) {
 			if (type == NAME_TEXT)
-				return CMisc.nameTextShown;
+				return UtilityMiscellaneous.nameTextShown;
 		} else if (type == NAME_TEXT)
 			return nameTextShown; // APPLET ONLY
 		return true;
@@ -277,7 +277,7 @@ public class GEText extends GraphicEntity {
 		else if (type == NAME_TEXT) {
 			final GEPoint p = (GEPoint) father;
 			lx = p.getx() + x;
-		} else if ((type == CNAME_TEXT) && CMisc.show_angle_text) {
+		} else if ((type == CNAME_TEXT) && UtilityMiscellaneous.show_angle_text) {
 			final GEAngle ag = (GEAngle) father;
 			lx = ag.getxForString() + x;
 		}
@@ -293,7 +293,7 @@ public class GEText extends GraphicEntity {
 			final GEPoint p = (GEPoint) father;
 			// lx = p.getx() + x;
 			ly = p.gety() + y;
-		} else if ((type == CNAME_TEXT) && CMisc.show_angle_text) {
+		} else if ((type == CNAME_TEXT) && UtilityMiscellaneous.show_angle_text) {
 			final GEAngle ag = (GEAngle) father;
 			// lx = ag.getxForString() + x;
 			ly = ag.getyForString() + y;
@@ -348,7 +348,7 @@ public class GEText extends GraphicEntity {
 			ly = p.gety() + y;
 			posX = lx;
 			posY = ly;
-		} else if ((type == CNAME_TEXT) && CMisc.show_angle_text) {
+		} else if ((type == CNAME_TEXT) && UtilityMiscellaneous.show_angle_text) {
 			final GEAngle ag = (GEAngle) father;
 			tstring = str;
 			final double r[] = GELine.Intersect(ag.lstart, ag.lend);
@@ -534,10 +534,10 @@ public class GEText extends GraphicEntity {
 		x += dx;
 		y += dy;
 		if (type == NAME_TEXT) {
-			if (((x * x) + (y * y)) > (CMisc.rlength * CMisc.rlength)) {
+			if (((x * x) + (y * y)) > (UtilityMiscellaneous.rlength * UtilityMiscellaneous.rlength)) {
 				final double r = Math.sqrt((x * x) + (y * y));
-				x = (int) ((x * CMisc.rlength) / r);
-				y = (int) ((y * CMisc.rlength) / r);
+				x = (int) ((x * UtilityMiscellaneous.rlength) / r);
+				y = (int) ((y * UtilityMiscellaneous.rlength) / r);
 			}
 		} else if (type == CNAME_TEXT) {
 			final GEAngle ag = (GEAngle) father;
@@ -546,10 +546,10 @@ public class GEText extends GraphicEntity {
 
 			double x1 = x - x0;
 			double y1 = y - y0;
-			if (((x1 * x1) + (y1 * y1)) > (CMisc.rlength * CMisc.rlength)) {
+			if (((x1 * x1) + (y1 * y1)) > (UtilityMiscellaneous.rlength * UtilityMiscellaneous.rlength)) {
 				final double r = Math.sqrt((x1 * x1) + (y1 * y1));
-				x1 = (int) ((x1 * CMisc.rlength) / r);
-				y1 = (int) ((y1 * CMisc.rlength) / r);
+				x1 = (int) ((x1 * UtilityMiscellaneous.rlength) / r);
+				y1 = (int) ((y1 * UtilityMiscellaneous.rlength) / r);
 				x -= dx + x1;
 				y -= dy + y1;
 			}
@@ -570,9 +570,9 @@ public class GEText extends GraphicEntity {
 
 			final double len = Math.sqrt((xp * xp) + (yp * yp));
 
-			if (len > CMisc.rlength) {
-				x = (int) ((xp * CMisc.rlength) / len);
-				y = (int) ((yp * CMisc.rlength) / len);
+			if (len > UtilityMiscellaneous.rlength) {
+				x = (int) ((xp * UtilityMiscellaneous.rlength) / len);
+				y = (int) ((yp * UtilityMiscellaneous.rlength) / len);
 
 			} else {
 				x += dx;
@@ -588,9 +588,9 @@ public class GEText extends GraphicEntity {
 
 			final double len = Math.sqrt((xp * xp) + (yp * yp));
 
-			if (len > CMisc.rlength) {
-				x = (int) ((xp * CMisc.rlength) / len);
-				y = (int) ((yp * CMisc.rlength) / len);
+			if (len > UtilityMiscellaneous.rlength) {
+				x = (int) ((xp * UtilityMiscellaneous.rlength) / len);
+				y = (int) ((yp * UtilityMiscellaneous.rlength) / len);
 
 			} else {
 				x += dx;
@@ -663,15 +663,15 @@ public class GEText extends GraphicEntity {
 
 	}
 
-	public GEText(drawProcess dp, final Element thisElement, final Map<Integer, GraphicEntity> mapGE) {
+	public GEText(DrawPanel dp, final Element thisElement, final Map<Integer, GraphicEntity> mapGE) {
 		super(dp, thisElement);
 
 		str = thisElement.getAttribute("string_value");
-		type = GExpert.safeParseInt(thisElement.getAttribute("text_type"), 0, 0, 1);
-		x = GExpert.safeParseInt(thisElement.getAttribute("x"), 0);
-		y = GExpert.safeParseInt(thisElement.getAttribute("y"), 0);
+		type = DrawPanelFrame.safeParseInt(thisElement.getAttribute("text_type"), 0, 0, 1);
+		x = DrawPanelFrame.safeParseInt(thisElement.getAttribute("x"), 0);
+		y = DrawPanelFrame.safeParseInt(thisElement.getAttribute("y"), 0);
 
-		final int index = GExpert.safeParseInt(thisElement.getAttribute("father"), 0);
+		final int index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("father"), 0);
 		father = mapGE.get(index);
 		if (type == NAME_TEXT) {
 			if (father == null || !(father instanceof GEPoint))

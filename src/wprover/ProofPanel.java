@@ -27,10 +27,10 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -6504661115086935911L;
-	private GExpert gxInstance;
-    private DPanel dpane;
-    private drawTextProcess dp;
-    private GApplet1 app1 = null;
+	private DrawPanelFrame gxInstance;
+    private PanelDraw dpane;
+    private DrawPanelExtended dp;
+    private GApplet app1 = null;
 
     private Conspanel condPane; //  construction;
 
@@ -44,30 +44,30 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
     private JTree tree_full; // Full Angle
 
     //private DefaultMutableTreeNode top_mp;
-    private MProveTree tree_mp;
-    private mproveInputPanel inputm;
+    private TreeMProof tree_mp;
+    private PanelMProofInput inputm;
 
     private JPanel mpPanel;
     private JScrollPane gddPanel, areaPanel, dbPanel, fullPanel;
-    private panelWu wuPanel;
-    private panelGB gbPanel;
+    private PanelWuMethod wuPanel;
+    private PanelGB gbPanel;
 
     private popMenu popcond;
     private ButtonToolBar tbar;
     private int findex = -1;
     private int gindex = 0;
 
-    private GProver gprover;
+    private GeometryProver gprover;
     private boolean is_database_updated = true;
 
-    private concDialog cdialog;
-    private FactFinderDialog fdialog;
+    private DialogConclusion cdialog;
+    private DialogFactFinder fdialog;
 
     private JDialog lstDrawDialog = null;
     private JDialog lstRuleDialog = null;
 
 
-    public ProofPanel(GExpert gx, DPanel dd, drawTextProcess dp, boolean mbar, int idonly) {
+    public ProofPanel(DrawPanelFrame gx, PanelDraw dd, DrawPanelExtended dp, boolean mbar, int idonly) {
         gxInstance = gx;
 
         if (gx != null) {
@@ -99,7 +99,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         createMProvePanel(mbar);
         addTab("M", mpPanel);//4
         this.createDatabaseTree();        //5
-        gprover = new GProver(this, gxInstance);
+        gprover = new GeometryProver(this, gxInstance);
         this.setBorder(null);
         initFont();
     }
@@ -113,7 +113,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 //        }
     }
 
-    public void setApplet1(GApplet1 app1) {
+    public void setApplet1(GApplet app1) {
         this.app1 = app1;
     }
 
@@ -124,7 +124,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         super.setSelectedIndex(index);
     }
 
-    public void setMember(DPanel dd, drawTextProcess dp) {
+    public void setMember(PanelDraw dd, DrawPanelExtended dp) {
         this.dpane = dd;
         this.dp = dp;
     }
@@ -295,12 +295,12 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                                 cond c = (cond) o;
                                 Object objx = tree.getLastSelectedPathComponent();
 
-                                RuleApplicationDialog dialog;
+                                DialogRuleApplication dialog;
 
                                 if (gxInstance != null)
-                                    dialog = new RuleApplicationDialog(gxInstance, dpane, dp);
+                                    dialog = new DialogRuleApplication(gxInstance, dpane, dp);
                                 else
-                                	dialog = new RuleApplicationDialog(app1, dpane, dp);
+                                	dialog = new DialogRuleApplication(app1, dpane, dp);
 
                                 if (lstDrawDialog != null)
                                     lstDrawDialog.setVisible(false);
@@ -316,11 +316,11 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                         Object o = selectLabel.getUserObject();
                         cond c = (cond) o;
 //                        RuleListDialog dlg = new RuleListDialog(gxInstance);
-                        RuleListDialog dlg;
+                        DialogRuleList dlg;
 
                         if (gxInstance != null)
-                            dlg = new RuleListDialog(gxInstance);
-                        else dlg = new RuleListDialog(app1);
+                            dlg = new DialogRuleList(gxInstance);
+                        else dlg = new DialogRuleList(app1);
 
                         if (lstRuleDialog != null)
                             lstRuleDialog.setVisible(false);
@@ -413,7 +413,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         top_db = new DefaultMutableTreeNode(getLanguage("Fixpoint"));
         tree_db = new JTree(top_db);
         ((DefaultTreeCellRenderer) tree_db.getCellRenderer()).setLeafIcon(null);
-        tree_db.setFont(CMisc.fixFont);
+        tree_db.setFont(UtilityMiscellaneous.fixFont);
 
         tree_db.addMouseListener(new MouseListener() {
 	    @Override
@@ -499,12 +499,12 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                                 el_term el = (el_term) o;
                                 Object objx = tree_full.getLastSelectedPathComponent();
 //                                RuleApplicationDialog dialog = new RuleApplicationDialog(gxInstance, dpane, dp);
-                                RuleApplicationDialog dialog;
+                                DialogRuleApplication dialog;
 
                                 if (gxInstance != null)
-                                    dialog = new RuleApplicationDialog(gxInstance, dpane, dp);
+                                    dialog = new DialogRuleApplication(gxInstance, dpane, dp);
                                 else
-                                	dialog = new RuleApplicationDialog(app1, dpane, dp);
+                                	dialog = new DialogRuleApplication(app1, dpane, dp);
 
                                 dialog.LoadRule(el);
                                 if (objx != null)
@@ -514,12 +514,12 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                                 cond c = (cond) o;
                                 Object objx = tree_full.getLastSelectedPathComponent();
 //                                RuleApplicationDialog dialog = new RuleApplicationDialog(gxInstance, dpane, dp);
-                                RuleApplicationDialog dialog;
+                                DialogRuleApplication dialog;
 
                                 if (gxInstance != null)
-                                    dialog = new RuleApplicationDialog(gxInstance, dpane, dp);
+                                    dialog = new DialogRuleApplication(gxInstance, dpane, dp);
                                 else
-                                	dialog = new RuleApplicationDialog(app1, dpane, dp);
+                                	dialog = new DialogRuleApplication(app1, dpane, dp);
 
                                 dialog.LoadRule(c);
                                 if (objx != null)
@@ -531,11 +531,11 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                         Object o = selectLabel.getUserObject();
                         el_term el = (el_term) o;
 //                        RuleListDialog dlg = new RuleListDialog(gxInstance);
-                        RuleListDialog dlg = null;
+                        DialogRuleList dlg = null;
 
                         if (gxInstance != null)
-                            dlg = new RuleListDialog(gxInstance);
-                        else dlg = new RuleListDialog(app1);
+                            dlg = new DialogRuleList(gxInstance);
+                        else dlg = new DialogRuleList(app1);
 
                         if (dlg.loadRule(true, el.getEType()))
                             dlg.setVisible(true);
@@ -694,7 +694,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
     private void createMProvePanel(boolean mbar) {
         mpPanel = new JPanel();
         mpPanel.setLayout(new BoxLayout(mpPanel, BoxLayout.Y_AXIS));
-        JScrollPane pane = new JScrollPane((tree_mp = new MProveTree(gxInstance, dpane, dp)),
+        JScrollPane pane = new JScrollPane((tree_mp = new TreeMProof(gxInstance, dpane, dp)),
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -706,7 +706,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         mdrobj.createAllIcons();
 
         if (mbar)
-            mpPanel.add((inputm = new mproveInputPanel(gxInstance, dpane, dp, tree_mp)));
+            mpPanel.add((inputm = new PanelMProofInput(gxInstance, dpane, dp, tree_mp)));
 //        this.addTab("M", mpPanel);
         mpPanel.setBackground(Color.white);
         mpPanel.setForeground(Color.white);
@@ -718,13 +718,13 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             this.setSelectedComponent(mpPanel);
     }
 
-    public mproveInputPanel getmInputPanel() {
+    public PanelMProofInput getmInputPanel() {
         return inputm;
     }
 
-    public FactFinderDialog getFactFinderDialog() {
+    public DialogFactFinder getFactFinderDialog() {
         if (fdialog == null)
-            fdialog = new FactFinderDialog(gxInstance, 0, getLanguage("Search facts"));
+            fdialog = new DialogFactFinder(gxInstance, 0, getLanguage("Search facts"));
 
         gxInstance.centerDialog(fdialog);
         ArrayList<GEPoint> vv = new ArrayList<GEPoint>();
@@ -942,7 +942,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             gxInstance.setActionSelect();
 
         if (cdialog == null) {
-            cdialog = new concDialog(gxInstance, getLanguage("Add Conclusion"));
+            cdialog = new DialogConclusion(gxInstance, getLanguage("Add Conclusion"));
             cdialog.setTitle(s);
         }
         ArrayList<String> v = new ArrayList<String>();
@@ -954,9 +954,9 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
     public void proveWu() {
 
         if (wuPanel == null) {
-            wuPanel = new panelWu(dp, new wuTextPane());
+            wuPanel = new PanelWuMethod(dp, new TextPaneWuMethod());
             if (gxInstance != null) {
-                wuPanel.setLanguage(GExpert.getLan());
+                wuPanel.setLanguage(DrawPanelFrame.getLan());
                 wuPanel.setXInstance(gxInstance);
             }
             this.addTab("Wu", wuPanel);
@@ -969,7 +969,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
     public void proveGB() {
         if (gbPanel == null) {
-            gbPanel = new panelGB(dp, new wuTextPane());
+            gbPanel = new PanelGB(dp, new TextPaneWuMethod());
             gbPanel.setXInstance(gxInstance);
             this.addTab("GB", gbPanel);
         }
@@ -1131,7 +1131,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
     public void show_AllFullAux(boolean ang) {
         //     drawTextProcess dp = gxInstance.dp;
-        drawData.setAuxStatus();
+        DrawData.setAuxStatus();
         DefaultMutableTreeNode node = top_full;
         if (node == null) {
             node = top;
@@ -1281,14 +1281,14 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
     String getLanguage(String s) {
         if (gxInstance != null)
-            return GExpert.getLanguage(s);
+            return DrawPanelFrame.getLanguage(s);
         return s;
     }
 
     public String getLanguage(int n, String s) {
         String s1 = "";
         if (gxInstance != null)
-            s1 = GExpert.getLanguage(n);
+            s1 = DrawPanelFrame.getLanguage(n);
         if (s1 != null && s1.length() > 0)
             return s1;
         return s;
@@ -1297,7 +1297,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
     public void drawConstruction() {
         if (dp.inConstruction()) {
-            dp.SetCurrentAction(drawProcess.CONSTRUCT_FROM_TEXT);
+            dp.SetCurrentAction(DrawPanel.CONSTRUCT_FROM_TEXT);
             return;
         }
 
@@ -1307,7 +1307,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             return;
         }
         dp.setConstructLines(gt);
-        dp.SetCurrentAction(drawProcess.CONSTRUCT_FROM_TEXT);
+        dp.SetCurrentAction(DrawPanel.CONSTRUCT_FROM_TEXT);
         dpane.repaint();
 
     }
@@ -1901,17 +1901,17 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
         public popMenu() {
             super();
-            JMenuItem item = new JMenuItem(GExpert.getLanguage("Prove"));
+            JMenuItem item = new JMenuItem(DrawPanelFrame.getLanguage("Prove"));
             add(item);
             item.addActionListener(this);
-            item = new JMenuItem(GExpert.getLanguage(311, "Prove in New Tab"));
+            item = new JMenuItem(DrawPanelFrame.getLanguage(311, "Prove in New Tab"));
             item.setEnabled(false);
             add(item);
             item.addActionListener(this);
-            item = new JMenuItem(GExpert.getLanguage(310, "Refresh"));
+            item = new JMenuItem(DrawPanelFrame.getLanguage(310, "Refresh"));
             item.addActionListener(this);
             add(item);
-            item = new JMenuItem(GExpert.getLanguage(305, "Search A Fact"));
+            item = new JMenuItem(DrawPanelFrame.getLanguage(305, "Search A Fact"));
             item.setActionCommand("FACT");
             item.addActionListener(this);
             add(item);
@@ -1961,7 +1961,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("FACT")) {
-                FactFinderDialog dlg = getFactFinderDialog();
+                DialogFactFinder dlg = getFactFinderDialog();
                 if (gxInstance != null)
                     gxInstance.setActionSelect();
                 dlg.showDialog();
@@ -2112,14 +2112,14 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
         public void addImageToItem(JMenuItem item, String name) {
             if (gxInstance != null)
-                GExpert.addImageToItem(item, name);
+                DrawPanelFrame.addImageToItem(item, name);
         }
 
         public ButtonToolBar() {
             setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
 
             b1 = new JToggleButton(new AbstractAction("",
-                    GExpert.createImageIcon("images/ptree/font.gif")) {
+                    DrawPanelFrame.createImageIcon("images/ptree/font.gif")) {
 
                 /**
 						 * 
@@ -2131,7 +2131,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                     ProofPanel.this.getSelectedIndex();
 
                     if (gxInstance != null) {
-                        MiscDialog dlg = new MiscDialog(gxInstance);
+                        DialogMiscellaneous dlg = new DialogMiscellaneous(gxInstance);
                         gxInstance.centerDialog(dlg);
                         dlg.setSelectedTabbedPane(3);
                         dlg.setVisible(true);
@@ -2146,7 +2146,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             });
 
             button3 = new JToggleButton(new AbstractAction("",
-                    GExpert.createImageIcon("images/ptree/expand.gif")) {
+                    DrawPanelFrame.createImageIcon("images/ptree/expand.gif")) {
 
                 /**
 						 * 
@@ -2160,7 +2160,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             });
 
             button4 = new JToggleButton(new AbstractAction("",
-                    GExpert.createImageIcon("images/ptree/draw.gif")) {
+                    DrawPanelFrame.createImageIcon("images/ptree/draw.gif")) {
                 /**
 						 * 
 						 */
@@ -2171,7 +2171,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 }
             });
             button5 = new JToggleButton(new AbstractAction("",
-                    GExpert.createImageIcon("images/ptree/addconc.gif")) {
+                    DrawPanelFrame.createImageIcon("images/ptree/addconc.gif")) {
                 /**
 						 * 
 						 */
@@ -2183,7 +2183,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 }
             });
             button6 = new JToggleButton(new AbstractAction("",
-                    GExpert.createImageIcon("images/ptree/refresh.gif")) {
+                    DrawPanelFrame.createImageIcon("images/ptree/refresh.gif")) {
                 /**
 						 * 
 						 */
@@ -2195,7 +2195,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 }
             });
             button7 = new JToggleButton(new AbstractAction("",
-                    GExpert.createImageIcon("images/ptree/run.gif")) {
+                    DrawPanelFrame.createImageIcon("images/ptree/run.gif")) {
                 /**
 						 * 
 						 */
@@ -2278,7 +2278,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 addImageToItem(item, "run");
 
                 JMenu m = new JMenu(getLanguage("To Prove"));
-                String[] ts = concDialog.ts;
+                String[] ts = DialogConclusion.ts;
                 for (int i = 0; i < ts.length; i++) {
                     JMenuItem it = new JMenuItem(getLanguage(200 + i, ts[i]));
                     it.setActionCommand("CONC");
@@ -2317,7 +2317,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 pmenu.add(item);
 
             }
-            label = new JLabel("GDD", GExpert.createImageIcon("images/ptree/downsel.gif"), JLabel.HORIZONTAL) {
+            label = new JLabel("GDD", DrawPanelFrame.createImageIcon("images/ptree/downsel.gif"), JLabel.HORIZONTAL) {
                 /**
 				 * 
 				 */
@@ -2389,7 +2389,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 }
             } else if (s.equals("AngText")) {
                 JMenuItem item = (JMenuItem) e.getSource();
-                CMisc.show_angle_text = item.isSelected();
+                UtilityMiscellaneous.show_angle_text = item.isSelected();
                 dpane.repaint();
             } else if (s.equals("SAng")) {
                 JMenuItem item = (JMenuItem) e.getSource();
@@ -2401,7 +2401,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             } else if (s.equals("Prove")) {
                 prove();
             } else if (s.equals("Rulers")) {
-                RuleDialog dlg = new RuleDialog(gxInstance);
+                DialogRule dlg = new DialogRule(gxInstance);
                 dlg.setVisible(true);
             } else if (s.equals("LV")) {
                 dp.popLeadingVariableDialog();
@@ -2409,7 +2409,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 ProofPanel.this.showNDGs();
             else if (s.equalsIgnoreCase("All Solutions")) {
                 ArrayList<double[]> v = dp.calculate_allResults();
-                AllSolutionDialog dlg = new AllSolutionDialog(gxInstance);
+                DialogSolutions dlg = new DialogSolutions(gxInstance);
                 dlg.setVlist(v);
                 dlg.autoFiltered();
 
@@ -2450,7 +2450,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                     }
                 }
             } catch (Exception ee) {
-                CMisc.print(ee.getMessage());
+                UtilityMiscellaneous.print(ee.getMessage());
             }
         }
 
@@ -2510,7 +2510,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
         if (!Prover.getAllNdgs(g, v1, v2, v3, v4))
             return;
-        ndgDialog d = new ndgDialog(gxInstance, g, dp);
+        DialogNondegeneracy d = new DialogNondegeneracy(gxInstance, g, dp);
 
         d.setValue(v1, v2, v3, v4);
         d.setVisible(true);
@@ -2548,8 +2548,8 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
             listModelx = new DefaultListModel<String>();
             list = new JList<cons>();
             listx = new JList<String>();
-            list.setFont(CMisc.thmFont);
-            listx.setFont(CMisc.thmFont);
+            list.setFont(UtilityMiscellaneous.thmFont);
+            listx.setFont(UtilityMiscellaneous.thmFont);
             list.setModel(listModel);
             listx.setModel(listModelx);
             ListSelectionModel listSelectionModel = list.getSelectionModel();
@@ -2574,8 +2574,8 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 }
             };
             tiptext.setEditable(false);
-            tiptext.setFont(CMisc.thmFont);
-            JToggleButton button = new JToggleButton(GExpert.createImageIcon("images/quit.gif"));
+            tiptext.setFont(UtilityMiscellaneous.thmFont);
+            JToggleButton button = new JToggleButton(DrawPanelFrame.createImageIcon("images/quit.gif"));
             button.setBorder(null);
             button.setActionCommand("Close");
             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -2672,7 +2672,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 JRadioButtonMenuItem m = (JRadioButtonMenuItem) o;
                 this.showDetail(m.isSelected());
             } else if (command.equals("PC")) {
-                ppDialog pp = new ppDialog(gxInstance, condPane.getTerm(), dp);
+                DialogNondegeneracyPolynomials pp = new DialogNondegeneracyPolynomials(gxInstance, condPane.getTerm(), dp);
                 pp.setVisible(true);
             } else if (command.equals("NDG")) {
                 ProofPanel.this.showNDGs();
@@ -2999,43 +2999,43 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
         //gdd_bc db = Prover.get_gddbase();
         cond co = null;
-        AttrToCondDialog dlg = null;
+        DialogAttrToCond dlg = null;
 
 
         if (c instanceof l_line) {
             l_line ln = (l_line) c;
             if (ln.no >= 3) {
-                dlg = new AttrToCondDialog(gxInstance, ln);
+                dlg = new DialogAttrToCond(gxInstance, ln);
                 dlg.setVisible(true);
             }
         } else if (c instanceof p_line) {
             p_line pn = (p_line) c;
             if (pn.no >= 2) {
-                dlg = new AttrToCondDialog(gxInstance, pn);
+                dlg = new DialogAttrToCond(gxInstance, pn);
                 dlg.setVisible(true);
             }
         } else if (c instanceof a_cir) {
             a_cir cr = (a_cir) c;
             if (cr.no >= 4) {
-                dlg = new AttrToCondDialog(gxInstance, cr);
+                dlg = new DialogAttrToCond(gxInstance, cr);
                 dlg.setVisible(true);
             }
         } else if (c instanceof angst) {
             angst st = (angst) c;
             if (st.no > 2) {
-                dlg = new AttrToCondDialog(gxInstance, st);
+                dlg = new DialogAttrToCond(gxInstance, st);
                 dlg.setVisible(true);
             }
         } else if (c instanceof s_tris) {
             s_tris st = (s_tris) c;
             if (st.no >= 2) {
-                dlg = new AttrToCondDialog(gxInstance, (s_tris) c);
+                dlg = new DialogAttrToCond(gxInstance, (s_tris) c);
                 dlg.setVisible(true);
             }
         } else if (c instanceof c_segs) {
             c_segs cg = (c_segs) c;
             if (cg.no >= 2) {
-                dlg = new AttrToCondDialog(gxInstance, (c_segs) c);
+                dlg = new DialogAttrToCond(gxInstance, (c_segs) c);
                 dlg.setVisible(true);
             }
         }

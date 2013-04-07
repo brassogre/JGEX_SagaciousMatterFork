@@ -25,7 +25,7 @@ public class GEAngle extends GraphicEntity {
     int radius = 20;
     private int show_type = -1; // 0: none  1: value ; 2:text , -1: default, 3: name with value;
     private int value1; // 0. Color or Num of Arc
-    private int ftype = CMisc.ANGLE_TYPE;  //// 0: traditional ;  1: Full angle, 2: Multiple arc, 3. Fill.
+    private int ftype = UtilityMiscellaneous.ANGLE_TYPE;  //// 0: traditional ;  1: Full angle, 2: Multiple arc, 3. Fill.
     private double dx, dy;
 
     GEText ptext;
@@ -34,45 +34,45 @@ public class GEAngle extends GraphicEntity {
         super(GraphicEntity.ANGLE);
     }
 
-    public GEAngle(drawProcess dp, Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+    public GEAngle(DrawPanel dp, Element thisElement, Map<Integer, GraphicEntity> mapGE) {
     	super(dp, thisElement);
 
-    	int index = GExpert.safeParseInt(thisElement.getAttribute("start_line"), 0);
+    	int index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("start_line"), 0);
 		GraphicEntity ge = mapGE.get(index);
 		if (ge instanceof GELine)
 			lstart = (GELine)ge;
 		else
 			bIsValidEntity = false;
 
-		index = GExpert.safeParseInt(thisElement.getAttribute("end_line"), 0);
+		index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("end_line"), 0);
 		ge = mapGE.get(index);
 		if (ge instanceof GELine)
 			lend = (GELine)ge;
 		else
 			bIsValidEntity = false;
 
-		index = GExpert.safeParseInt(thisElement.getAttribute("start_point"), 0);
+		index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("start_point"), 0);
 		ge = mapGE.get(index);
 		if (ge instanceof GEPoint)
 			pstart = (GEPoint)ge;
 		else
 			bIsValidEntity = false;
 
-		index = GExpert.safeParseInt(thisElement.getAttribute("end_point"), 0);
+		index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("end_point"), 0);
 		ge = mapGE.get(index);
 		if (ge instanceof GEPoint)
 			pend = (GEPoint)ge;
 		else
 			bIsValidEntity = false;
 
-		radius = GExpert.safeParseInt(thisElement.getAttribute("radius"), 20, 1, 50); // Default radius of 20 (min allowed is 1, max allowed is 50)
-		show_type = GExpert.safeParseInt(thisElement.getAttribute("show_type"), -1, -1, 3); // Default of -1 (min allowed is -1, max allowed is 3)
-		ftype = GExpert.safeParseInt(thisElement.getAttribute("ftype"), 0, 0, 3);
-		value1 = GExpert.safeParseInt(thisElement.getAttribute("value1"), 0);
+		radius = DrawPanelFrame.safeParseInt(thisElement.getAttribute("radius"), 20, 1, 50); // Default radius of 20 (min allowed is 1, max allowed is 50)
+		show_type = DrawPanelFrame.safeParseInt(thisElement.getAttribute("show_type"), -1, -1, 3); // Default of -1 (min allowed is -1, max allowed is 3)
+		ftype = DrawPanelFrame.safeParseInt(thisElement.getAttribute("ftype"), 0, 0, 3);
+		value1 = DrawPanelFrame.safeParseInt(thisElement.getAttribute("value1"), 0);
 
         m_name = getAngleName();//"[" + p1.m_name + p2.m_name + "," + p3.m_name + p4.m_name + "]";
         ptext = new GEText(this, 2, 2, GEText.CNAME_TEXT);
-        ptext.setFont(CMisc.angleNameFont);
+        ptext.setFont(UtilityMiscellaneous.angleNameFont);
         ptext.setText1(m_name);
     }    
     
@@ -251,9 +251,9 @@ public class GEAngle extends GraphicEntity {
         radius = 40;
         m_name = getAngleName();//"[" + p1.m_name + p2.m_name + "," + p3.m_name + p4.m_name + "]";
         ptext = new GEText(this, 2, 2, GEText.CNAME_TEXT);
-        ptext.setFont(CMisc.angleNameFont);
+        ptext.setFont(UtilityMiscellaneous.angleNameFont);
         ptext.setText1(m_name);
-        ftype = CMisc.ANGLE_TYPE;
+        ftype = UtilityMiscellaneous.ANGLE_TYPE;
         value1 = 1;
     }
 
@@ -308,14 +308,14 @@ public class GEAngle extends GraphicEntity {
 
 
         if (r == null) {
-            CMisc.print("line can not intersect");
+            UtilityMiscellaneous.print("line can not intersect");
         } else {
             double x = p1.getx();
             double y = p1.gety();
             GEPoint p11 = null;
             for (int i = 0; i < l1.points.size(); i++) {
                 GEPoint p = l1.points.get(i);
-                if ((p.getx() - r[0]) * (x - r[0]) + (p.gety() - r[1]) * (y - r[1]) > CMisc.ZERO) {
+                if ((p.getx() - r[0]) * (x - r[0]) + (p.gety() - r[1]) * (y - r[1]) > UtilityMiscellaneous.ZERO) {
                     if (p11 == null)
                         p11 = p;
                     else if (p11.x1.xindex > p.x1.xindex)
@@ -332,7 +332,7 @@ public class GEAngle extends GraphicEntity {
 
             for (int i = 0; i < l2.points.size(); i++) {
                 GEPoint p = l2.points.get(i);
-                if ((p.getx() - r[0]) * (x - r[0]) + (p.gety() - r[1]) * (y - r[1]) > CMisc.ZERO) {
+                if ((p.getx() - r[0]) * (x - r[0]) + (p.gety() - r[1]) * (y - r[1]) > UtilityMiscellaneous.ZERO) {
                     if (p11 == null)
                         p11 = p;
                     else if (p11.x1.xindex > p.x1.xindex)
@@ -344,16 +344,16 @@ public class GEAngle extends GraphicEntity {
                 pend = l2.points.get(0);
         }
         if (pstart == null || pend == null) {
-            CMisc.print("CAngle contruction error");
+            UtilityMiscellaneous.print("CAngle contruction error");
         }
 
         radius = 40;
         m_name = this.getAngleName();
 
         ptext = new GEText(this, 0, 0, GEText.CNAME_TEXT);
-        ptext.setFont(CMisc.angleNameFont);
+        ptext.setFont(UtilityMiscellaneous.angleNameFont);
         ptext.setText1(m_name);
-        ftype = CMisc.ANGLE_TYPE;
+        ftype = UtilityMiscellaneous.ANGLE_TYPE;
         value1 = 1;
     }
 
@@ -442,7 +442,7 @@ public class GEAngle extends GraphicEntity {
         double[] r = GELine.Intersect(lstart, lend);
         if (r == null) return false;
 
-        if (Math.abs(Math.sqrt(Math.pow(x - r[0], 2) + Math.pow(y - r[1], 2)) - radius) > CMisc.PIXEPS)
+        if (Math.abs(Math.sqrt(Math.pow(x - r[0], 2) + Math.pow(y - r[1], 2)) - radius) > UtilityMiscellaneous.PIXEPS)
             return false;
 
 
@@ -534,7 +534,7 @@ public class GEAngle extends GraphicEntity {
             yf = p2.gety();
         }
         g2.setColor(Color.red);
-        g2.setStroke(CMisc.DashedStroke);
+        g2.setStroke(UtilityMiscellaneous.DashedStroke);
         g2.drawLine((int) dx1, (int) dy1, (int) xf, (int) yf);
     }
 
@@ -558,7 +558,7 @@ public class GEAngle extends GraphicEntity {
             else
                 p2 = pl2[1];
             g2.setColor(Color.red);
-            g2.setStroke(CMisc.DashedStroke);
+            g2.setStroke(UtilityMiscellaneous.DashedStroke);
             if (!lstart.inside(x, y))
                 g2.drawLine((int) x, (int) y, (int) p1.getx(), (int) p1.gety());
             if (!lend.inside(x, y))
@@ -691,9 +691,9 @@ public class GEAngle extends GraphicEntity {
             }
         } else if (ftype == 3) {
             Composite ac = g2.getComposite();
-            g2.setComposite(CMisc.getFillComposite());
+            g2.setComposite(UtilityMiscellaneous.getFillComposite());
 
-            g2.setColor(drawData.getColor(value1));
+            g2.setColor(DrawData.getColor(value1));
             g2.fillArc(x, y, w, w, (int) ri1, (int) dr);
             g2.setComposite(ac);
             g2.setColor(super.getColor());
@@ -701,7 +701,7 @@ public class GEAngle extends GraphicEntity {
         g2.drawArc(x, y, w, w, (int) ri1, (int) dr);
 
 
-        if (CMisc.show_angle_text) {
+        if (UtilityMiscellaneous.show_angle_text) {
             if (ptext != null) {
                 if (show_type == -1 || show_type == 1)
                     ptext.setText1(" " + roundValue(dr1));
@@ -900,9 +900,9 @@ public class GEAngle extends GraphicEntity {
             r2 += Math.PI;
 
         double dr = ((r1 - r2));
-        if (dr > Math.PI || Math.abs(dr - Math.PI) < CMisc.ZERO)
+        if (dr > Math.PI || Math.abs(dr - Math.PI) < UtilityMiscellaneous.ZERO)
             dr = dr - Math.PI * 2;
-        else if (dr < -Math.PI || Math.abs(dr + Math.PI) < CMisc.ZERO)
+        else if (dr < -Math.PI || Math.abs(dr + Math.PI) < UtilityMiscellaneous.ZERO)
             dr = dr + Math.PI * 2;
         return dr;
     }

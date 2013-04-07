@@ -3,8 +3,6 @@ package wprover;
 import gprover.cons;
 import gprover.gib;
 
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.*;
 
 import maths.*;
@@ -12,32 +10,32 @@ import maths.*;
 import org.w3c.dom.*;
 
 
-public class constraint {
+public class Constraint {
     final public static int NULLTYPE = 0;
-    final public static int PONLINE = 11;  // colinear
-    final public static int PONCIRCLE = 12; // circle
-    final public static int PARALLEL = 2;            // para
-    final public static int PERPENDICULAR = 3;              // perp
-    final public static int PFOOT = 31;                            // foot
+    final public static int PONLINE = 11;  // point on line
+    final public static int PONCIRCLE = 12; // point on circle
+    final public static int PARALLEL = 2;            // two lines parallel
+    final public static int PERPENDICULAR = 3;              // two lines are perpendicular
+    final public static int PFOOT = 31;                            // line from one point to a line such that the two lines are perpendicular
     final public static int EQDISTANCE = 4;                    // eqdistance PC
 
     final public static int COLLINEAR = 1;
-    final public static int PERPBISECT = 5;
+    final public static int PERPBISECT = 5; // Line that bisects a line segment and is perpendicular to it.
 
     final public static int MIDPOINT = 6;      // midpoint
 
-    final public static int EQANGLE = 7;
-    final public static int LCTANGENT = 9;
-    final public static int CCTANGENT = 10;
+    final public static int EQANGLE = 7; // Two angles are set equal in magnitude.
+    final public static int LCTANGENT = 9; // Line tangent to a circle
+    final public static int CCTANGENT = 10; // Circle tangent to a circle
 
     final public static int LRATIO = 19;
-    final public static int RCIRCLE = 20;
-    final public static int CIRCUMCENTER = 21;
+    final public static int RCIRCLE = 20; 
+    final public static int CIRCUMCENTER = 21; // Center of the circle that passes through three given points.
     final public static int BARYCENTER = 22;
-    final public static int ORTHOCENTER = 37;
-    final public static int INCENTER = 44;
+    final public static int ORTHOCENTER = 37; // Intersection of the three altitudes of a triangle.
+    final public static int INCENTER = 44; // Intersection of the three medians (angle bisectors) of a triangle.
     final public static int BISECT = 13;
-    final public static int CCLine = 14;
+    final public static int CCLine = 14; // Line joining the centers of two circles
     final public static int TRATIO = 15;
 
     final public static int PRATIO = 17;
@@ -67,8 +65,8 @@ public class constraint {
     final public static int INTER_CC = 48;
 
     final public static int TRIANGLE = 59;
-    final public static int ISO_TRIANGLE = 50;
-    final public static int EQ_TRIANLE = 51;
+    final public static int ISO_TRIANGLE = 50; // Isoceles triangle
+    final public static int EQ_TRIANLE = 51; // Equilateral triangle
     final public static int RIGHT_ANGLED_TRIANGLE = 52;
     final public static int ISO_RIGHT_ANGLED_TRIANGLE = 53;
     final public static int QUADRANGLE = 54;
@@ -79,9 +77,9 @@ public class constraint {
     final public static int PENTAGON = 60;
     final public static int POLYGON = 64;
     final public static int SANGLE = 65;
-    final public static int ANGLE_BISECTOR = 66;
+    final public static int ANGLE_BISECTOR = 66;   // Line that bisects a given angle
     final public static int BLINE = 67;
-    final public static int TCLINE = 68;
+    final public static int TCLINE = 68; // Line that is tangent to a circle?
     final public static int RATIO = 69;
     final public static int TRANSFORM = 70;
     final public static int EQUIVALENCE1 = 71;
@@ -101,7 +99,7 @@ public class constraint {
 
     private static TPoly polylist = null;
 
-    int id = CMisc.id_count++;
+    int id = UtilityMiscellaneous.id_count++;
     private int ConstraintType = 0;
     private ArrayList<Object> elementlist = new ArrayList<Object>();
     int proportion = 1;
@@ -111,7 +109,7 @@ public class constraint {
     cons csd = null;
     cons csd1 = null;
 
-    public constraint(int type, Object obj1, Object obj2, boolean gpoly) {
+    public Constraint(int type, Object obj1, Object obj2, boolean gpoly) {
     	bIsValidEntity = true;
     	ConstraintType = type;
         elementlist.add(obj1);
@@ -122,16 +120,16 @@ public class constraint {
         }
     }
 
-	public constraint(drawProcess dp, Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+	public Constraint(DrawPanel dp, Element thisElement, final Map<Integer, GraphicEntity> mapGE) {
 		assert(thisElement != null);
 		bIsValidEntity = false;
 		if (thisElement != null) {
 			bIsValidEntity = true;
-			id = GExpert.safeParseInt(thisElement.getAttribute("id"), 0);
+			id = DrawPanelFrame.safeParseInt(thisElement.getAttribute("id"), 0);
 			bIsValidEntity &= (id > 0);
-			ConstraintType = GExpert.safeParseInt(thisElement.getAttribute("type"), 0);
-			proportion = GExpert.safeParseInt(thisElement.getAttribute("proportion"), 1);
-			bPolyGenerate = GExpert.safeParseBoolean(thisElement.getAttribute("poly_generate"), false);
+			ConstraintType = DrawPanelFrame.safeParseInt(thisElement.getAttribute("type"), 0);
+			proportion = DrawPanelFrame.safeParseInt(thisElement.getAttribute("proportion"), 1);
+			bPolyGenerate = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("poly_generate"), false);
 			
 			NodeList elist = thisElement.getChildNodes();
 			for (int i = 0; i < elist.getLength() && bIsValidEntity; ++i) {
@@ -142,7 +140,7 @@ public class constraint {
 	            		elementlist.add(null);
 	            		continue;
 	            	}
-            		int ii = GExpert.safeParseInt(((Element)nn).getTextContent(), 0); // Should this default value be zero?
+            		int ii = DrawPanelFrame.safeParseInt(((Element)nn).getTextContent(), 0); // Should this default value be zero?
 	            	if (s.equalsIgnoreCase("parameter")) {
 	            		param pp = dp.getParameterByindex(ii);
 	            		if (pp == null)
@@ -166,44 +164,12 @@ public class constraint {
 	            	}
 	            }
 	        }
-//	        if (bPolyGenerate) {
-//	            PolyGenerate();
-//	        }
 	    }
 	}
-	
-	
-	
-//	public constraint(Element thisElement, Map<Integer, GraphicEntity> mapGE) {
-//    	bIsValidEntity = true; // check for whether the tagname of thisElement is "constraint"
-//    	ConstraintType = GExpert.safeParseInt(thisElement.getAttribute("type"), 0);
-//    	id = GExpert.safeParseInt(thisElement.getAttribute("type"), 0);
-//    	is_poly_genereate = GExpert.safeParseBoolean(thisElement.getAttribute("is_poly_genereate"), true);
-//
-//    	NodeList elist = thisElement.getChildNodes();
-//		for (int i = 0; i < elist.getLength(); ++i) {
-//			Node nn = elist.item(i);
-//            if (nn != null && nn instanceof Element) {
-//            	String s = nn.getNodeName();
-//            	if (s.equalsIgnoreCase("object")) {
-//            		int ii = GExpert.safeParseInt(((Element)nn).getTextContent(), 0);
-//            		GraphicEntity ge = mapGE.get(ii);
-//            		if (ge == null)
-//            			bIsValidEntity = false;
-//            		else {
-//            			elementlist.add(ge);
-//            		}
-//            	}
-//            }
-//		}
-//        if (is_poly_genereate) {
-//            PolyGenerate();
-//        }
-//    }
     
-    /* (non-Javadoc)
+    /** 
 	 * @see java.lang.Object#hashCode()
-	 */
+	 **/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -219,18 +185,18 @@ public class constraint {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	 **/
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof constraint))
+		if (!(obj instanceof Constraint))
 			return false;
-		constraint other = (constraint) obj;
+		Constraint other = (Constraint) obj;
 		if (ConstraintType != other.ConstraintType)
 			return false;
 		if (bIsValidEntity != other.bIsValidEntity)
@@ -263,7 +229,7 @@ public class constraint {
         return bIsValidEntity;
     }
 
-    public constraint(int type, Object...objlist) {
+    public Constraint(int type, Object...objlist) {
     	bIsValidEntity = true;
         ConstraintType = type;
         for (Object o : objlist) {
@@ -285,7 +251,7 @@ public class constraint {
         }
     }
     
-    public constraint(int type, int prop, Object...objlist) {
+    public Constraint(int type, int prop, Object...objlist) {
     	bIsValidEntity = true;
         ConstraintType = type;
         proportion = prop;
@@ -297,7 +263,7 @@ public class constraint {
         if (bPolyGenerate)
             PolyGenerate();
     }
-    public constraint(int type, ArrayList<Object> olist) {
+    public Constraint(int type, ArrayList<Object> olist) {
     	bIsValidEntity = true;
         ConstraintType = type;
         elementlist.addAll(olist);
@@ -334,7 +300,7 @@ public class constraint {
 
     public GEPoint getLPoints2(GEPoint p1, GEPoint p2) {
         for (int i = 0; i < elementlist.size(); i++) {
-            GEPoint p = (GEPoint) elementlist.get(i); // XXX Are all members of elementlist points. Not so according to the loading functions. If so, why not make them GEPoints instead of Objects?
+            GEPoint p = (GEPoint) elementlist.get(i); // XXX Are all members of elementlist points? Not so according to the loading functions. If so, why not make them GEPoints instead of Objects?
             if (p != p1 && p != p2)
                 return p;
         }
@@ -373,9 +339,9 @@ public class constraint {
         if (csd != null)
             return csd.toDString();
 
-        if (ConstraintType == constraint.SPECIFIC_ANGLE) {
+        if (ConstraintType == Constraint.SPECIFIC_ANGLE) {
             param p = (param) elementlist.get(0);
-            return "x" + p.xindex + "| angle = " + p.type;
+            return "x" + p.xindex + "| angle = " + p.value;
         }
 
         int num = elementlist.size();
@@ -420,21 +386,21 @@ public class constraint {
             case CCLine:
                 return e1.TypeString() + " is the axes of " + e2.TypeString() + " and " + e3.TypeString();
             case TRATIO:
-                return "T(" + e4.m_name + e3.m_name + ") / " + "T(" + e1.m_name + e2.m_name + ") = 1 : " + new Integer(proportion).toString();
+                return "T(" + e4.m_name + e3.m_name + ") / " + "T(" + e1.m_name + e2.m_name + ") = 1 : " + String.valueOf(proportion);
             case PERPBISECT:
                 return e1.TypeString() + " is on the perpendicular bisector of " + e2.m_name + " " + e3.TypeString();
             case MIRROR:
 
             case PRATIO:
-                return "o(" + e1.m_name + e2.m_name + ") / " + "o(" + e3.m_name + e4.m_name + ") = 1 : " + new Integer(proportion).toString();
+                return "o(" + e1.m_name + e2.m_name + ") / " + "o(" + e3.m_name + e4.m_name + ") = 1 : " + String.valueOf(proportion);
             case LRATIO:
                 return "";
             case CIRCUMCENTER:
                 return e1.TypeString() + "is the circumcenter of " + e2.getname() + e3.getname() + e4.getname();
             case BARYCENTER:
-                return e1.TypeString() + " is the barycenter" + e2.getname() + e3.getname() + e4.getname();
+                return e1.TypeString() + " is the barycenter of " + e2.getname() + e3.getname() + e4.getname();
             case LCTANGENT:
-                return e1.TypeString() + " tangent to " + e2.TypeString();
+                return e1.TypeString() + " is tangent to " + e2.TypeString();
             case HORIZONAL:
                 return "set " + e1.TypeString() + e2.TypeString() + " a horizonal line";
             case VERTICAL:
@@ -683,9 +649,7 @@ public class constraint {
         while (p != null) {
             TMono m = p.getPoly();
             if (m != null && PolyBasic.plength(m) == 1) {
-                boolean d = GeoPoly.addZeroN(m.x);
-                if (d)
-                    a = true;
+            	a |= GeoPoly.addZ(m.x);
             }
             p = p.getNext();
         }
@@ -1323,18 +1287,27 @@ public class constraint {
         GEPoint p8 = ag3.getVertex();
         GEPoint p9 = ag3.pend;
 
-        add_des(gib.C_EQANGLE3P, p1, p2, p3, p4, p5, p6, p7, p8, p9, pm.type);
+        add_des(gib.C_EQANGLE3P, p1, p2, p3, p4, p5, p6, p7, p8, p9, (int)(pm.value));
 
         return GeoPoly.eqangle3p(p1.x1.xindex, p1.y1.xindex, p2.x1.xindex, p2.y1.xindex, p3.x1.xindex, p3.y1.xindex,
                 p4.x1.xindex, p4.y1.xindex, p5.x1.xindex, p5.y1.xindex, p6.x1.xindex, p6.y1.xindex,
                 p7.x1.xindex, p7.y1.xindex, p8.x1.xindex, p8.y1.xindex, p9.x1.xindex, p9.y1.xindex,
                 pm.xindex);
-
     }
 
+    /**
+     * The method returns a constraint to force an angle (represented by a parameter as the only element in <code>elementlist</code>
+     * to have the magnitude specified by <code>this</code> value of <code>proportion</code>.
+     * 
+     * Kutach: I am not sure why <code>proportion</code> is used to store the angular value. There was apparently
+     * some repurposing of the "type" variable in param as well in order 
+     * to hold the angular magnitude (which I have set to value in an attempt to clear up what is going on).
+     * @return
+     * @see PolyEqAngle3P()
+     */
     TMono PolySpecifiAngle() {
         param pm = (param) elementlist.get(0);
-        return GeoPoly.specificangle(pm.xindex, proportion);
+        return GeoPoly.specificangle(pm.xindex, proportion); // the proportion</code
     }
 
     TMono PolyEqidstance() {
@@ -1346,7 +1319,6 @@ public class constraint {
         add_des(gib.C_EQDISTANCE, p1, p2, p3, p4);
         return GeoPoly.eqdistance(p1.x1.xindex, p1.y1.xindex, p2.x1.xindex, p2.y1.xindex,
                 p3.x1.xindex, p3.y1.xindex, p4.x1.xindex, p4.y1.xindex);
-
     }
 
     TPoly PolyMidPoint() {
@@ -1365,9 +1337,7 @@ public class constraint {
         poly2.setPoly(m2);
         poly2.setNext(poly);
         return poly2;
-
     }
-
 
     TPoly PolyRectangle() {
         GEPoint p1 = (GEPoint) elementlist.get(0);
@@ -1455,7 +1425,7 @@ public class constraint {
         y = p.y1.xindex;
 
         if (line.linetype == GELine.CCLine) {
-            constraint cs = line.getcons(0);
+            Constraint cs = line.getcons(0);
 
             GECircle c1 = (GECircle) cs.getelement(1);
             GECircle c2 = (GECircle) cs.getelement(2);
@@ -1466,8 +1436,6 @@ public class constraint {
             //?????
             return GeoPoly.ccline(p.x1.xindex, p.y1.xindex, po1.x1.xindex, po1.y1.xindex, pc1.x1.xindex, pc1.y1.xindex,
                     po2.x1.xindex, po2.y1.xindex, pc2.x1.xindex, pc2.y1.xindex);
-
-
         } else {
             GEPoint[] plist = line.getTwoPointsOfLine();
             if (plist == null) return null;
@@ -1639,10 +1607,10 @@ public class constraint {
         GEPoint o = c.o;
 
         if (c.circle_type == GECircle.RCircle && (c.points.size() == 0 || c.points.size() == 1 && c.points.contains(p))) {
-            constraint cs = null;
+            Constraint cs = null;
             for (int i = 0; i < c.cons.size(); i++) {
-                constraint cc = c.cons.get(i);
-                if (cc.GetConstraintType() == constraint.RCIRCLE && c == cc.getelement(2)) {
+                Constraint cc = c.cons.get(i);
+                if (cc.GetConstraintType() == Constraint.RCIRCLE && c == cc.getelement(2)) {
                     cs = cc;
                     break;
                 }
@@ -1665,7 +1633,7 @@ public class constraint {
             return GeoPoly.eqdistance(o.x1.xindex, o.y1.xindex, p.x1.xindex, p.y1.xindex, o.x1.xindex, o.y1.xindex, pt.x1.xindex, pt.y1.xindex);
 
         } else {
-            CMisc.print("ERROR CIRCLE CONSTRAINT");
+            UtilityMiscellaneous.print("ERROR CIRCLE CONSTRAINT");
         }
         return null;
     }
@@ -1714,7 +1682,7 @@ public class constraint {
         GEPoint p4 = (GEPoint) getelement(3);
         add_des(gib.C_FOOT, p1, p2, p3, p4);
         TMono m1 = GeoPoly.collinear(p1.x1.xindex, p1.y1.xindex, p3.x1.xindex, p3.y1.xindex, p4.x1.xindex, p4.y1.xindex);
-        constraint.addZeron(m1);
+        Constraint.addZeron(m1);
         TMono m2 = GeoPoly.perpendicular(p1.x1.xindex, p1.y1.xindex,
                 p2.x1.xindex, p2.y1.xindex, p3.x1.xindex, p3.y1.xindex, p4.x1.xindex, p4.y1.xindex);
         return mpoly(m1, m2);
@@ -1760,28 +1728,28 @@ public class constraint {
         TMono mpoly = null;
         TMono mpoly1 = null;
         switch (type) {
-            case constraint.COLLINEAR: // 3 obj
+            case Constraint.COLLINEAR: // 3 obj
                 mpoly = GeoPoly.collinear(x1, y1, x2, y2, x3, y3);
                 break;
-            case constraint.PARALLEL: // 4 obj
+            case Constraint.PARALLEL: // 4 obj
                 x4 = p4.x1.xindex;
                 y4 = p4.y1.xindex;
                 mpoly = GeoPoly.parallel(x1, y1, x2, y2, x3, y3, x4, y4);
                 break;
-            case constraint.PERPENDICULAR:    //4
+            case Constraint.PERPENDICULAR:    //4
                 x4 = p4.x1.xindex;
                 y4 = p4.y1.xindex;
                 mpoly = GeoPoly.perpendicular(x1, y1, x2, y2, x3, y3, x4, y4);
                 break;
-            case constraint.EQDISTANCE:       //4
+            case Constraint.EQDISTANCE:       //4
                 x4 = p4.x1.xindex;
                 y4 = p4.y1.xindex;
                 mpoly = GeoPoly.eqdistance(x1, y1, x2, y2, x3, y3, x4, y4);
                 break;
-            case constraint.BISECT:
+            case Constraint.BISECT:
                 mpoly = GeoPoly.bisect(x1, y1, x2, y2, x3, y3);
                 break;
-            case constraint.MIDPOINT:
+            case Constraint.MIDPOINT:
                 mpoly = GeoPoly.midpoint(x1, x2, x3);
                 mpoly1 = GeoPoly.midpoint(y1, y2, y3);
             default:
@@ -1794,7 +1762,7 @@ public class constraint {
         tp.setPoly(mpoly);
         tp.setNext(polylist);
         polylist = tp;
-        if (type == constraint.MIDPOINT) {
+        if (type == Constraint.MIDPOINT) {
             tp = new TPoly();
             tp.setPoly(mpoly1);
             tp.setNext(polylist);
@@ -1862,59 +1830,7 @@ public class constraint {
 	        }
 		}
 	}
-
-//	public void Save(DataOutputStream out) throws IOException {
-//        out.writeInt(id);
-//        out.writeInt(ConstraintType);
-//        int size = elementlist.size();
-//        out.writeInt(size);
-//        for (int i = 0; i < size; i++) {
-//            Object obj = elementlist.get(i);
-//            if (obj == null) {
-//                CMisc.print("Constraint Null");
-//            } else if (obj instanceof GEPoint) {
-//                GEPoint p = (GEPoint) obj;
-//                out.writeInt(1);
-//                out.writeInt(p.m_id);
-//            } else if (obj instanceof GELine) {
-//                GELine ln = (GELine) obj;
-//                out.writeInt(2);
-//                out.writeInt(ln.m_id);
-//            } else if (obj instanceof GECircle) {
-//                GECircle c = (GECircle) obj;
-//                out.writeInt(3);
-//                out.writeInt(c.m_id);
-//            } else if (obj instanceof GEDistance) {
-//                GEDistance dis = (GEDistance) obj;
-//                out.writeInt(4);
-//                out.writeInt(dis.m_id);
-//            } else if (obj instanceof GEAngle) {
-//                GEAngle ag = (GEAngle) obj;
-//                out.writeInt(5);
-//                out.writeInt(ag.m_id);
-//            } else if (obj instanceof param) {
-//                param pm = (param) obj;
-//                out.writeInt(6);
-//                out.writeInt(pm.xindex);
-//            } else if (obj instanceof Integer) {
-//                Integer I = (Integer) obj;
-//                out.writeInt(20);
-//                out.writeInt(I.intValue());
-//            } else if (obj instanceof GEPolygon) {
-//                GEPolygon p = (GEPolygon) obj;
-//                out.writeInt(7);
-//                out.writeInt(p.m_id);
-//            } else {
-//                GraphicEntity cc = (GraphicEntity) obj;
-//                out.writeInt(99);
-//                out.writeInt(cc.m_id);
-//            }
-//
-//        }
-//        out.writeInt(proportion);
-//        out.writeBoolean(bPolyGenerate);
-//    }
-
+	
     private void add_des(cons s) {
         if (csd == null)
             csd = s;
@@ -1988,123 +1904,13 @@ public class constraint {
         add_des(csd);
     }
 
-    public void add_des(int t, Object p1, Object p2, Object p3, Object p4, Object p5) {
-        cons csd = new cons(t);
-        csd.setId(id);
-        csd.add_pt(p1);
-        csd.add_pt(p2);
-        csd.add_pt(p3);
-        csd.add_pt(p4);
-        csd.add_pt(p5);
-        add_des(csd);
-    }
-
-    public void add_des(int t, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6) {
-        cons csd = new cons(t);
-        csd.setId(id);
-        csd.add_pt(p1);
-        csd.add_pt(p2);
-        csd.add_pt(p3);
-        csd.add_pt(p4);
-        csd.add_pt(p5);
-        csd.add_pt(p6);
-        add_des(csd);
-    }
-
-    public void add_des(int t, Object p1, Object p2, Object p3,
-                        Object p4, Object p5, Object p6, Object p7, Object p8) {
-        cons csd = new cons(t);
-        csd.setId(id);
-        csd.add_pt(p1);
-        csd.add_pt(p2);
-        csd.add_pt(p3);
-        csd.add_pt(p4);
-        csd.add_pt(p5);
-        csd.add_pt(p6);
-        csd.add_pt(p7);
-        csd.add_pt(p8);
-        add_des(csd);
-    }
-
-    public void add_des(int t, Object p1, Object p2, Object p3,
-                        Object p4, Object p5, Object p6, Object p7, Object p8, Object p9, Object p10) {
-        cons csd = new cons(t);
-        csd.setId(id);
-        csd.add_pt(p1);
-        csd.add_pt(p2);
-        csd.add_pt(p3);
-        csd.add_pt(p4);
-        csd.add_pt(p5);
-        csd.add_pt(p6);
-        csd.add_pt(p7);
-        csd.add_pt(p8);
-        csd.add_pt(p9);
-        csd.add_pt(p10);
-        add_des(csd);
-    }
-
-    public void add_des(int t, Object p1, Object p2, Object p3,
-                        Object p4, Object p5, Object p6, Object p7) {
-        cons csd = new cons(t);
-        csd.setId(id);
-        csd.add_pt(p1);
-        csd.add_pt(p2);
-        csd.add_pt(p3);
-        csd.add_pt(p4);
-        csd.add_pt(p5);
-        csd.add_pt(p6);
-        csd.add_pt(p7);
-        add_des(csd);
-    }
-
-
-    public void Load(DataInputStream in, drawProcess dp) throws IOException {
-        id = in.readInt();
-        ConstraintType = in.readInt();
-        int size = in.readInt();
-        for (int i = 0; i < size; i++) {
-            int t = in.readInt();
-            int d = in.readInt();
-
-            switch (t) {
-                case 1:
-                    elementlist.add(dp.getPointById(d));
-		    break;
-                case 2:
-                    elementlist.add(dp.getLineByid(d));
-                    break;
-                case 3:
-                    elementlist.add(dp.getCircleByid(d));
-                    break;
-                case 4:
-                    elementlist.add(dp.getObjectById(d));
-                    break;
-                case 5:
-                    elementlist.add(dp.getAngleByid(d));
-                    break;
-                case 6:
-                    elementlist.add(dp.getParameterByindex(d));
-                    break;
-                case 7:
-                    elementlist.add(dp.getObjectById(d));
-                    break;
-                case 20:
-                    elementlist.add(new Integer(d));
-                    break;
-                default:
-                    elementlist.add(dp.getObjectById(d));
-                    break;
-            }
-        }
-        proportion = in.readInt();
-        bPolyGenerate = in.readBoolean();
-        if (CMisc.version_load_now <= 0.032) {
-            if (ConstraintType == 16) {
-                ConstraintType = NSQUARE;
-                elementlist.remove(1);
-            }
-
-        }
+    public void add_des(int t, Object...pList) {
+    	cons csd = new cons(t);
+    	csd.setId(id);
+    	for (Object o : pList) {
+    		csd.add_pt(o);
+    	}
+    	add_des(csd);
     }
 
     int pidx(GEPoint p) {
@@ -2124,7 +1930,7 @@ public class constraint {
         return p2;
     }
 
-    public static double get_sp_ag_value(int v) {
+    public static double getSpecifiedAnglesMagnitude(int v) {
         double val = 0;
         if (v == 90)
             val = 0xfffff;
@@ -2135,7 +1941,7 @@ public class constraint {
     }
 
     public double get_sangle_v() {
-        return get_sp_ag_value(proportion);
+        return getSpecifiedAnglesMagnitude(proportion);
     }
 
     public boolean check_constraint(double x, double y) {
@@ -2198,14 +2004,14 @@ public class constraint {
     }
 
     public static TMono parseTMonoString(String name, String func, int x) {
-        parser p = new parser(name, func, x);
+        Parser p = new Parser(name, func, x);
         TMono m = p.parse();
         return m;
     }
 
     public static boolean addZeron(TMono m1) {
         if (m1 != null && PolyBasic.plength(m1) == 1)
-            return GeoPoly.addZeroN(m1.x);
+            return GeoPoly.addZ(m1.x);
         return false;
     }
 

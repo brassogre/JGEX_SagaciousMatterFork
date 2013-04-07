@@ -24,16 +24,16 @@ public class ListTree extends JTabbedPane
 	 * 
 	 */
 	private static final long serialVersionUID = 789086010064494837L;
-	public GExpert gxInstance;
+	public DrawPanelFrame gxInstance;
     public ArrayList<UndoStruct> undolist;
     private JList<UndoStruct> list;
     private JList<GraphicEntity> listx;
     private DefaultListModel<UndoStruct> model; 
     private DefaultListModel<GraphicEntity> modelx;
-    private CProperty prop;
+    private PanelProperty prop;
 
 
-    public ListTree(GExpert gx) {
+    public ListTree(DrawPanelFrame gx) {
         super(JTabbedPane.BOTTOM);
 
         JPanel pane1 = new JPanel();
@@ -67,7 +67,7 @@ public class ListTree extends JTabbedPane
         list.setCellRenderer(rener);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.addListSelectionListener(this);
-        this.addTab(GExpert.getLanguage(157, "Construct History"), pane1);
+        this.addTab(DrawPanelFrame.getLanguage(157, "Construct History"), pane1);
 
         modelx = new DefaultListModel<GraphicEntity>();
         listx = new JList<GraphicEntity>(modelx) {
@@ -109,14 +109,14 @@ public class ListTree extends JTabbedPane
 
         };
 
-        prop = new CProperty(gx.d, GExpert.getLan());
+        prop = new PanelProperty(gx.d, DrawPanelFrame.getLan());
         prop.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JSplitPane pane2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         pane2.setLeftComponent(new JScrollPane(listx));
         listx.setCellRenderer(rener1);
         pane2.setRightComponent(prop);
         listx.addListSelectionListener(this);
-        this.addTab(GExpert.getLanguage(3115, "Objects"), pane2);
+        this.addTab(DrawPanelFrame.getLanguage(3115, "Objects"), pane2);
     }
 
 
@@ -181,7 +181,7 @@ public class ListTree extends JTabbedPane
         model.removeAllElements();
         modelx.removeAllElements();
 
-        drawProcess dp = gxInstance.dp;
+        DrawPanel dp = gxInstance.dp;
 
         undolist.addAll(dp.undolist);
 

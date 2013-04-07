@@ -219,7 +219,7 @@ public class GEPolygon extends GraphicEntity implements Pointed {
         Composite ac = null;
         if (overlap) {
             ac = g2.getComposite();
-            g2.setComposite(CMisc.getFillComposite());
+            g2.setComposite(UtilityMiscellaneous.getFillComposite());
         }
 
         this.prepareToBeDrawnAsUnselected(g2);
@@ -235,10 +235,10 @@ public class GEPolygon extends GraphicEntity implements Pointed {
 
             if (rotate) {
                 g2.setColor(Color.black);
-                g2.setStroke(CMisc.DashedStroke);
+                g2.setStroke(UtilityMiscellaneous.DashedStroke);
             } else {
                 if (selected)
-                    g2.setStroke(CMisc.SelectPolygonStroke);
+                    g2.setStroke(UtilityMiscellaneous.SelectPolygonStroke);
 
                 g2.setColor(super.getColor().darker());
             }
@@ -255,7 +255,7 @@ public class GEPolygon extends GraphicEntity implements Pointed {
                 else {
                 }
                 if (selected) {
-                    g2.setStroke(CMisc.SelectPolygonStroke);
+                    g2.setStroke(UtilityMiscellaneous.SelectPolygonStroke);
                     g2.setColor(super.getColor().darker());
                     g2.drawOval(xpoints[0] - r1, ypoints[0] - r1, 2 * r1, 2 * r1);
                 }
@@ -671,7 +671,7 @@ public class GEPolygon extends GraphicEntity implements Pointed {
 
         double[] ov = new double[n];
 
-        if (Math.abs(k) > 1 / CMisc.ZERO || Math.abs(k) < CMisc.ZERO) {
+        if (Math.abs(k) > 1 / UtilityMiscellaneous.ZERO || Math.abs(k) < UtilityMiscellaneous.ZERO) {
 
             if (gtype == 1 || gtype == 2) {
                 double x = (xmin / step) * step - step + 0.1;
@@ -866,14 +866,14 @@ public class GEPolygon extends GraphicEntity implements Pointed {
 
     }
     
-    public GEPolygon(drawProcess dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+    public GEPolygon(DrawPanel dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
     	super(dp, thisElement);
 
-		showArea = GExpert.safeParseBoolean(thisElement.getAttribute("show_area"), false);
-		ftype = GExpert.safeParseInt(thisElement.getAttribute("polygon_type"), 0, 0, 1);
-		type = GExpert.safeParseInt(thisElement.getAttribute("grid_type"), 0);
-		grid = GExpert.safeParseInt(thisElement.getAttribute("grid"), 0);
-		slope = GExpert.safeParseInt(thisElement.getAttribute("slope"), 0);
+		showArea = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("show_area"), false);
+		ftype = DrawPanelFrame.safeParseInt(thisElement.getAttribute("polygon_type"), 0, 0, 1);
+		type = DrawPanelFrame.safeParseInt(thisElement.getAttribute("grid_type"), 0);
+		grid = DrawPanelFrame.safeParseInt(thisElement.getAttribute("grid"), 0);
+		slope = DrawPanelFrame.safeParseInt(thisElement.getAttribute("slope"), 0);
 
 		NodeList elist = thisElement.getChildNodes();
 		for (int i = 0; i < elist.getLength(); ++i) {
@@ -887,7 +887,7 @@ public class GEPolygon extends GraphicEntity implements Pointed {
                         if (nnn != null && nnn instanceof Element) {
                         	s = nnn.getNodeName();
                         	if (s.equalsIgnoreCase("point")) {
-                        		int pIndex = GExpert.safeParseInt(((Element)nnn).getTextContent(), 0);
+                        		int pIndex = DrawPanelFrame.safeParseInt(((Element)nnn).getTextContent(), 0);
 			            		GraphicEntity p = mapGE.get(pIndex);
 			            		bIsValidEntity &= (p != null);
 		                        if (p != null && !points.contains(p) && p instanceof GEPoint) {

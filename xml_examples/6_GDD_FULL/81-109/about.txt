@@ -7,6 +7,6 @@
 
 63,65 ,77,91,109,false
 
-21 ,25, 75,83, 87Conclution not suported. 
+21 ,25, 75,83, 87Conclusion not supported. 
 
 \76,100, long

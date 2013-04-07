@@ -12,7 +12,7 @@ public class SClass {
     public static String[][] ActionString=
     {   // command ,            imagename,          tooltips ,                          altText
         {"new",                 "new",              "start new view to construction",   "New"},
-        {"save",                "save",             "save therom",                      "save"},
+        {"save",                "save",             "save therom",                      "Save"},
         {"load",                "load",             "load new theorem",                  "Up"},
 
         {"",                    "Separator"},
@@ -30,7 +30,7 @@ public class SClass {
         {"circle-by-3",         "circle-by-3",      "draw a circle around a point",     "circle-by-3"},
         {"",                    "Separator"},
         {"meet",                "meet",             "meet to decide a point",           "Meet"},
-        {"empty",               "empty",            "empty the view",                   "empty"},
+        {"empty",               "empty",            "empty the view",                   "Empty"},
         {"",                    "Separator"},
         {"animation",           "animation",        "animate construction",             "Animation"}
 
@@ -70,21 +70,21 @@ public class SClass {
             } ;
     public static String[][] ActionTip =
             {
-                {"Select",          "Select element by click on them"},
-                {"single-add",      "Add a single point by click the mouse"},
-                {"multi-add-middle","Construct two point to define their middle point"},
-                {"multi-add-line",  "Construct two point to define a line"},
+                {"select",          "Select elements by clicking on them"},
+                {"single-add",      "Add a single point by clicking the mouse"},
+                {"multi-add-middle","Construct two points to define their middle point"},
+                {"multi-add-line",  "Construct two points to define a line"},
                 {"parallel",        "Select a line and drag to define a parallel line"},
                 {"perp",            "Select a line and drag to define a perpedicular line"},
                 {"perp2",           "Drag to a line to define a perpedicular line"},
                 {"multi-add-circle","Construct two points to define a circle "},
                 {"circle-by-radius","Select two points to construct a circle"},
                 {"circle-by-3",     "Select three points to construct a circle"},
-                {"angle",           "Select two lines to define a angle"},
-                {"polygon",         "Mouse Click to construct a polygon"},
-                {"text",            "Click to set the location of the text"},
-                {"meet",            "Select two elements to define their meet point"},
-                {"mirror",          "Select two element to define mirror"},
+                {"angle",           "Select two lines to define an angle"},
+                {"polygon",         "Click multiple locations to construct a polygon"},
+                {"text",            "Click to locate the text"},
+                {"meet",            "Select two elements to define where they meet"},
+                {"mirror",          "Select two elements to define mirror"},
                 {"clear",           "Clear all elements"},
                 {"track",           "Select a point and an element as contrail"},
                 {"eqangle",         "Select two angles to define equation"},

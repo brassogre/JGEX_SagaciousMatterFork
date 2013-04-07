@@ -16,7 +16,7 @@ public class GAppletParameterDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 7152612563351597890L;
 
-	public  GAppletParameterDialog(GExpert gx)
+	public  GAppletParameterDialog(DrawPanelFrame gx)
     {
         super(gx.getFrame(),"Applet Exporter");
         

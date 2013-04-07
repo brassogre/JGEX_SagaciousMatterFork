@@ -17,16 +17,16 @@ import javax.swing.event.ChangeListener;
  * Time: 16:18:09
  * To change this template use File | Settings | File Templates.
  */
-public class ImageTimer extends JBaseDialog implements ActionListener, ChangeListener {
+public class ImageTimer extends DialogBase implements ActionListener, ChangeListener {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 6922886059967855955L;
-	private GExpert gxInstance;
+	private DrawPanelFrame gxInstance;
     private JLabel label1;
     private Timer timer;
     private Rectangle rc;
-    private CProveBarPanel bar;
+    private ToolBarProof bar;
     private GifEncoder encorder;
     private int delay, delay1, delay2;
     private int nf = 0;
@@ -55,7 +55,7 @@ public class ImageTimer extends JBaseDialog implements ActionListener, ChangeLis
     }
 
 
-    public ImageTimer(GExpert f) {
+    public ImageTimer(DrawPanelFrame f) {
         super(f.getFrame(), "Saving Proof as GIF File", true);
         gxInstance = f;
         nf = 0;
@@ -156,7 +156,7 @@ public class ImageTimer extends JBaseDialog implements ActionListener, ChangeLis
         this.encorder = e;
     }
 
-    public void setProveBar(CProveBarPanel bar) {
+    public void setProveBar(ToolBarProof bar) {
         this.bar = bar;
     }
 

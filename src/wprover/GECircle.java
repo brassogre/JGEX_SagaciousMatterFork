@@ -23,13 +23,13 @@ public class GECircle extends GraphicEntity implements Pointed {
 
     public GEPoint o = new GEPoint(); // o represents the center of the circle
     public ArrayList<GEPoint> points = new ArrayList<GEPoint>(); // contains points that are on the circumference.
-    ArrayList<constraint> cons = new ArrayList<constraint>();
+    ArrayList<Constraint> cons = new ArrayList<Constraint>();
     private HashSet<Integer> setConstraintIndices = null;
 
-    public GECircle(drawProcess dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+    public GECircle(DrawPanel dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
     	super(dp, thisElement);
-		circle_type = GExpert.safeParseInt(thisElement.getAttribute("circle_type"), PCircle);
-		int center_index = GExpert.safeParseInt(thisElement.getAttribute("center"), 0);
+		circle_type = DrawPanelFrame.safeParseInt(thisElement.getAttribute("circle_type"), PCircle);
+		int center_index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("center"), 0);
 		GraphicEntity ge = mapGE.get(center_index);
 		if (ge == null || !(ge instanceof GEPoint))
 			bIsValidEntity = false;
@@ -50,7 +50,7 @@ public class GECircle extends GraphicEntity implements Pointed {
                         if (nnn != null && nnn instanceof Element) {
                         	s = nnn.getNodeName();
                         	if (s.equalsIgnoreCase("constraint")) {
-                        		int cIndex = GExpert.safeParseInt(((Element)nnn).getTextContent(), 0);
+                        		int cIndex = DrawPanelFrame.safeParseInt(((Element)nnn).getTextContent(), 0);
                         		setConstraintIndices.add(cIndex);
                         	}
                         }
@@ -63,7 +63,7 @@ public class GECircle extends GraphicEntity implements Pointed {
                         if (nnn != null && nnn instanceof Element) {
                         	s = nnn.getNodeName();
                         	if (s.equalsIgnoreCase("point")) {
-                        		int pIndex = GExpert.safeParseInt(((Element)nnn).getTextContent(), 0);
+                        		int pIndex = DrawPanelFrame.safeParseInt(((Element)nnn).getTextContent(), 0);
 			            		GraphicEntity p = mapGE.get(pIndex);
 			            		bIsValidEntity &= (p != null);
 		                        if (p != null && !points.contains(p) && p instanceof GEPoint) {
@@ -77,12 +77,12 @@ public class GECircle extends GraphicEntity implements Pointed {
 		}
 	}
     
-    public boolean setConstraints(Map<Integer, constraint> mapConstraints) {
+    public boolean setConstraints(Map<Integer, Constraint> mapConstraints) {
     	assert(mapConstraints != null);
     	boolean bAllConstraintsFoundInMap = true;
     	if (mapConstraints != null) {
     		for (Integer Index : setConstraintIndices) {
-    			constraint cs = mapConstraints.get(Index);
+    			Constraint cs = mapConstraints.get(Index);
     			if (cs == null) {
     				bAllConstraintsFoundInMap = false;
     				System.err.println("Null constraint added.");
@@ -239,8 +239,8 @@ public class GECircle extends GraphicEntity implements Pointed {
     public void draw(Graphics2D g2, boolean selected) {
         if (!isdraw()) return;
         if (selected) {
-            g2.setColor(CMisc.SelectObjectColor);
-            g2.setStroke(CMisc.SelectObjectStroke);
+            g2.setColor(UtilityMiscellaneous.SelectObjectColor);
+            g2.setStroke(UtilityMiscellaneous.SelectObjectStroke);
         } else
             super.prepareToBeDrawnAsUnselected(g2);
 
@@ -248,7 +248,7 @@ public class GECircle extends GraphicEntity implements Pointed {
         x1 = o.x1.value;
         y1 = o.y1.value;
         r = getRadius();
-        if (r < CMisc.MAX_DRAW_LEN)
+        if (r < UtilityMiscellaneous.MAX_DRAW_LEN)
             g2.drawOval((int) (x1 - r), (int) (y1 - r), 2 * (int) r, 2 * (int) r);
         else {
             if (points.size() < 2) return;
@@ -310,8 +310,8 @@ public class GECircle extends GraphicEntity implements Pointed {
             p3 = points.get(2);
             return st + "(" + o.getname() + "," + p1.getname() + p2.getname() + p3.getname() + ")";
         } else if (circle_type == RCircle) {
-            constraint cs = cons.get(0);
-            if (cs.GetConstraintType() == constraint.RCIRCLE) {
+            Constraint cs = cons.get(0);
+            if (cs.GetConstraintType() == Constraint.RCIRCLE) {
                 GraphicEntity p1 = (GraphicEntity) cs.getelement(0);
                 GraphicEntity p2 = (GraphicEntity) cs.getelement(1);
                 return st + "(" + o.m_name + "," + p1.getname() + p2.getname() + ")";
@@ -328,7 +328,7 @@ public class GECircle extends GraphicEntity implements Pointed {
 
         double r = getRadius();
         double len = Math.sqrt(Math.pow(x - ox, 2) + Math.pow(y - oy, 2));
-        if (Math.abs(r - len) < CMisc.PIXEPS)
+        if (Math.abs(r - len) < UtilityMiscellaneous.PIXEPS)
             return true;
         return false;
 
@@ -380,8 +380,8 @@ public class GECircle extends GraphicEntity implements Pointed {
         if (circle_type == RCircle) {
             //constraint cs = null;
             for (int i = 0; i < cons.size(); i++) {
-                constraint c = cons.get(i);
-                if (c.GetConstraintType() == constraint.RCIRCLE) {
+                Constraint c = cons.get(i);
+                if (c.GetConstraintType() == Constraint.RCIRCLE) {
                     GEPoint p1 = (GEPoint) c.getelement(0);
                     GEPoint p2 = (GEPoint) c.getelement(1);
                     return Math.sqrt(Math.pow(p1.getx() - p2.getx(), 2) + Math.pow(p1.gety() - p2.gety(), 2));
@@ -398,8 +398,8 @@ public class GECircle extends GraphicEntity implements Pointed {
         GEPoint[] pl = new GEPoint[2];
         if (circle_type == GECircle.RCircle) {
             for (int i = 0; i < cons.size(); i++) {
-                constraint cs = cons.get(i);
-                if (cs.GetConstraintType() == constraint.RCIRCLE) {
+                Constraint cs = cons.get(i);
+                if (cs.GetConstraintType() == Constraint.RCIRCLE) {
                     pl[0] = (GEPoint) cs.getelement(0);
                     pl[1] = (GEPoint) cs.getelement(1);
                     return pl;
@@ -446,7 +446,7 @@ public class GECircle extends GraphicEntity implements Pointed {
         this.circle_type = t;
     }
 
-    public void addConstraint(constraint cs) {
+    public void addConstraint(Constraint cs) {
         cons.add(cs);
     }
 
@@ -537,7 +537,7 @@ public class GECircle extends GraphicEntity implements Pointed {
             double r1 = Math.sqrt(Math.pow(this.o.getx() - p1.getx(), 2) + Math.pow(this.o.gety() - p1.gety(), 2));
             double r2 = Math.sqrt(Math.pow(c2.o.getx() - p2.getx(), 2) + Math.pow(c2.o.gety() - p2.gety(), 2));
             double d = Math.sqrt(Math.pow(this.o.getx() - c2.o.getx(), 2) + Math.pow(this.o.gety() - c2.o.gety(), 2));
-            if (Math.abs(r1 + r2 - d) < CMisc.PIXEPS)
+            if (Math.abs(r1 + r2 - d) < UtilityMiscellaneous.PIXEPS)
                 return true;
             else
                 return false;
@@ -583,7 +583,7 @@ public Element saveIntoXMLDocument(Element rootElement, String sTypeName) {
 			Element eCons = doc.createElement("constraints");
     		elementThis.appendChild(eCons);
     		
-    		for (constraint cs : cons) {
+    		for (Constraint cs : cons) {
     			if (cs != null) {
     				Element child = doc.createElement("constraint");
     				child.setTextContent(String.valueOf(cs.id));

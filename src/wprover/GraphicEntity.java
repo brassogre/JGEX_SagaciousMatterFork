@@ -116,17 +116,17 @@ abstract public class GraphicEntity {
 
     abstract public void SavePS(FileOutputStream fp, int stype) throws IOException;
 
-    public GraphicEntity(drawProcess dp, Element thisElement) {
+    public GraphicEntity(DrawPanel dp, Element thisElement) {
     	bIsValidEntity = true;
-		m_id = GExpert.safeParseInt(thisElement.getAttribute("id"), 0);
-		m_type = GExpert.safeParseInt(thisElement.getAttribute("type"), 0);
+		m_id = DrawPanelFrame.safeParseInt(thisElement.getAttribute("id"), 0);
+		m_type = DrawPanelFrame.safeParseInt(thisElement.getAttribute("type"), 0);
 		m_name = thisElement.getAttribute("name");
 		setDefaultAttributes();
-		m_color = GExpert.safeParseInt(thisElement.getAttribute("color"), 1);
-		m_dash = GExpert.safeParseInt(thisElement.getAttribute("dash"), drawData.dindex);
-		m_width = GExpert.safeParseInt(thisElement.getAttribute("width"), drawData.windex);
-		bVisible = GExpert.safeParseBoolean(thisElement.getAttribute("visible"), true);
-		bFlashing = GExpert.safeParseBoolean(thisElement.getAttribute("flashing"), false);
+		m_color = DrawPanelFrame.safeParseInt(thisElement.getAttribute("color"), 1);
+		m_dash = DrawPanelFrame.safeParseInt(thisElement.getAttribute("dash"), DrawData.dindex);
+		m_width = DrawPanelFrame.safeParseInt(thisElement.getAttribute("width"), DrawData.windex);
+		bVisible = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("visible"), true);
+		bFlashing = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("flashing"), false);
 		isValid();
 	}
     
@@ -145,9 +145,9 @@ abstract public class GraphicEntity {
 			if (m_name != null && !m_name.isEmpty())
 				elementThis.setAttribute("name", m_name);
 			elementThis.setAttribute("color", String.valueOf(m_color));
-			if (m_dash != drawData.dindex)
+			if (m_dash != DrawData.dindex)
 				elementThis.setAttribute("dash", String.valueOf(m_dash));
-			if (m_width != drawData.windex)
+			if (m_width != DrawData.windex)
 				elementThis.setAttribute("width", String.valueOf(m_width));
 			if (!bVisible)
 				elementThis.setAttribute("visible", String.valueOf(bVisible));
@@ -195,7 +195,7 @@ abstract public class GraphicEntity {
 
     public GraphicEntity(GraphicEntity c) {
         m_type = c.m_type;
-        m_id = CMisc.getObjectId();
+        m_id = UtilityMiscellaneous.getObjectId();
         m_dash = c.m_dash;
         m_width = c.m_width;
         m_color = c.m_color;
@@ -203,33 +203,33 @@ abstract public class GraphicEntity {
 
     public GraphicEntity(int type) {
         m_type = type;
-        m_id = (type != TEMP_POINT) ? CMisc.getObjectId() : -1;
+        m_id = (type != TEMP_POINT) ? UtilityMiscellaneous.getObjectId() : -1;
         setDefaultAttributes();
     }
     
     private void setDefaultAttributes() {
-        m_dash = drawData.dindex;
-        m_width = drawData.windex;
-        m_color = drawData.pointcolor;
+        m_dash = DrawData.dindex;
+        m_width = DrawData.windex;
+        m_color = DrawData.pointcolor;
 
         switch(m_type) {
         	case TEMP_POINT:
-        		m_color = drawData.pointcolor;
+        		m_color = DrawData.pointcolor;
                 break;
         	case POINT:
-        		m_color = drawData.pointcolor;
+        		m_color = DrawData.pointcolor;
         		m_width = 2;
         		break;
         	case ANGLE:
-        		m_color = drawData.anglecolor;
-                m_dash = drawData.angledash;
-                m_width = drawData.anglewidth;
+        		m_color = DrawData.anglecolor;
+                m_dash = DrawData.angledash;
+                m_width = DrawData.anglewidth;
                 break;
         	case POLYGON:
-                m_color = drawData.polygoncolor;
+                m_color = DrawData.polygoncolor;
                 break;
         	case TRACE:
-                m_color = drawData.tractcolor;
+                m_color = DrawData.tractcolor;
                 break;
         	case ARROW:
                 m_color = 16;
@@ -239,14 +239,14 @@ abstract public class GraphicEntity {
                 m_color = 3;
                 break;
             default:
-               	m_color = drawData.cindex;      	
+               	m_color = DrawData.cindex;      	
         };
     }
 
     public void setAttrAux() {
-        m_color = drawData.RED;
-        m_dash = drawData.DASH8;
-        m_width = drawData.WIDTH2;
+        m_color = DrawData.RED;
+        m_dash = DrawData.DASH8;
+        m_width = DrawData.WIDTH2;
     }
 
     public void copy(GraphicEntity c) {
@@ -274,7 +274,7 @@ abstract public class GraphicEntity {
     }
 
     public Color getColor() {
-        return drawData.getColor(m_color);
+        return DrawData.getColor(m_color);
     }
 
     public int getColorIndex() {
@@ -305,9 +305,9 @@ abstract public class GraphicEntity {
      * @param g2 The current graphics context
      */
     void prepareToBeDrawnAsSelected(Graphics2D g2) {
-        float w = (float) drawData.getWidth(m_width);
+        float w = (float) DrawData.getWidth(m_width);
         g2.setStroke(new BasicStroke(w + 5));
-        g2.setColor(CMisc.SelectObjectColor);
+        g2.setColor(UtilityMiscellaneous.SelectObjectColor);
     }
 
     /** 
@@ -319,21 +319,21 @@ abstract public class GraphicEntity {
      * @param g2 The current graphics context
      */
     void prepareToBeDrawnAsUnselected(Graphics2D g2) {
-        float w = (float) drawData.getWidth(m_width);
+        float w = (float) DrawData.getWidth(m_width);
         if (m_dash > 0) {
-            float d = (float) drawData.getDash(m_dash);
+            float d = (float) DrawData.getDash(m_dash);
             float dash[] = {d};
             g2.setStroke(new BasicStroke(w, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, dash, 0.0f));
         } else
             g2.setStroke(new BasicStroke(w));
 
-        Color c = drawData.getColor(m_color);
-        if (CMisc.ColorMode == 1) {
+        Color c = DrawData.getColor(m_color);
+        if (UtilityMiscellaneous.ColorMode == 1) {
             float gray = (float) (0.11 * c.getRed() + 0.59 * c.getGreen() + 0.3 * c.getBlue()) / 255.0f;
             c = new Color(gray, gray, gray);
         }
 
-        double r = CMisc.getAlpha();
+        double r = UtilityMiscellaneous.getAlpha();
         Color cc = (r == 1.0) ? c : new Color(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, (float) r);
         g2.setPaint(cc);
     }

@@ -13,13 +13,13 @@ import java.util.SortedSet;
  * Time: 20:40:39
  * To change this template use File | Settings | File Templates.
  */
-public class drawData {
+public class DrawData {
     public static int RED = 3;
     public static int DASH8 = 15;
     public static int WIDTH2 = 2;
     public static int LIGHTCOLOR = 18;
 
-    private static drawData dd = new drawData();
+    private static DrawData dd = new DrawData();
 //    private static int cnum;
 
     public ArrayList<Color> colorlist = new ArrayList<Color>();
@@ -29,7 +29,7 @@ public class drawData {
     int default_color_num;
 
 
-    private drawData() {
+    private DrawData() {
         Color[] color = {
             Color.blue,
             new Color(0, 255, 255),
@@ -198,7 +198,7 @@ public class drawData {
     }
 
     public static void reset() {
-        dd = new drawData();
+        dd = new DrawData();
     }
 
 

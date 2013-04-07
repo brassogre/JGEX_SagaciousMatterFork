@@ -5,8 +5,20 @@ public class TPoly {
     public TPoly next;
 
     public TPoly() {
+        poly = null;
+        next = null;
     }
 
+    public TPoly(TMono m) {
+    	next = null;
+    	poly = m;
+    }
+    
+    public TPoly(TMono m, TPoly t) {
+    	next = t;
+    	poly = m;
+    }
+    
     /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -96,4 +108,14 @@ public class TPoly {
         return i;
     }
 
+    public void reduce(int length) { // Original code was in CharacteristicSetMethod.reduce(TPoly poly)
+		if (next != null)
+			next.reduce(length);
+		if (PolyBasic.plength(poly) <= length) {
+			for (TPoly tx = next; tx != null && tx != this; tx = tx.next ) {
+				tx.poly = PolyBasic.prem(tx.poly, PolyBasic.p_copy(poly));
+			}
+		}
+    }
+    
 }

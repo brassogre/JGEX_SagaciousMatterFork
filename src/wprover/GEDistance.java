@@ -31,20 +31,20 @@ public class GEDistance extends GraphicEntity {
         pend = p2;
         m_name = "|" + p1.getname() + p2.getname() + "|";
         if (pstart == null || pend == null)
-            CMisc.print("Neither endpoint of the Distance can be null");
+            UtilityMiscellaneous.print("Neither endpoint of the Distance can be null");
     }
 
-    public GEDistance(drawProcess dp, Element thisElement, Map<Integer, GraphicEntity> mapGE) {
+    public GEDistance(DrawPanel dp, Element thisElement, Map<Integer, GraphicEntity> mapGE) {
     	super(dp, thisElement);
     	
-		int index = GExpert.safeParseInt(thisElement.getAttribute("start_point"), 0);
+		int index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("start_point"), 0);
 		GraphicEntity ge = mapGE.get(index);
 		if (ge instanceof GEPoint)
 			pstart = (GEPoint)ge;
 		else
 			bIsValidEntity = false;
 		
-		index = GExpert.safeParseInt(thisElement.getAttribute("end_point"), 0);
+		index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("end_point"), 0);
 		ge = mapGE.get(index);
 		if (ge instanceof GEPoint)
 			pend = (GEPoint)ge;
@@ -154,7 +154,7 @@ public class GEDistance extends GraphicEntity {
 	        double m = x3 - x1;
 	        double n = y3 - y1;
 	        double length = m * dy - n * dx;
-	        if (Math.abs(length - len) < CMisc.PIXEPS)
+	        if (Math.abs(length - len) < UtilityMiscellaneous.PIXEPS)
 	            return true;
         }
         return false;

@@ -5259,7 +5259,7 @@ public class gddbase extends gib {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void add_nodes(int[] p) { // for conclution;
+    public void add_nodes(int[] p) { // for conclusion;
 
         l_list d = new l_list();
         mnde m = null;

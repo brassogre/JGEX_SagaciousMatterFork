@@ -4,25 +4,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class DialogPsProperty extends JBaseDialog implements ActionListener {
+public class DialogPsProperty extends DialogBase implements ActionListener {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -2984403647853729840L;
 	private int type = -1;
     private JCheckBox pfill;
-    private GExpert gxInstance;
+    private DrawPanelFrame gxInstance;
 
     public String getLanguage(String s) {
         String s1 = "";
         if (gxInstance != null)
-            s1 = GExpert.getLanguage(s);
+            s1 = DrawPanelFrame.getLanguage(s);
         if (s1.length() > 0)
             return s1;
         return s;
     }
 
-    public DialogPsProperty(GExpert owner) {
+    public DialogPsProperty(DrawPanelFrame owner) {
         super(owner.getFrame(), true);
 
         gxInstance = owner;
@@ -31,7 +31,7 @@ public class DialogPsProperty extends JBaseDialog implements ActionListener {
 //        this.setSize(350, 120);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        JToggleButton button1 = new JToggleButton(GExpert.getLanguage(1015, "Color"));
+        JToggleButton button1 = new JToggleButton(DrawPanelFrame.getLanguage(1015, "Color"));
         button1.setActionCommand("Color");
         JToggleButton button2 = new JToggleButton(getLanguage("Gray"));
         button2.setActionCommand("Gray");
@@ -57,7 +57,7 @@ public class DialogPsProperty extends JBaseDialog implements ActionListener {
 
         JPanel ppanel = new JPanel();
         ppanel.setLayout(new BoxLayout(ppanel, BoxLayout.Y_AXIS));
-        pfill = new JCheckBox(GExpert.getLanguage(1013, "Point filled with background color"));
+        pfill = new JCheckBox(DrawPanelFrame.getLanguage(1013, "Point filled with background color"));
 //        ptext = new JCheckBox(gxInstance.getLanguage(1014, "Proof text"));
 //        ptext.setSelected(true);
         ppanel.add(pfill);

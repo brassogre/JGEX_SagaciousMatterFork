@@ -8,6 +8,5 @@ package wprover;
  * To change this template use File | Settings | File Templates.
  */
 public interface DiagramUpdater {
-
     public void UpdateDiagram();   
 }

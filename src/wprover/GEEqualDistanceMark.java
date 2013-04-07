@@ -156,8 +156,8 @@ public class GEEqualDistanceMark extends GraphicEntity {
 
 
         if (selected) {
-            g2.setStroke(CMisc.SelectObjectStroke);
-            g2.setColor(CMisc.SelectObjectColor);
+            g2.setStroke(UtilityMiscellaneous.SelectObjectStroke);
+            g2.setColor(UtilityMiscellaneous.SelectObjectColor);
         } else
             this.prepareToBeDrawnAsUnselected(g2);
 
@@ -218,10 +218,10 @@ public class GEEqualDistanceMark extends GraphicEntity {
         dy /= len;
 
         double a = (x * dx + y * dy) / (dx * dx + dy * dy);
-        if (Math.abs(a) > fx + CMisc.PIXEPS)
+        if (Math.abs(a) > fx + UtilityMiscellaneous.PIXEPS)
             return false;
         double b = (y * dx - x * dy) / (dx * dx + dy * dy);
-        if (Math.abs(b) > fy + CMisc.PIXEPS)
+        if (Math.abs(b) > fy + UtilityMiscellaneous.PIXEPS)
             return false;
         return true;
     }

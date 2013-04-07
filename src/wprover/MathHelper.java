@@ -268,7 +268,7 @@ public class MathHelper {
             }
         }
 
-        CMisc.print("Error input polynomial type in CTextValue");
+        UtilityMiscellaneous.print("Error input polynomial type in CTextValue");
         return null;
 
     }
@@ -395,12 +395,12 @@ public class MathHelper {
         return Math.round(r * 1000 + 0.1) / 1000.0;
     }
 
-    public void calculate(drawProcess dp) {
+    public void calculate(DrawPanel dp) {
         double r = calvalue(this, dp);
         this.dvalue = roud3(r);
     }
 
-    public static double calvalue(MathHelper ct, drawProcess dp) {
+    public static double calvalue(MathHelper ct, DrawPanel dp) {
         if (ct == null) return 0.0;
         return dp.calculate(ct);
     }

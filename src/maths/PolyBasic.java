@@ -6,13 +6,13 @@ import java.util.ArrayList;
 public class PolyBasic {
 	private static int MAXSTR = 100;
 	private static double ZERO = 10E-6;
-	private static final PolyBasic basic = new PolyBasic();
+//	private static final PolyBasic basic = new PolyBasic();
 	private static boolean BB_STOP = false;
 	private static boolean RM_SCOEF = true;
 
-	public static PolyBasic getInstance() {
-		return basic;
-	}
+//	public static PolyBasic getInstance() {
+//		return basic;
+//	}
 
 	public static void setbbStop(final boolean t) {
 		BB_STOP = t;
@@ -38,7 +38,7 @@ public class PolyBasic {
 		poly = p1;
 
 		if (p1.x > p2.x)// ||(p1.x == p2.x && p1.deg > p2.deg)) append to the
-						// last one.
+			// last one.
 		{
 			while ((p1.next != null) && (p1.deg != 0))
 				p1 = p1.next;
@@ -171,7 +171,7 @@ public class PolyBasic {
 
 		if ((p1 == null) || (p2 == null))
 			return null;
-		if (Int(p1))
+		if (isConstant(p1))
 			return cp_times(p1.val, p2);
 
 		if (p1.x == p2.x)
@@ -276,6 +276,12 @@ public class PolyBasic {
 		return m;
 	}
 
+	/**
+	 * This method appears to return some sort of "reduction" of p1 and p2.
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
 	public static TMono prem(final TMono p1, final TMono p2) {
 		if (p1 == null)
 			return p1;
@@ -316,11 +322,11 @@ public class PolyBasic {
 	}
 
 	private static TMono prem3(TMono p1, final TMono p2, final boolean r /*
-																		 * do
-																		 * all
-																		 */) { // p1.x
-																				// >
-																				// p2.x.
+	 * do
+	 * all
+	 */) { // p1.x
+		// >
+		// p2.x.
 		if (p2 == null)
 			return p1;
 		final int x = p2.x;
@@ -334,7 +340,7 @@ public class PolyBasic {
 			// int d1 = degree(mm[0], x);
 			// int d2 = degree(p2, x);
 			if (p1 != null) // if (d1 >= d2) {
-			// int dd = d1 - d2;
+				// int dd = d1 - d2;
 			{
 				// TMono l1 = ptimes(p_copy(mm[0].coef), mm[1]);
 				// if (rx) {
@@ -371,12 +377,12 @@ public class PolyBasic {
 	}
 
 	private static void getm2(TMono p1, final TMono p2, final TMono[] mm) {// int
-																			// x,
-																			// int
-																			// deg,
-																			// TMono[]
-																			// mm)
-																			// {
+		// x,
+		// int
+		// deg,
+		// TMono[]
+		// mm)
+		// {
 		if ((p1 == null) || (p2 == null) || (p1.x < p2.x)
 				|| ((p1.x == p2.x) && (p1.deg < p2.deg)))
 			return;
@@ -619,9 +625,9 @@ public class PolyBasic {
 	}
 
 	public static TMono factor_remove(final TMono p1, final TMono p2) { // p1
-																		// ,p2
-																		// be
-																		// destroyed.
+		// ,p2
+		// be
+		// destroyed.
 		if ((p1 == null) || (p2 == null) || (plength(p1) > 1000))
 			return p1;
 
@@ -631,7 +637,7 @@ public class PolyBasic {
 		if (plength(p2) <= 1)
 			return p1;
 
-		if (Int(p1) || Int(p2))
+		if (isConstant(p1) || isConstant(p2))
 			return p1;
 		coefgcd(p2);
 		factor1(p1);
@@ -731,7 +737,6 @@ public class PolyBasic {
 		p1.coef = p_copy(p.coef);
 		p1.next = p_copy(p.next);
 		return p1;
-
 	}
 
 	private static int pp_compare(final TMono p1, final TMono p2) {
@@ -825,14 +830,13 @@ public class PolyBasic {
 	 * if (m.deg == 0) m = m.coef; } return d; }
 	 */
 
-	private static boolean Int(final TMono p) {
+	private static boolean isConstant(final TMono p) {
 		if (p == null)
 			return false;
-
 		if (p.x == 0)
 			return true;
 		if (p.deg == 0)
-			return Int(p.coef);
+			return isConstant(p.coef);
 		return false;
 	}
 
@@ -857,24 +861,29 @@ public class PolyBasic {
 		System.out.print("\n");
 	}
 
+	/**
+	 * Outputs a string representation of p to the system console.
+	 * @param p   The <code>TMono</code> to be printed
+	 */
 	public static void sprint(final TMono p) {
 		p_print(p, false, true);
 	}
 
-	private static void p_print(TMono p, boolean ce, final boolean first) { // coefficent
-																			// ?
-																			// print
-																			// "+"
-																			// of
-																			// first
-																			// ?
+	/**
+	 * Outputs a string representation of p to the system console
+	 * @param p   The <code>TMono</code> to be printed
+	 * @param bInsideParentheses  Enclose the string in parentheses
+	 * @param bFirst   	The TMono is the first in a sequence of terms so suppress the introduction of a "+" sign at the front.
+	 * @see #sprint(TMono)
+	 */
+	private static void p_print(TMono p, boolean bInsideParentheses, final boolean bFirst) {
 		if (p == null)
 			return;
 		if (p.next == null)
-			ce = false;
+			bInsideParentheses = false;
 
-		if (ce) {
-			if (first)
+		if (bInsideParentheses) {
+			if (bFirst)
 				System.out.print("(");
 			else
 				System.out.print(" + (");
@@ -885,24 +894,33 @@ public class PolyBasic {
 				p = p.next;
 			}
 			System.out.print(")");
-		} else if (!first)
-			while (p != null) {
-				m_print(p, false);
-				p = p.next;
+		} else {
+			if (!bFirst) {
+				while (p != null) {
+					m_print(p, false);
+					p = p.next;
+				}
 			}
-		else {
-			m_print(p, true);
-			p = p.next;
-			while (p != null) {
-				m_print(p, false);
+			else {
+				m_print(p, true);
 				p = p.next;
+				while (p != null) {
+					m_print(p, false);
+					p = p.next;
+				}
 			}
 		}
 	}
 
-	private static void m_print(final TMono p, final boolean first) {
+	/**
+	 * Outputs a string representation of p to the system console. This method differs by printing the relevant variables as "x", "x^2", "x^3" etc.
+	 * @param p   The <code>TMono</code> to be printed
+	 * @param bFirst   	The TMono is the first in a sequence of terms so suppress the introduction of a "+" sign at the front.
+	 * @see #sprint(TMono)
+	 */
+	private static void m_print(final TMono p, final boolean bFirst) {
 		if (p.x == 0) {
-			if (first != true) {
+			if (!bFirst) {
 				if (p.value() > 0)
 					System.out.print(" + ");
 				else
@@ -913,9 +931,9 @@ public class PolyBasic {
 			} else if (p.value() != 1)
 				System.out.print(p.value());
 		} else if (p.deg == 0)
-			p_print(p.coef, false, first);
+			p_print(p.coef, false, bFirst);
 		else {
-			p_print(p.coef, true, first);
+			p_print(p.coef, true, bFirst);
 			if (p.coef == null)
 				System.out.print("0");
 			if (p.x >= 0) {
@@ -939,49 +957,49 @@ public class PolyBasic {
 	}
 
 	public static int deg(final TMono p) {
-		return p.deg;
+		assert(p != null);
+		return (p != null) ? p.deg : 0;
 	}
 
 	public static int lv(final TMono p) {
-		if (p == null)
-			return 0;
-		return p.x;
+		assert(p != null);
+		return (p != null) ? p.x : 0;
 	}
 
-	public static TMono pzero() {
-		return null;
-	}
+//	public static TMono pzero() {
+//		return null;
+//	}
 
+	/**
+	 * Returns the number of terms in the polynomial represented by m.
+	 * @param m   the polynomial being evaluated 
+	 * @return an <code>int</code> representation of the number of terms in m 
+	 */
 	public static int plength(final TMono m) {
 		if (m == null)
 			return 0;
 
-		if (Int(m))
+		if (isConstant(m))
 			return 1;
-		else
-			return plength(m.coef) + plength(m.next);
+		
+		return plength(m.coef) + plength(m.next);
 	}
 
-	static boolean pzerom(final TMono m) {
-		if (m == null)
-			return true;
-		return (!pzerop(m.coef) && (m.next == null));
-	}
+//	static boolean pzerom(final TMono m) {
+//		return (m == null || !pzerop(m.coef) && m.next == null);
+//	}
 
 	public static boolean pzerop(final TMono m) {
 		if (m == null)
 			return true;
 
-		if (Int(m))
+		if (isConstant(m))
 			return m.value() == 0;
 		return pzerop(m.coef) && pzerop(m.next);
 	}
 
 	static TPoly addpoly(final TMono t, final TPoly p) {
-		final TPoly poly = new TPoly();
-		poly.setNext(p);
-		poly.setPoly(t);
-
+		final TPoly poly = new TPoly(t, p);
 		return poly;
 	}
 
@@ -996,14 +1014,12 @@ public class PolyBasic {
 		return pp;
 	}
 
-	public TPoly ppush(final TMono t, final TPoly pp) { // n, n-1,,,,,,1.
+	public static TPoly ppush(final TMono t, final TPoly pp) { // n, n-1, ..., 2, 1.
 		if (t == null)
 			return pp;
 
 		final int vra = PolyBasic.lv(t);
-		final TPoly poly = new TPoly();
-		poly.next = null;
-		poly.poly = t;
+		final TPoly poly = new TPoly(t);
 
 		if (pp == null)
 			return poly;
@@ -1052,17 +1068,18 @@ public class PolyBasic {
 	}
 
 	static double calpoly(TMono m, final param[] p) {
-		if ((m == null) || (p == null))
+		if (m == null || p == null)
 			return 0.0;
 
-		if (Int(m))
+		if (isConstant(m))
 			return m.value();
+		
 		double r = 0.0;
 
 		while (m != null) {
 			final double v = calpoly(m.coef, p);
 			final int id = m.x - 1;
-			if ((id < 0) || (id >= p.length) || (p[m.x - 1] == null))
+			if (id < 0 || id >= p.length || p[m.x - 1] == null)
 				return 0.0;
 			r += Math.pow(p[m.x - 1].value, m.deg) * v;
 			m = m.next;
@@ -1109,12 +1126,13 @@ public class PolyBasic {
 			final double aa = calpoly(a1, p);
 			final double bb1 = calpoly(b1, p);
 			final double bb2 = calpoly(b2, p);
+			
 			if (ZERO(aa))
 				return new double[0];
 
-			return poly_solve_quadratic(aa, bb1, bb2);
+			result = poly_solve_quadratic(aa, bb1, bb2);
 
-		} else if ((d == 3) || (d == 4)) {
+		} else if (d == 3 || d == 4) {
 			TMono a1, b1, c1, d1, e1;
 			a1 = b1 = c1 = d1 = e1 = null;
 			while (mm != null) {
@@ -1144,16 +1162,13 @@ public class PolyBasic {
 			final double cc = calpoly(c1, p);
 			final double dd = calpoly(d1, p);
 			final double ee = calpoly(e1, p);
-			double[] r = null;
-
-			if ((d == 3) && (aa != 0.0))
-				r = poly_solve_cubic(1, bb / aa, cc / aa, dd / aa);
-			else if ((d == 4) && (ee != 0))
-				r = poly_solve_quartic(aa / ee, bb / ee, cc / ee, dd / ee);
-			return r;
-
+			
+			if (d == 3 && aa != 0.0)
+				result = poly_solve_cubic(1, bb / aa, cc / aa, dd / aa);
+			else if (d == 4 && ee != 0)
+				result = poly_solve_quartic(aa / ee, bb / ee, cc / ee, dd / ee);
 		}
-		return null;
+		return result;
 	}
 
 	public double[] calculv_2v(final TMono mm, final param[] p) {
@@ -1266,8 +1281,8 @@ public class PolyBasic {
 	}
 
 	public static double[] calculv2poly(TMono mm1, TMono mm2, final param[] p) // from
-																				// two
-																				// poly
+	// two
+	// poly
 	{
 		int x, d;
 		double[] result;
@@ -1358,7 +1373,7 @@ public class PolyBasic {
 	static boolean isZero(final TMono m) {
 		if (m == null)
 			return true;
-		if (Int(m))
+		if (isConstant(m))
 			if (m.value() == 0)
 				return true;
 			else
@@ -1389,7 +1404,7 @@ public class PolyBasic {
 		print(m);
 	}
 
-	TMono getMinV(final int x, TPoly p) {
+	public static TMono getMinV(final int x, TPoly p) {
 		TMono poly = null;
 		int exp = 0;
 		while (p != null) {
@@ -1421,20 +1436,20 @@ public class PolyBasic {
 		return t;
 	}
 
-	static TMono opt(TMono m) {
+	private static TMono opt(TMono m) {
 		if (m == null)
 			return null;
 
-		if (Int(m))
+		if (isConstant(m))
 			return m;
 
-		if ((m.x <= 3) && (m.x > 0))
+		if (m.x <= 3 && m.x > 0)
 			return null;
 
 		m.coef = opt(m.coef);
 		m.next = opt(m.next);
 
-		if ((m.coef == null) && (m.deg != 0))
+		if (m.coef == null && m.deg != 0)
 			m = m.next;
 		if (isZero(m))
 			return null;
@@ -1487,20 +1502,19 @@ public class PolyBasic {
 
 		String s = String_p_print(m, false, true, true);
 		if (s.length() > n)
-			return s.substring(0, n) + ".... = 0";
+			return s.substring(0, n) + "... = 0";
 		else
 			s += " =0";
 		return s;
 	}
 
 	public static String printMaxstrPoly(final TMono m) {
-		final int n = MAXSTR;
 		if (m == null)
 			return "0";
 
 		final String s = String_p_print(m, false, true, true);
-		if (s.length() > n)
-			return s.substring(0, n) + "....0";
+		if (s.length() > MAXSTR)
+			return s.substring(0, MAXSTR) + "... 0";
 		return s;
 	}
 
@@ -2031,7 +2045,7 @@ public class PolyBasic {
 				if (x <= 0)
 					x = 0;
 				final double sqrt_disc = Math.sqrt(x); // modified here.
-														// 2007.1.2
+				// 2007.1.2
 				final double A = -sgnR * Math.pow(modR + sqrt_disc, 1.0 / 3.0);
 				final double B = Q / A;
 				final double mod_diffAB = Math.abs(A - B);
@@ -2171,7 +2185,7 @@ public class PolyBasic {
 		if ((m == null) || (p == null))
 			return BigFraction.ZERO;
 
-		if (Int(m))
+		if (isConstant(m))
 			return new BigFraction(m.val);
 		BigFraction r = BigFraction.ZERO;
 
@@ -2191,10 +2205,10 @@ public class PolyBasic {
 	}
 
 	public int check_ndg(final TMono m, final param[] pm) // 0. TRUE 1. FALSE
-															// 2.CAN NOT Verify,
-															// should be checked
-															// by floating point
-															// calculation.
+	// 2.CAN NOT Verify,
+	// should be checked
+	// by floating point
+	// calculation.
 	{
 		if (m == null)
 			return 1;
@@ -2325,13 +2339,8 @@ public class PolyBasic {
 		m = m.next;
 		if (m == null)
 			return false;
-		return Int(m.coef);
+		return isConstant(m.coef);
 	}
-
-	// public TPoly gb_reduce(TPoly poly) {
-	// return bb_reduce(poly);
-	// return null;
-	// }
 
 	public void nn_reduce(TPoly poly) {
 		while (poly != null) {
@@ -2415,7 +2424,7 @@ public class PolyBasic {
 						r = false;
 						if (m2 == null)
 							break;
-						if (Int(m2))
+						if (isConstant(m2))
 							return vlist;
 					}
 				}
@@ -2501,38 +2510,34 @@ public class PolyBasic {
 	}
 
 	public static TMono b_reduce(TMono m1, final ArrayList<TMono> vlist) {
-		if (m1 == null)
-			return null;
+		if (m1 != null) {
+			boolean bHasPerformedAReduction;
+			do {
+				bHasPerformedAReduction = false;
+				for (final TMono m2 : vlist) {
+					if (m1 != m2) { // (m1.coef == null || m1.coef.coef != null)
+						// m1 = sp_reduce(m1, m2);
 
-		while (true) {
-			boolean r = true;
-			for (int i = 0; i < vlist.size(); i++) {
-				final TMono m2 = vlist.get(i);
-				if (m1 == m2)
-					continue;
-				// if (m1.coef != null && m1.coef.coef == null)
-				// continue;
+						TMono m = bb_divn(m1, m2);
+						while (m != null) {
+							final BigInteger b2 = getLN(m2);
+							if (BB_STOP)
+								return null;
 
-				// m1 = this.sp_reduce(m1, m2);
+							m1 = pdif(cp_times(b2, m1), pp_times(m, p_copy(m2)));
 
-				TMono m = bb_divn(m1, m2);
-				while (m != null) {
-					final BigInteger b2 = getLN(m2);
-					if (BB_STOP)
-						return null;
-
-					m1 = pdif(cp_times(b2, m1), pp_times(m, p_copy(m2)));
-
-					if (m1 == null)
-						return null;
-					r = false;
-					m = bb_divn(m1, m2);
+							if (m1 == null)
+								return null;
+							
+							bHasPerformedAReduction = true;
+							m = bb_divn(m1, m2);
+						}
+					}
 				}
-			}
-			if (r)
-				break;
+			} while (bHasPerformedAReduction);
+
+			coefgcd(m1);
 		}
-		coefgcd(m1);
 		return m1;
 	}
 
@@ -2619,7 +2624,7 @@ public class PolyBasic {
 		if ((m1.x < m2.x) || ((m1.x == m2.x) && (m1.deg < m2.deg)))
 			return null;
 
-		if (Int(m1) && Int(m2))
+		if (isConstant(m1) && isConstant(m2))
 			return pth(0, m1.val, 0);
 
 		TMono mx = null;
@@ -2643,15 +2648,15 @@ public class PolyBasic {
 	}
 
 	private static TMono bb_divn(TMono m1, final TMono m2) { // get a term of m1 which
-														// diviid leading
-														// variable of m2.
+		// diviid leading
+		// variable of m2.
 		if ((m1 == null) || (m2 == null))
 			return null;
 
 		if ((m1.x < m2.x) || ((m1.x == m2.x) && (m1.deg < m2.deg)))
 			return null;
 
-		if (Int(m1) && Int(m2))
+		if (isConstant(m1) && isConstant(m2))
 			return pth(0, m1.val, 0);
 
 		TMono mx = null;
@@ -2694,42 +2699,41 @@ public class PolyBasic {
 	}
 
 	public static void printVpoly(final ArrayList<TMono> v) {
-		for (int i = 0; i < v.size(); i++)
-			print(v.get(i));
+		for (TMono m : v)
+			print(m);
 		System.out.println("\n");
 	}
 
-	public static ArrayList<TMono> g_basis(final ArrayList<TMono> v) {
-		while (true) {
+	public static void g_basis(ArrayList<TMono> v) {
+		ArrayList<TMono> tp = null;
+		do {
 			bb_reduce(v, System.currentTimeMillis());
 
 			if (gb_finished(v))
 				break;
 
 			// this.printVpoly(v);
-			final ArrayList<TMono> tp = s_polys(v);
-
-			for (int i = 0; i < tp.size(); i++) {
-				ppush(tp.get(i), v);
-				printpoly(tp.get(i));
+			tp = s_polys(v);
+			for (TMono tpe : tp) {
+				ppush(tpe, v);
+				printpoly(tpe);
 			}
+
 			if (tp.size() == 0)
 				break;
-		}
-		return v;
+		} while (!tp.isEmpty());
 	}
 
-	public static ArrayList<TMono> s_polys(final ArrayList<TMono> vlist) {
+	public static ArrayList<TMono> s_polys(final ArrayList<TMono> listInput) {
 
 		final ArrayList<TMono> v = new ArrayList<TMono>();
-		for (int i = 0; i < vlist.size(); i++) {
-			final TMono m1 = vlist.get(i);
-			for (int j = i + 1; j < vlist.size(); j++) {
-				final TMono m2 = vlist.get(j);
+		for (int i = 0; i < listInput.size(); i++) {
+			final TMono m1 = listInput.get(i);
+			for (int j = i + 1; j < listInput.size(); j++) {
+				final TMono m2 = listInput.get(j);
 
 				TMono mx = s_poly1(m1, m2);
-
-				mx = b_reduce(mx, vlist);
+				mx = b_reduce(mx, listInput);
 				coefgcd(mx);
 				if (mx != null)
 					ppush(mx, v);
@@ -2877,7 +2881,7 @@ public class PolyBasic {
 	private static BigInteger getLN(TMono m) {
 		if (m == null)
 			return null;
-		while (!Int(m))
+		while (!isConstant(m))
 			m = m.coef;
 		return m.val;
 	}

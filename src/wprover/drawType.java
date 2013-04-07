@@ -10,43 +10,31 @@ import java.awt.*;
  * Time: 13:54:48
  * To change this template use File | Settings | File Templates.
  */
-public class drawType {
+public class DrawType {
     int color_index;
     int dash;
     int width;
 
-
-    public drawType()
+    public DrawType()
     {
     }
-    public drawType(int ci,int dash,int width)
+    
+    public DrawType(int ci,int dash,int width)
     {
         color_index = ci;
         this.dash = dash;
         this.width = width;
     }
-//    public void Save(DataOutputStream out) throws IOException
-//    {
-//        out.writeInt(color_index);
-//        out.writeInt(dash);
-//        out.writeInt(width);
-//    }
-//    public void Load(DataInputStream in) throws IOException
-//    {
-//        color_index = in.readInt();
-//        dash = in.readInt();
-//        width = in.readInt();
-//    }
 
     public void setdrawType(Graphics2D g2)
     {
         if(color_index >= 0)
-            g2.setColor(drawData.getColor(color_index));
+            g2.setColor(DrawData.getColor(color_index));
 
         float d =0;
         if(dash >=0 )
-           d = (float)drawData.getDash(dash);
-        float w = (float)drawData.getWidth(width);
+           d = (float)DrawData.getDash(dash);
+        float w = (float)DrawData.getWidth(width);
 
         if(dash >0)
         {
@@ -55,7 +43,6 @@ public class drawType {
         }else g2.setStroke(new BasicStroke(w));
 
     }
-
 
     public void setColorIndex(int id)
     {
@@ -75,7 +62,7 @@ public class drawType {
     }
     public Color getColor()
     {
-        return drawData.getColor(color_index);
+        return DrawData.getColor(color_index);
     }
     public int getDashIndex()
     {
@@ -85,7 +72,4 @@ public class drawType {
     {
         return width;
     }
-////////////// ///////////
-
-
 }

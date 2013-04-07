@@ -2,7 +2,6 @@ package maths;
 
 public class CharacteristicSetMethod {
     final private static boolean DEBUG = false;
-    private static PolyBasic basic = PolyBasic.getInstance();
     private static CharacteristicSetMethod charset = new CharacteristicSetMethod();
     private static int REDUCE_LEN = 2;
 
@@ -34,7 +33,7 @@ public class CharacteristicSetMethod {
             int vra = PolyBasic.lv(tp.getPoly());
             tp = tp.getNext();
             if (tp == null) {
-                output = basic.ppush(rm.getPoly(), output);
+                output = PolyBasic.ppush(rm.getPoly(), output);
                 break;
             }
             int v = PolyBasic.lv(tp.getPoly());
@@ -51,12 +50,12 @@ public class CharacteristicSetMethod {
 
 
             if (ch == chend) {
-                output = basic.ppush(ch.getPoly(), output);
+                output = PolyBasic.ppush(ch.getPoly(), output);
             } else {
                 TPoly poly = null;
 
                 while (ch.getNext() != null) {
-                    TMono divor = basic.getMinV(vra, ch);
+                    TMono divor = PolyBasic.getMinV(vra, ch);
                     do {
                         TMono out;
                         TMono div = ch.getPoly();
@@ -71,12 +70,12 @@ public class CharacteristicSetMethod {
                                 PolyBasic.print(divor);
                             }
                         } else if (vra > a)
-                            rm = basic.ppush(out, rm);
+                            rm = PolyBasic.ppush(out, rm);
                         else
                             poly = PolyBasic.addpoly(out, poly);
                     } while ((ch = ch.getNext()) != null);
                     if (poly == null) {
-                        output = basic.ppush(divor, output);
+                        output = PolyBasic.ppush(divor, output);
                         break;
                     } else {
                         poly = PolyBasic.addpoly(divor, poly);
@@ -112,56 +111,55 @@ public class CharacteristicSetMethod {
         return poly;
     }
 
-    public void reduce(TPoly poly) {    // n ,n-1,,,,,,, 1.
-        TPoly p1 = poly;
-        while (p1 != null) {
-            TMono m = p1.poly;
-            if (PolyBasic.plength(m) <= REDUCE_LEN) {
-                TPoly tx = poly;
-                while (tx != null && tx != p1) {
-                    TMono m2 = tx.poly;
-                    tx.poly = PolyBasic.prem(m2, PolyBasic.p_copy(m));
-                    tx = tx.next;
-                }
-            }
-            p1 = p1.next;
-        }
+    public static void reduce(TPoly poly) {    // n ,n-1,,,,,,, 1.
+    	if (poly != null)
+    		poly.reduce(REDUCE_LEN);
+    	
+//        TPoly p1 = poly;
+//        while (p1 != null) {
+//            TMono m = p1.poly;
+//            if (PolyBasic.plength(m) <= REDUCE_LEN) {
+//                TPoly tx = poly;
+//                while (tx != null && tx != p1) {
+//                    TMono m2 = tx.poly;
+//                    tx.poly = PolyBasic.prem(m2, PolyBasic.p_copy(m));
+//                    tx = tx.next;
+//                }
+//            }
+//            p1 = p1.next;
+//        }
     }
 
-
     public static boolean cfinished(TPoly pp) {
-        if (pp == null) return true;
-        int a = PolyBasic.lv(pp.getPoly());
-        pp = pp.getNext();
-        while (pp != null) {
-            int n = PolyBasic.lv(pp.getPoly());
-            if (a == n)
-                return false;
-            else {
-                a = n;
-                pp = pp.getNext();
-            }
-        }
-        return true;
+    	if (pp != null) {
+    		int a = PolyBasic.lv(pp.getPoly());
+    		pp = pp.getNext();
+    		while (pp != null) {
+    			int n = PolyBasic.lv(pp.getPoly());
+    			if (a == n)
+    				return false;
+    			else {
+    				a = n;
+    				pp = pp.getNext();
+    			}
+    		}
+    	}
+    	return true;
     }
 
     public static void printpoly(TPoly pp) {
         int i = 0;
         while (pp != null) {
             if (pp.getPoly() != null) {
-                Integer s = new Integer(i);
-                System.out.print("f" + s.toString() + "= ");
+                System.out.print("f" + String.valueOf(i++) + "= ");
                 PolyBasic.print(pp.getPoly());
-                i++;
             }
             pp = pp.getNext();
         }
     }
 
     public static TPoly reverse(TPoly pp) {
-        if (pp == null) return pp;
         TPoly out = null;
-
         while (pp != null) {
             TPoly p = pp;
             pp = pp.getNext();

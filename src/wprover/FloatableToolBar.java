@@ -44,7 +44,7 @@ public class FloatableToolBar extends JPopupMenu {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 
-        JToggleButton button = new JToggleButton(GExpert.createImageIcon("images/quit.gif")) {
+        JToggleButton button = new JToggleButton(DrawPanelFrame.createImageIcon("images/quit.gif")) {
             /**
 			 * 
 			 */

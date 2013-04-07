@@ -5,7 +5,7 @@ package wprover;
 
 import javax.swing.JFrame;
 
-import wprover.GExpert;
+import wprover.DrawPanelFrame;
 
 /**
  * @author kutach
@@ -16,7 +16,7 @@ public class JGEXapp {
 	/**
 	 * @param args
 	 */
-	private static GExpert mainJFrame;
+	private static DrawPanelFrame mainJFrame;
 	
 	public static void main(String[] args) {
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -34,7 +34,7 @@ public class JGEXapp {
  
     private static void createAndShowGUI() {
         //Create and set up the window.
-    	mainJFrame = new GExpert();
+    	mainJFrame = new DrawPanelFrame();
     	mainJFrame.init();
     	mainJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

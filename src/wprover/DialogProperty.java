@@ -10,14 +10,14 @@ import javax.swing.JPanel;
  * Time: 15:47:43
  * To change this template use File | Settings | File Templates.
  */
-public class DialogProperty extends JBaseDialog
+public class DialogProperty extends DialogBase
 {
       /**
 	 * 
 	 */
 	private static final long serialVersionUID = -4873735607440890404L;
 
-	public DialogProperty(GExpert owner,JPanel panel)
+	public DialogProperty(DrawPanelFrame owner,JPanel panel)
       {
           super(owner.getFrame(),false);
           this.setTitle("Property");

@@ -22,7 +22,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
     private int type = 0;
     public param x1 = null;
     public param y1 = null;
-    private HashSet<constraint> cons = new HashSet<constraint>();
+    private HashSet<Constraint> cons = new HashSet<Constraint>();
     private boolean hasSetColor = false;
     private int m_radius = -1; //default
     private boolean frozen = false;
@@ -57,21 +57,21 @@ public class GEPoint extends GraphicEntity implements Pointed {
         y1 = Y;
     }
 
-     public GEPoint(drawProcess dp, final Element thisElement) {
+     public GEPoint(DrawPanel dp, final Element thisElement) {
     	super(dp, thisElement);
 
-		int xindex = GExpert.safeParseInt(thisElement.getAttribute("x"), 0);
+		int xindex = DrawPanelFrame.safeParseInt(thisElement.getAttribute("x"), 0);
 		x1 = dp.getParameterByindex(xindex);
 		bIsValidEntity &= (x1 != null);
 
-		int yindex = GExpert.safeParseInt(thisElement.getAttribute("y"), 0);
+		int yindex = DrawPanelFrame.safeParseInt(thisElement.getAttribute("y"), 0);
 		y1 = dp.getParameterByindex(yindex);
 		bIsValidEntity &= (y1 != null);
 			
 		//y1.value = GExpert.safeParseDouble(thisElement.getAttribute("yy"), 0);
-		m_radius = GExpert.safeParseInt(thisElement.getAttribute("radius"), -1);
-		frozen = GExpert.safeParseBoolean(thisElement.getAttribute("frozen"), false);
-		setChosenColor(GExpert.safeParseBoolean(thisElement.getAttribute("hasSetColor"), false));
+		m_radius = DrawPanelFrame.safeParseInt(thisElement.getAttribute("radius"), -1);
+		frozen = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("frozen"), false);
+		setChosenColor(DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("hasSetColor"), false));
 		setColorDefault();
 		textNametag = new GEText(this, 5, -20, GEText.NAME_TEXT);
 		
@@ -87,7 +87,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
                         if (nnn != null && nnn instanceof Element) {
                         	s = nnn.getNodeName();
                         	if (s.equalsIgnoreCase("constraint")) {
-                        		int cIndex = GExpert.safeParseInt(((Element)nnn).getTextContent(), 0);
+                        		int cIndex = DrawPanelFrame.safeParseInt(((Element)nnn).getTextContent(), 0);
                         		setConstraintIndices.add(cIndex);
                         	}
                         }
@@ -99,12 +99,12 @@ public class GEPoint extends GraphicEntity implements Pointed {
 		assert(bIsValidEntity);
 	}
     
-    public boolean setConstraints(Map<Integer, constraint> mapConstraints) {
+    public boolean setConstraints(Map<Integer, Constraint> mapConstraints) {
     	assert(mapConstraints != null);
     	boolean bAllConstraintsFoundInMap = true;
     	if (mapConstraints != null) {
     		for (Integer Index : setConstraintIndices) {
-    			constraint cs = mapConstraints.get(Index);
+    			Constraint cs = mapConstraints.get(Index);
     			if (cs == null) {
     				bAllConstraintsFoundInMap = false;
     				System.err.println("Null constraint added.");
@@ -239,7 +239,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
         double dy = gety() - y;
         dy *= dy;
         
-        return (bVisible && dx + dy < CMisc.PIXEPS_PT2);
+        return (bVisible && dx + dy < UtilityMiscellaneous.PIXEPS_PT2);
     }
 
     @Override
@@ -303,15 +303,15 @@ public class GEPoint extends GraphicEntity implements Pointed {
     	return pCommon;
     }
     
-    public int POINT_RADIUS = CMisc.getPointRadius();
+    public int POINT_RADIUS = UtilityMiscellaneous.getPointRadius();
 
     public int getRadius() {
     	assert(x1.value == x1.value);
     	assert(y1.value == y1.value);
     	int radius = m_radius;
         if (radius < 0) {
-            if (CMisc.isApplication())
-                radius = CMisc.getPointRadius();
+            if (UtilityMiscellaneous.isApplication())
+                radius = UtilityMiscellaneous.getPointRadius();
             else
                 radius = POINT_RADIUS;      //APPLET ONLY
         }
@@ -323,8 +323,8 @@ public class GEPoint extends GraphicEntity implements Pointed {
     	assert(y1.value == y1.value);
     	table.setValueAt(m_name, 0, 1);
 		table.setValueAt(new Integer(m_radius), 1, 1);
-		table.setValueAt(new Double(CProperty.round(getx())), 2, 1);
-		table.setValueAt(new Double(CProperty.round(gety())), 3, 1);
+		table.setValueAt(new Double(PanelProperty.round(getx())), 2, 1);
+		table.setValueAt(new Double(PanelProperty.round(gety())), 3, 1);
 		table.setValueAt(isFrozen(), 4, 1);
 	}
     
@@ -391,7 +391,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
     	assert(x1.value == x1.value);
     	assert(y1.value == y1.value);
     	prepareToBeDrawnAsUnselected(g2);
-        int radius = CMisc.getPointRadius() + 2;
+        int radius = UtilityMiscellaneous.getPointRadius() + 2;
         int x = (int) (getx() - radius);
         int y = (int) (gety() - radius);
 
@@ -430,20 +430,20 @@ public class GEPoint extends GraphicEntity implements Pointed {
             return;
         }
         if (!x1.Solved && !y1.Solved) {
-            this.m_color = drawData.pointcolor;
+            this.m_color = DrawData.pointcolor;
         } else if (x1.Solved && y1.Solved) {
-            this.m_color = drawData.pointcolor_decided;
+            this.m_color = DrawData.pointcolor_decided;
         } else {
-            this.m_color = drawData.pointcolor_half_decided;
+            this.m_color = DrawData.pointcolor_half_decided;
         }
     }
 
-    public void addConstraint(constraint cs) {
+    public void addConstraint(Constraint cs) {
     	assert(x1.value == x1.value);
     	assert(y1.value == y1.value);
     	if (cs != null) {
     		if (cons == null)
-    			cons = new HashSet<constraint>();
+    			cons = new HashSet<Constraint>();
     		cons.add(cs);
     	}
     }
@@ -452,7 +452,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
     	assert(x1.value == x1.value);
     	assert(y1.value == y1.value);
     	if (cons != null) {
-    		for (constraint cs : cons) {
+    		for (Constraint cs : cons) {
     			if (!cs.check_constraint(x, y))
     				return false;
     		}
@@ -473,7 +473,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
     }
 
     public boolean isAtSameLocationAs(double x, double y) {
-        return (Math.abs(x - getx()) < CMisc.ZERO && Math.abs(y - gety()) < CMisc.ZERO);
+        return (Math.abs(x - getx()) < UtilityMiscellaneous.ZERO && Math.abs(y - gety()) < UtilityMiscellaneous.ZERO);
     }
 
     public double getx() {
@@ -624,7 +624,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
     			Element eCons = doc.createElement("constraints");
         		elementThis.appendChild(eCons);
         		
-        		for (constraint cs : cons) {
+        		for (Constraint cs : cons) {
         			if (cs != null) {
         				Element child = doc.createElement("constraint");
         				child.setTextContent(String.valueOf(cs.id));

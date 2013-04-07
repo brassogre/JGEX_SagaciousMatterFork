@@ -150,14 +150,14 @@ public class GEArrow extends GraphicEntity {
 
         boolean inside = false;
 
-        if (Math.abs(x1 - x2) < CMisc.PIXEPS) {
+        if (Math.abs(x1 - x2) < UtilityMiscellaneous.PIXEPS) {
             inside = ((y - y1) * (y - y2) <= 0);
         } else
             inside = ((x - x1) * (x - x2) <= 0);
         if (!inside)
             return false;
         double d = distance(x, y);
-        if (d < CMisc.PIXEPS)
+        if (d < UtilityMiscellaneous.PIXEPS)
             return true;
         return false;
     }
@@ -172,7 +172,7 @@ public class GEArrow extends GraphicEntity {
         double k = -getK();
         GEPoint pt = st;
 
-        if (Math.abs(k) > CMisc.ZERO && Math.abs(1 / k) < CMisc.ZERO) {
+        if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
             return Math.abs(x - pt.getx());
         }
         double len = Math.abs(y + k * x - pt.gety() - k * pt.getx()) / Math.sqrt(1 + k * k);
