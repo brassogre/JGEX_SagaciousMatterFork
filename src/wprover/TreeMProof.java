@@ -39,7 +39,7 @@ public class TreeMProof extends JTree implements ActionListener {
 	 */
 	private static final long serialVersionUID = 2267579660069843560L;
 	private DrawPanelFrame gxInstance;
-	private PanelDraw dpane;
+	private DrawPanelOverlay dpane;
 	private DrawPanelExtended dp;
 
 	private DefaultMutableTreeNode top;
@@ -385,7 +385,7 @@ public class TreeMProof extends JTree implements ActionListener {
 
 	}
 
-	public TreeMProof(final DrawPanelFrame gx, final PanelDraw dd,
+	public TreeMProof(final DrawPanelFrame gx, final DrawPanelOverlay dd,
 			final DrawPanelExtended dpp) {
 		gxInstance = gx;
 		dpane = dd;

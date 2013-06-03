@@ -17,8 +17,8 @@ public class GETrace extends GraphicEntity {
 
     private int Num = 40;
     private int[] PX, PY;
-    private int Radius = 2;
-    private boolean dlns;
+    private int iRadius = 2;
+    private boolean bDrawLines;
 
 
     public GETrace(GEPoint p) {
@@ -27,7 +27,7 @@ public class GETrace extends GraphicEntity {
         PX = new int[MAX_POINT];
         PY = new int[MAX_POINT];
         point = p;
-        Num = -1;
+        Num = 0;
     }
 
     public GETrace(GEPoint p, GEPoint po, GELine o) {
@@ -60,8 +60,8 @@ public class GETrace extends GraphicEntity {
 		result = prime * result + Num;
 		result = prime * result + Arrays.hashCode(PX);
 		result = prime * result + Arrays.hashCode(PY);
-		result = prime * result + Radius;
-		result = prime * result + (dlns ? 1231 : 1237);
+		result = prime * result + iRadius;
+		result = prime * result + (bDrawLines ? 1231 : 1237);
 		result = prime * result + ((oObj == null) ? 0 : oObj.hashCode());
 		result = prime * result + ((po == null) ? 0 : po.hashCode());
 		result = prime * result + ((point == null) ? 0 : point.hashCode());
@@ -86,9 +86,9 @@ public class GETrace extends GraphicEntity {
 			return false;
 		if (!Arrays.equals(PY, other.PY))
 			return false;
-		if (Radius != other.Radius)
+		if (iRadius != other.iRadius)
 			return false;
-		if (dlns != other.dlns)
+		if (bDrawLines != other.bDrawLines)
 			return false;
 		if (oObj == null) {
 			if (other.oObj != null)
@@ -112,34 +112,35 @@ public class GETrace extends GraphicEntity {
         return point == pt && po == null && oObj == null;
     }
 
-    public void setDLns(boolean r) {
-        dlns = r;
+    public void setDrawLines(boolean r) {
+        bDrawLines = r;
     }
 
-    public boolean isDrawLines() {
-        return dlns;
+    public boolean doesDrawLines() {
+        return bDrawLines;
     }
 
-    public void setNumPts(int n) {
+    public void setMaxNumberOfPoints(int n) {
     	Num =  (n < MAX_POINT) ? n : MAX_POINT;
+    	Num =  (n < 0) ? 0 : n;
     }
 
     public void draw(Graphics2D g2, boolean selected) {
         if (!isdraw()) return;
 
-        int radius = Radius;
+        int radius = iRadius;
 
         if (selected) {
             g2.setColor(UtilityMiscellaneous.SelectObjectColor);
             g2.setStroke(UtilityMiscellaneous.SelectObjectStroke);
-            radius = Radius + 2;
+            radius = iRadius + 2;
         } else
             prepareToBeDrawnAsUnselected(g2);
 
         for (int i = 0; i < Num; i++) {
-            if (!dlns)
+            if (!bDrawLines)
                 g2.fillOval(PX[i] - radius / 2, PY[i] - radius / 2, radius, radius);
-            if (dlns) {
+            if (bDrawLines) {
                 if (oObj != null && oObj.get_type() == GraphicEntity.CIRCLE)
                     drawALN(PX[i], PY[i], PX[(i + 1) % Num], PY[(i + 1) % Num], g2);
                 else if (i < Num - 1)
@@ -148,25 +149,16 @@ public class GETrace extends GraphicEntity {
         }
     }
 
-    public static void drawALN(int x, int y, int x1, int y1, Graphics2D g2) {
+    private static void drawALN(int x2, int y2, int x1, int y1, Graphics2D g2) {
 
-        if ((x1 < 0 || x1 > 1000) && (x < 0 || x > 1000))
-            return;
-
-        if ((y1 < 0 || y1 > 1000) && (y < 0 || y > 1000))
-            return;
-
-        int dx = x - x1;
-        int dy = y - y1;
-        if(dx > MAXLEN || dx < - MAXLEN || dy > MAXLEN || dy < -MAXLEN)
-            return;
-
-        g2.drawLine(x, y, x1, y1);
+        if ( !((x1 < 0 || x1 > 1000) && (x2 < 0 || x2 > 1000)) && !((y1 < 0 || y1 > 1000) && (y2 < 0 || y2 > 1000)) ) {
+            int dx = x2 - x1;
+            int dy = y2 - y1;
+            if (dx*dx < MAXLEN * MAXLEN && dy*dy < MAXLEN * MAXLEN)
+            	g2.drawLine(x2, y2, x1, y1);
+        }
     }
 
-//    public void draw(Graphics2D g2) {
-//        draw(g2, false);
-//    }
 
     public String TypeString() {
         if (m_name == null) return "Trace";
@@ -178,12 +170,13 @@ public class GETrace extends GraphicEntity {
     }
 
     public boolean isLocatedNear(double x, double y) {
-        if (!isdraw()) return false;
-        double r2 = UtilityMiscellaneous.PIXEPS * UtilityMiscellaneous.PIXEPS;
+        if (isdraw()) {
+        	double r2 = UtilityMiscellaneous.PIXEPS * UtilityMiscellaneous.PIXEPS;
 
-        for (int i = 0; i < Num; i++)
-            if (Math.pow(PX[i] - x, 2) + Math.pow(PY[i] - y, 2) < r2)
-                return true;
+        	for (int i = 0; i < Num; i++)
+        		if (Math.pow(PX[i] - x, 2) + Math.pow(PY[i] - y, 2) < r2)
+        			return true;
+        }
         return false;
     }
 
@@ -198,7 +191,7 @@ public class GETrace extends GraphicEntity {
         if (!bVisible) return;
 
          for (int i = 0; i < Num; i++) {
-                    if (dlns) {
+                    if (bDrawLines) {
                 if (oObj != null && oObj.get_type() == GraphicEntity.CIRCLE || i < Num -1)
                 {
 
@@ -222,8 +215,8 @@ public class GETrace extends GraphicEntity {
     	super(dp, thisElement);
 
 		Num = DrawPanelFrame.safeParseInt(thisElement.getAttribute("number"), 40, 10, 1000);
-		Radius = DrawPanelFrame.safeParseInt(thisElement.getAttribute("radius"), 2);
-		dlns = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("draw_lines"), true);
+		iRadius = DrawPanelFrame.safeParseInt(thisElement.getAttribute("radius"), 2);
+		bDrawLines = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("draw_lines"), true);
 		
 		int index = DrawPanelFrame.safeParseInt(thisElement.getAttribute("oObj"), 0);
 		GraphicEntity ge = mapGE.get(index);
@@ -279,8 +272,8 @@ public class GETrace extends GraphicEntity {
     		Element elementThis = super.saveIntoXMLDocument(rootElement, "trace");
 
     		elementThis.setAttribute("number", String.valueOf(Num));
-    		elementThis.setAttribute("radius", String.valueOf(Radius));
-    		elementThis.setAttribute("draw_lines", String.valueOf(dlns));
+    		elementThis.setAttribute("radius", String.valueOf(iRadius));
+    		elementThis.setAttribute("draw_lines", String.valueOf(bDrawLines));
     		if (po != null)
     			elementThis.setAttribute("oObj", String.valueOf(po.m_id));
     		if (oObj != null)
@@ -302,51 +295,6 @@ public class GETrace extends GraphicEntity {
     	return null;
     }
 
-//    public void Save(DataOutputStream out) throws IOException {
-//        super.Save(out);
-//        out.writeInt(point.m_id);
-//        out.writeInt(Num);
-//        for (int i = 0; i < Num; i++) {
-//            out.writeInt(PX[i]);
-//            out.writeInt(PY[i]);
-//        }
-//
-//        int oid, mid;
-//        oid = mid = -1;
-//        if (po != null)
-//            oid = po.m_id;
-//        if (oObj != null)
-//            mid = oObj.m_id;
-//        out.writeInt(oid);
-//        out.writeInt(mid);
-//
-//        out.writeInt(Num);
-//        out.writeInt(Radius);
-//        out.writeBoolean(dlns);
-//    }
-//
-//    public void Load(DataInputStream in, drawProcess dp) throws IOException {
-//        super.Load(in, dp);
-//        if (CMisc.version_load_now >= 0.011) {
-//            int id = in.readInt();
-//            point = dp.getPointById(id);
-//        }
-//        Num = in.readInt();
-//        for (int i = 0; i < Num; i++) {
-//            PX[i] = in.readInt();
-//            PY[i] = in.readInt();
-//        }
-//        if (CMisc.version_load_now >= 0.044) {
-//            int id = in.readInt();
-//            po = dp.getPointById(id);
-//            id = in.readInt();
-//            oObj = dp.getObjectById(id);
-//            Num = in.readInt();
-//            Radius = in.readInt();
-//            dlns = in.readBoolean();
-//        }
-//    }
-
     ///////////////////////////////////////////////////////
 
 
@@ -355,15 +303,8 @@ public class GETrace extends GraphicEntity {
         if (i >= 0 && i < Num) {
         	PX[i] = (int) x;
 	        PY[i] = (int) y;	        
-	        soft(i);
         }
     }
-
-//    public void addTracePoint(int x, int y, int i) {
-//        PX[i] = x;
-//        PY[i] = y;
-//        soft(i);
-//    }
 
     public void addTracePoint(int x, int y) {
 
@@ -403,8 +344,8 @@ public class GETrace extends GraphicEntity {
         }
     }
 
-    public void soft(int i) {
-    }
+//    public void soft(int i) {
+//    }
 
 
     public void trans(double dx, double dy) {
@@ -414,8 +355,9 @@ public class GETrace extends GraphicEntity {
         }
     }
 
-    public double Roud_length() {
-        if (Num == 0) return 0.0d;
+    public double circumference() {
+        if (Num == 0)
+        	return 0.0d;
 
         double len = 0;
         int x, y;

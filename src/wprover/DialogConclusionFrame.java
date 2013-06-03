@@ -18,8 +18,8 @@ public class DialogConclusionFrame extends DialogBase implements  ActionListener
 	 * 
 	 */
 	private static final long serialVersionUID = -3833808194284220827L;
-    private static CharacteristicSetMethod charset = CharacteristicSetMethod.getinstance();
-    PanelDraw d;
+    //private static CharacteristicSetMethod charset = CharacteristicSetMethod.getinstance();
+    DrawPanelOverlay d;
 
     DrawPanel dp;
 
@@ -146,7 +146,7 @@ public class DialogConclusionFrame extends DialogBase implements  ActionListener
 
         pclist = PolyBasic.OptimizePoly(pclist);
         plist = PolyBasic.OptimizePoly(plist);
-        pclist = charset.charset(pclist);
+        pclist = CharacteristicSetMethod.charset(pclist);
         pclist = CharacteristicSetMethod.reverse(pclist);
 
 

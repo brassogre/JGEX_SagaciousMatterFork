@@ -40,8 +40,7 @@ public class GEText extends GraphicEntity {
 		str = new String();
 	}
 
-	public GEText(final GraphicEntity f, final double dx, final double dy,
-			final int t) {
+	public GEText(final GraphicEntity f, final double dx, final double dy, final int t) {
 		super(GraphicEntity.TEXT);
 		str = new String();
 		m_color = DrawData.getColorIndex(Color.black);
@@ -170,8 +169,6 @@ public class GEText extends GraphicEntity {
 		if (n != font.getSize())
 			font = new Font(font.getName(), font.getStyle(), n);
 	}
-
-
 
 	@Override
 	public void move(final double dx, final double dy) {

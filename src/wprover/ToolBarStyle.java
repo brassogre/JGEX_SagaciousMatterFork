@@ -17,7 +17,7 @@ public class ToolBarStyle extends FloatableToolBar {
     int action = -1;
 
     DrawPanelFrame gxInstance;
-    PanelDraw d;
+    DrawPanelOverlay d;
     Panel_CS pcs;
 
     PopComboRender render0, render1, render2;
@@ -38,7 +38,7 @@ public class ToolBarStyle extends FloatableToolBar {
     JPanel pagColor = null;
     JPanel topAgPanel = null;
 
-    public ToolBarStyle(DrawPanelFrame gx, PanelDraw d) {
+    public ToolBarStyle(DrawPanelFrame gx, DrawPanelOverlay d) {
         this.gxInstance = gx;
         this.d = d;
         mpanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -129,7 +129,7 @@ public class ToolBarStyle extends FloatableToolBar {
 		 * 
 		 */
 		private static final long serialVersionUID = -7551125993920113879L;
-		PanelDraw d;
+		DrawPanelOverlay d;
 
         public void setColorOnly(boolean r) {
         }

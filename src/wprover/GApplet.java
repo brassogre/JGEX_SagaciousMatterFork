@@ -33,7 +33,7 @@ public class GApplet extends JApplet {
 	private boolean hasProofPane = false;
 	private int PWIDTH = 300;
 
-	public PanelDraw d;
+	public DrawPanelOverlay d;
 	public DrawPanelExtended dp;
 	public ProofPanel pproof;
 
@@ -48,8 +48,8 @@ public class GApplet extends JApplet {
 			gib.initRules();
 			UtilityMiscellaneous.homedir = getDocumentBase();
 
-			d = new PanelDraw(null);
-			dp = new DrawPanelExtended();
+			d = new DrawPanelOverlay(null, null);
+			dp = new DrawPanelExtended(null);
 			d.dp = dp;
 
 			this.setSize(getAppletWidth(), getAppletHeight());
@@ -130,7 +130,7 @@ public class GApplet extends JApplet {
 
 	@Override
 	public void destroy() {
-		dp.clearAll();
+		dp.initialize();
 		d.removeAll();
 		super.destroy();
 	}
@@ -330,7 +330,7 @@ public class GApplet extends JApplet {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			dp.clearAll();
+			dp.initialize();
 			// loadfile();
 			d.repaint();
 		}

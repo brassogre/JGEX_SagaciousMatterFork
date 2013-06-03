@@ -5,10 +5,10 @@ import java.util.Arrays;
 public class cons {
     final public static int MAXLEN = 16;
 
-    int id = 0;
+    private int id = 0;
     public int type = 0;
-    int no = 0;
-    boolean bHasConclusion = false;
+    public int no = 0;
+    private boolean bHasConclusion = false;
 
     public int[] ps;
     public Object[] pss;
@@ -232,12 +232,11 @@ public class cons {
     }
 
     public void revalidate() {
-        if (this.type == gib.CO_NANG || this.type == gib.CO_NSEG)
-            return;
-        sd = null;
+        if (type != gib.CO_NANG && type != gib.CO_NSEG)
+            sd = null;
     }
 
-    public void set_conc(boolean r) {
+    public void setHasConclusion(boolean r) {
         bHasConclusion = r;
     }
 
@@ -327,7 +326,7 @@ public class cons {
         }
     }
 
-    public void reorder1(int m, int n) {
+    private void reorder1(int m, int n) {
         if (m == n)
             return;
         if (ps[m] < ps[n]) {
@@ -337,7 +336,7 @@ public class cons {
         }
     }
 
-    public void reorder2() {
+    private void reorder2() {
         reorder1(0, 1);
         reorder1(2, 3);
         if (ps[0] < ps[2]) {

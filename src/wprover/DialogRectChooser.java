@@ -40,7 +40,7 @@ public class DialogRectChooser extends DialogBase implements MouseListener, Mous
         zoom = 1.00;
 
 //        this.addWindowListener((new WindowDispose(this));
-        PanelDraw d = gx.d;
+        DrawPanelOverlay d = gx.d;
         width = d.getWidth();
         height = d.getHeight();
         dpane = new drawPane();

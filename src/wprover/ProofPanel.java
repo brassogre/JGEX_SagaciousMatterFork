@@ -28,7 +28,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 	 */
 	private static final long serialVersionUID = -6504661115086935911L;
 	private DrawPanelFrame gxInstance;
-    private PanelDraw dpane;
+    private DrawPanelOverlay dpane;
     private DrawPanelExtended dp;
     private GApplet app1 = null;
 
@@ -67,7 +67,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
     private JDialog lstRuleDialog = null;
 
 
-    public ProofPanel(DrawPanelFrame gx, PanelDraw dd, DrawPanelExtended dp, boolean mbar, int idonly) {
+    public ProofPanel(DrawPanelFrame gx, DrawPanelOverlay dd, DrawPanelExtended dp, boolean mbar, int idonly) {
         gxInstance = gx;
 
         if (gx != null) {
@@ -124,7 +124,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         super.setSelectedIndex(index);
     }
 
-    public void setMember(PanelDraw dd, DrawPanelExtended dp) {
+    public void setMember(DrawPanelOverlay dd, DrawPanelExtended dp) {
         this.dpane = dd;
         this.dp = dp;
     }
@@ -187,7 +187,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
     			loadMTree(mainMnode);
 
     		if (gxInstance != null) {
-    			gxInstance.showppanel((gt.getCons_no() > 0 || !tree_mp.isTreeEmpty()));
+    			gxInstance.showProofPanel((gt.getCons_no() > 0 || !tree_mp.isTreeEmpty()));
     		}
     	}
     }
@@ -1270,11 +1270,11 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
     }
 
     public void generate() {
-        //drawProcess dp = gxInstance.dp;
+    	assert(dp != null);
+    	assert(condPane != null);
         ArrayList<cons> v = dp.getConstructionFromDraw();
-        //int n = dp.getPointSize();
         condPane.setVector(v);
-        if (0 == dp.getRedolistSize())
+        if (dp.getRedolistSize() == 0)
             condPane.addConclusion();
 
     }
@@ -1371,7 +1371,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         if (gt == null) return false;
 
         int n1 = condPane.getTerm().getPointsNum();
-        int n2 = dp.getPointSize();
+        int n2 = dp.getNumberOfPoints();
 
         if (n2 < n1 && dp.getPt(n1) == null) {
             JOptionPane.showMessageDialog(gxInstance, getLanguage(1008, "Please Construct the Diagram First!"),

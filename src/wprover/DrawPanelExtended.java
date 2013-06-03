@@ -17,15 +17,19 @@ public class DrawPanelExtended extends DrawPanel {
     private Timer cons_timer;
     double PX, PY;
 
+    public DrawPanelExtended(final DrawPanelFrame dpf) {
+    	super(dpf);
+    }
+    
     public boolean inConstruction() {
         if (gt == null)
             return false;
 
         int n = gt.getCons_no();
-        return nd > 1 && nd < n && n > 0;
+        return nd > 1 && nd < n;
     }
 
-    public boolean isConsFinished() {
+    public boolean isConstructionFinished() {
         if (gt == null)
             return true;
 
@@ -34,40 +38,31 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     public void setConstructLines(gterm g) {
-        cleardText();
-        this.clearAll();
-        this.gt = g;
+        initialize();
+        gt = g;
         nd = 1;
     }
 
-    public void cleardText() {
-        gt = null;
-        nd = 1;
-    }
 
     public boolean animateDiagramFromString(String s) {
         Animation an = new Animation();
-        if (false == an.loadAnimationString(s, this)) {
+        if (an.loadAnimationString(s, this)) {
+            if (gxInstance != null)
+                gxInstance.toggleButton(true);
+            animate = an;
+            autoAnimate();
+            return true;
+        } else {
             gxInstance.toggleButton(false);
             return false;
-        } else {
-            if (gxInstance != null) {
-                gxInstance.toggleButton(true);
-            }
         }
 
-        animate = an;
-        this.autoAnimate();
-        return true;
     }
 
     public void autoConstruct(gterm g) {
+        setConstructLines(g);
 
-        cleardText();
-        this.clearAll();
-        this.gt = g;
-
-        this.SetCurrentAction(CONSTRUCT_FROM_TEXT);
+        SetCurrentAction(CONSTRUCT_FROM_TEXT);
 
         if (cons_timer != null)
             cons_timer.stop();
@@ -90,24 +85,24 @@ public class DrawPanelExtended extends DrawPanel {
 
         if (n == 0) {
             while (true) {
-                this.mouseDown(0, 0, true);
-                this.reCalculate();
-                if (isConsFinished())
+                mouseDown(0, 0, true);
+                reCalculate();
+                if (isConstructionFinished())
                     break;
             }
         } else if (n == 1) {
 
             cons_timer = new Timer(2000, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (!DrawPanelExtended.this.isConsFinished()) {
+                    if (!isConstructionFinished()) {
                         int index = nd;
                         Pro_point pt = gterm().getProPoint(index);
                         if (pt != null) {
-                            DrawPanelExtended.this.mouseDown(pt.getX(), pt.getY());
+                            mouseDown(pt.getX(), pt.getY());
                         }
                     } else {
                         ((Timer) e.getSource()).stop();
-                        DrawPanelExtended.this.mouseDown(0, 0); // for conclusion.
+                        	mouseDown(0, 0); // for conclusion.
                     }
                     panel.repaint();
                 }
@@ -116,45 +111,8 @@ public class DrawPanelExtended extends DrawPanel {
         }
     }
 
-//    public void writePointPosition(FileOutputStream out) throws IOException {
-//        int n = pointlist.size();
-//        for (int i = 0; i < n; i++) {
-//            GEPoint p = pointlist.get(i);
-//            out.write(p.toString().getBytes());
-//            int x = (int) p.getx();
-//            int y = (int) p.gety();
-//            GEText ct = p.getNametag();
-//            Point p1 = ct.getLocation();
-//            if (p1 == null) {
-//                out.write(("(" + x + "," + y + ")  ").getBytes());
-//            } else {
-//                out.write(("(" + x).getBytes());
-//                int tx = p1.x;
-//                if (tx >= 0) {
-//                    out.write("+".getBytes());
-//                }
-//                out.write((new Integer(tx).toString() + "," +
-//                        new Integer(y).toString()).getBytes());
-//                int ty = p1.y;
-//                if (ty >= 0) {
-//                    out.write("+".getBytes());
-//                }
-//                out.write((new Integer(ty).toString() + ")  ").getBytes());
-//            }
-//            if (i != n - 1 && i > 0 && i % 4 == 0) {
-//                out.write("\n".getBytes());
-//            }
-//        }
-//        if (animate != null) {
-//            String s = animate.getAnimationString();
-//            if (s != null) {
-//                out.write(s.getBytes());
-//            }
-//        }
-//    }
-
     public void addAuxPoint(auxpt ax) {
-        if (this.isConsFinished()) {
+        if (isConstructionFinished()) {
             int act = gxInstance.dp.CurrentAction;
 
             DrawData.setAuxStatus();
@@ -175,9 +133,9 @@ public class DrawPanelExtended extends DrawPanel {
                 int n = pointlist.size();
                 int nn = nd;
                 while (nn == nd)
-                    this.pointAdded(cs, cs.type, cs.ps, true, nd, pt.getX(), pt.getY(), null, cs.pss);
+                    pointAdded(cs, cs.type, cs.ps, true, nd, pt.getX(), pt.getY(), null, cs.pss);
                 if (pointlist.size() > n) {
-                    GEPoint c = this.getLastConstructedPoint();
+                    GEPoint c = getLastConstructedPoint();
                     decoratePointAsRecentlyConstructed(c);
                 }
             }
@@ -195,10 +153,8 @@ public class DrawPanelExtended extends DrawPanel {
     public boolean addFreePt(cons c) {
         int[] pp = c.ps;
         for (int i = 0; i < pp.length && pp[i] != 0; i++) {
-            if (isFreePoint(pp[i])) {
-                if (null != addPt(pp[i]))
-                	return true;
-            }
+            if (isFreePoint(pp[i]) && addPt(pp[i]) != null)
+                return true;
         }
         return false;
     }
@@ -238,7 +194,7 @@ public class DrawPanelExtended extends DrawPanel {
         GEPoint pt = getPt(p1);
         ln.add(pt);
         Constraint cs = new Constraint(Constraint.PONLINE, pt, ln, false);
-        this.addConstraintToList(cs);
+        addConstraintToList(cs);
     }
 
     public void mouseDown(double x, double y) {
@@ -246,7 +202,6 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     public void mouseDown(double x, double y, boolean cc) {
-
         if (CurrentAction == CONSTRUCT_FROM_TEXT) {
             PX = x;
             PY = y;
@@ -261,7 +216,7 @@ public class DrawPanelExtended extends DrawPanel {
                         pointAdded(pt, type, pp, cc, index, x, y, cp, pt.pss);
 
                         if (index != nd)
-                            this.UndoAdded(pt.toDString(), false);
+                            UndoAdded(pt.toDString(), false);
                     } else {
                         addCondAux(gterm().getConclusion(), false);
                         cond cc1 = gterm().getConc();
@@ -270,11 +225,11 @@ public class DrawPanelExtended extends DrawPanel {
                             String s = gterm().getAnimateString();
                             animateDiagramFromString(s);
                         }
-                        this.UndoAdded(pt.toString(), false);
+                        UndoAdded(pt.toString(), false);
                         finishConstruction();
                         nd++;
                     }
-                    gxInstance.getpprove().setListSelection(pt);
+                    gxInstance.getProofPanel().setListSelection(pt);
                 } else finishConstruction();
             } else if (addPt2(gt.getPointsNum()) == null)
                 finishConstruction();
@@ -296,11 +251,11 @@ public class DrawPanelExtended extends DrawPanel {
             case gddbase.C_FOOT: {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.PFOOT, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     addLn(pp[0], pp[1]);
                     addLn(pp[2], pp[3]);
                     addPt2Line(pp[0], pp[2], pp[3]);
-                    this.charsetAndAddPoly(cc);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -308,11 +263,11 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.CO_MIDP:
             case gddbase.C_MIDPOINT: {
                 if (!addGTPt(pt)) {
-                    this.addLn(pp[1], pp[2]);
+                    addLn(pp[1], pp[2]);
                     Constraint cs = new Constraint(Constraint.MIDPOINT, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]));
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     addPt2Line(pp[0], pp[1], pp[2]);
-                    this.charsetAndAddPoly(cc);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -322,14 +277,14 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     GECircle c = null;
                     if ((c = fd_circle(pp[1], pp[2])) == null) { // add circle
-                        this.addCr(pp[1], pp[2]);
+                        addCr(pp[1], pp[2]);
                     } else {
                         cp = getPt(pp[0]);
                         Constraint cs = new Constraint(Constraint.PONCIRCLE, cp, c);
                         c.add(cp);
                         c.pointStickToCircle(cp);
-                        this.charsetAndAddPoly(cc);
-                        this.addConstraintToList(cs);
+                        characteristicSetMethodAndAddPoly(cc);
+                        addConstraintToList(cs);
                         nd++;
                     }
                 }
@@ -338,12 +293,12 @@ public class DrawPanelExtended extends DrawPanel {
             case gddbase.C_O_P: {
                 if (!addGTPt(pt)) {
                     GELine lp = null;
-                    if ((lp = this.fd_p_line(pp[1], pp[2], pp[3])) == null) {
-                        lp = this.addPLn(pp[1], pp[2], pp[3]);
+                    if ((lp = fd_p_line(pp[1], pp[2], pp[3])) == null) {
+                        lp = addPLn(pp[1], pp[2], pp[3]);
                     }
                     {
-                        this.addPointToLine(getPt(pp[0]), lp, false);
-                        this.charsetAndAddPoly(cc);
+                        addPointToLine(getPt(pp[0]), lp, false);
+                        characteristicSetMethodAndAddPoly(cc);
                         nd++;
                     }
                 }
@@ -352,35 +307,35 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_O_B: {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.PERPBISECT, fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]));
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
             break;
             case gddbase.C_O_L: {
                 if (!addGTPt(pt)) {
-                    GELine ln = this.addLn(pp[1], pp[2]);
+                    GELine ln = addLn(pp[1], pp[2]);
                     cp = getPt(pp[0]);
                     Constraint cs = new Constraint(Constraint.PONLINE, cp, ln);
                     ln.pointonline(cp);
-                    this.charsetAndAddPoly(cc);
+                    characteristicSetMethodAndAddPoly(cc);
                     ln.pointonline(cp);
                     ln.add(cp);
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     nd++;
                 }
             }
             break;
             case gib.C_O_D: {
                 if (!addGTPt(pt)) {
-                    this.addLn(pp[1], pp[2]);
+                    addLn(pp[1], pp[2]);
                     cp = getPt(pp[0]);
                     Constraint cs = new Constraint(Constraint.ONDCIRCLE, cp, getPt(pp[1]), getPt(pp[2]));
                     addLn(pp[0], pp[1]);
                     addLn(pp[0], pp[2]);
-                    this.charsetAndAddPoly(cc);
-                    this.addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
+                    addConstraintToList(cs);
                     nd++;
                 }
             }
@@ -390,9 +345,9 @@ public class DrawPanelExtended extends DrawPanel {
                     cp = getPt(pp[0]);
                     Constraint cs = new Constraint(Constraint.EQDISTANCE, cp, getPt(pp[1]), cp, getPt(pp[2]));
                     Constraint cs1 = new Constraint(Constraint.EQDISTANCE, cp, getPt(pp[3]), getPt(pp[4]), getPt(pp[5]));
-                    this.charsetAndAddPoly(cc);
-                    this.addConstraintToList(cs);
-                    this.addConstraintToList(cs1);
+                    characteristicSetMethodAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    addConstraintToList(cs1);
                     nd++;
                 }
             }
@@ -401,34 +356,34 @@ public class DrawPanelExtended extends DrawPanel {
             case gddbase.C_I_LL: {
                 if (!addGTPt(pt)) {
                     cp = getPt(pp[0]);
-                    GELine ln = this.addLn(pp[1], pp[2]);
-                    GELine ln1 = this.addLn(pp[3], pp[4]);
+                    GELine ln = addLn(pp[1], pp[2]);
+                    GELine ln1 = addLn(pp[3], pp[4]);
                     Constraint cs = new Constraint(Constraint.PONLINE, cp, ln, false);
                     ln.add(cp);
                     Constraint cs1 = new Constraint(Constraint.PONLINE, cp, ln1, false);
                     ln1.add(cp);
                     Constraint csx = new Constraint(Constraint.INTER_LL, cp, ln, ln1);
-                    this.charsetAndAddPoly(cc);
-                    this.addConstraintToList(csx);
-                    this.addConstraintToList(cs);
-                    this.addConstraintToList(cs1);
+                    characteristicSetMethodAndAddPoly(cc);
+                    addConstraintToList(csx);
+                    addConstraintToList(cs);
+                    addConstraintToList(cs1);
                     nd++;
                 }
             }
             break;
             case gddbase.C_I_LP: {
-                GELine ln = this.addLn(pp[1], pp[2]);
+                GELine ln = addLn(pp[1], pp[2]);
                 GELine lp;
-                if ((lp = this.fd_p_line(pp[3], pp[4], pp[5])) == null) {
-                    this.addPLn(pp[3], pp[4], pp[5]);
+                if ((lp = fd_p_line(pp[3], pp[4], pp[5])) == null) {
+                    addPLn(pp[3], pp[4], pp[5]);
                 } else {
                     if (!addGTPt(pt)) {
                         cp = getPt(pp[0]);
                         Constraint cs = new Constraint(Constraint.PONLINE, cp, ln);
                         lp.add(cp);
-                        this.addPointToLine(cp, lp, false);
-                        this.charsetAndAddPoly(cc);
-                        this.addConstraintToList(cs);
+                        addPointToLine(cp, lp, false);
+                        characteristicSetMethodAndAddPoly(cc);
+                        addConstraintToList(cs);
                         nd++;
                     }
                 }
@@ -437,16 +392,16 @@ public class DrawPanelExtended extends DrawPanel {
 
             case gddbase.C_I_PP: {
                 GELine lp1, lp2;
-                if ((lp1 = this.fd_p_line(pp[1], pp[2], pp[3])) == null) {
-                    this.addPLn(pp[1], pp[2], pp[3]);
-                } else if ((lp2 = this.fd_p_line(pp[4], pp[5], pp[6])) == null) {
-                    this.addPLn(pp[4], pp[5], pp[6]);
+                if ((lp1 = fd_p_line(pp[1], pp[2], pp[3])) == null) {
+                    addPLn(pp[1], pp[2], pp[3]);
+                } else if ((lp2 = fd_p_line(pp[4], pp[5], pp[6])) == null) {
+                    addPLn(pp[4], pp[5], pp[6]);
                 } else {
                     if (!addGTPt(pt)) {
                         cp = getPt(pp[0]);
-                        this.addPointToLine(cp, lp1, false);
-                        this.addPointToLine(cp, lp2, false);
-                        charsetAndAddPoly(cc);
+                        addPointToLine(cp, lp1, false);
+                        addPointToLine(cp, lp2, false);
+                        characteristicSetMethodAndAddPoly(cc);
                         nd++;
                     }
                 }
@@ -459,11 +414,11 @@ public class DrawPanelExtended extends DrawPanel {
                     GEPoint p3 = getPt(pp[3]);
                     cp = getPt(pp[0]);
                     Constraint cs = new Constraint(Constraint.CIRCUMCENTER, cp, p1, p2, p3);
-                    this.addConstraintToList(cs);
-                    GECircle c = this.addCr(pp[0], pp[1]);
+                    addConstraintToList(cs);
+                    GECircle c = addCr(pp[0], pp[1]);
                     c.add(p2);
                     c.add(p3);
-                    this.charsetAndAddPoly(cc);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -471,26 +426,26 @@ public class DrawPanelExtended extends DrawPanel {
             case gddbase.C_I_CC: {
                 if (!addGTPt(pt)) {
                     cp = getPt(pp[0]);
-                    GECircle c1 = this.ad_circle(pp[1], pp[2]);
-                    GECircle c2 = this.ad_circle(pp[3], pp[4]);
+                    GECircle c1 = ad_circle(pp[1], pp[2]);
+                    GECircle c2 = ad_circle(pp[3], pp[4]);
                     HashSet<GEPoint> vset = GECircle.CommonPoints(c1, c2);
                     if (vset.size() == 1) {
                         GEPoint t = vset.iterator().next();
                         Constraint cs = new Constraint(Constraint.INTER_CC1, cp, t, c1, c2);
                         c1.add(cp);
                         c2.add(cp);
-                        this.charsetAndAddPoly(cc);
-                        this.addConstraintToList(cs);
+                        characteristicSetMethodAndAddPoly(cc);
+                        addConstraintToList(cs);
                     } else if (vset.isEmpty()) {
                         Constraint cs1 = new Constraint(Constraint.PONCIRCLE, cp, c1, false);
                         Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c2, false);
                         Constraint cs = new Constraint(Constraint.INTER_CC, cp, c1, c2);
-                        this.addConstraintToList(cs1);
-                        this.addConstraintToList(cs2);
-                        this.addConstraintToList(cs);
+                        addConstraintToList(cs1);
+                        addConstraintToList(cs2);
+                        addConstraintToList(cs);
                         c1.add(cp);
                         c2.add(cp);
-                        this.charsetAndAddPoly(true);
+                        characteristicSetMethodAndAddPoly(true);
                     }
                     nd++;
                 }
@@ -498,8 +453,8 @@ public class DrawPanelExtended extends DrawPanel {
             break;
             case gddbase.C_I_LC: {
                 if (!addGTPt(pt)) {
-                    GELine ln = this.addLn(pp[1], pp[2]);
-                    GECircle c = this.ad_circle(pp[3], pp[4]);
+                    GELine ln = addLn(pp[1], pp[2]);
+                    GECircle c = ad_circle(pp[3], pp[4]);
                     GEPoint p, p1;
                     p = p1 = null;
                     cp = getPt(pp[0]);
@@ -517,20 +472,20 @@ public class DrawPanelExtended extends DrawPanel {
                         return;
                     } else if (p != null && p1 == null) {
                         Constraint css = new Constraint(Constraint.LC_MEET, cp, p, ln, c);
-                        this.charsetAndAddPoly(cc);
-                        this.addConstraintToList(css);
+                        characteristicSetMethodAndAddPoly(cc);
+                        addConstraintToList(css);
                         ln.add(cp);
                         c.add(cp);
                     } else {
                         Constraint cs1 = new Constraint(Constraint.PONCIRCLE, cp, c, false);
                         Constraint cs2 = new Constraint(Constraint.PONLINE, cp, ln, false);
                         Constraint cs = new Constraint(Constraint.INTER_LC, cp, ln, c);
-                        this.addConstraintToList(cs1);
-                        this.addConstraintToList(cs2);
-                        this.addConstraintToList(cs);
+                        addConstraintToList(cs1);
+                        addConstraintToList(cs2);
+                        addConstraintToList(cs);
                         ln.add(cp);
                         c.add(cp);
-                        this.charsetAndAddPoly(true);
+                        characteristicSetMethodAndAddPoly(true);
                     }
                     nd++;
                 }
@@ -538,14 +493,14 @@ public class DrawPanelExtended extends DrawPanel {
             break;
             case gddbase.C_I_LT: {
                 if (!addGTPt(pt)) {
-                    GELine ln = this.addLn(pp[1], pp[2]);
-                    //CLine ln1 = this.addLn(pp[4], pp[5]);
-                    //CLine lnt = this.addLn(pp[0], pp[3]);
+                    GELine ln = addLn(pp[1], pp[2]);
+                    //CLine ln1 = addLn(pp[4], pp[5]);
+                    //CLine lnt = addLn(pp[0], pp[3]);
                     Constraint cs = new Constraint(Constraint.PERPENDICULAR, fd_point(pp[0]), fd_point(pp[3]), fd_point(pp[4]), fd_point(pp[5]));
                     GEPoint p = fd_point(pp[0]);
-                    this.addPointToLine(p, ln, false);
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addPointToLine(p, ln, false);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -553,13 +508,13 @@ public class DrawPanelExtended extends DrawPanel {
 
             case gib.C_O_T: {
                 if (!addGTPt(pt)) {
-                    GELine ln = this.addLn(pp[0], pp[1]);
-                    GELine ln1 = this.addLn(pp[2], pp[3]);
+                    GELine ln = addLn(pp[0], pp[1]);
+                    GELine ln1 = addLn(pp[2], pp[3]);
                     Constraint cs = new Constraint(Constraint.PERPENDICULAR, ln, ln1);
-                    this.addConstraintToList(cs);
-                    this.addLineToList(ln);
-                    this.addLineToList(ln1);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    addLineToList(ln);
+                    addLineToList(ln1);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -574,11 +529,11 @@ public class DrawPanelExtended extends DrawPanel {
                         addLn(pp[4], pp[5]);
                     {
                         cp = getPt(pp[0]);
-                        this.addLn(pp[1], pp[0]);
+                        addLn(pp[1], pp[0]);
                         Constraint cs = new Constraint(Constraint.ONALINE, fd_point(pp[0]), fd_point(pp[1]),
                                 fd_point(pp[2]), fd_point(pp[3]), fd_point(pp[4]), fd_point(pp[5]));
-                        this.addConstraintToList(cs);
-                        this.charsetAndAddPoly(cc);
+                        addConstraintToList(cs);
+                        characteristicSetMethodAndAddPoly(cc);
                         nd++;
                     }
                 }
@@ -595,8 +550,8 @@ public class DrawPanelExtended extends DrawPanel {
                         Constraint cs = new Constraint(Constraint.ONRCIRCLE, cp, getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
                         c.add(cp);
                         c.pointStickToCircle(cp);
-                        this.charsetAndAddPoly(cc);
-                        this.addConstraintToList(cs);
+                        characteristicSetMethodAndAddPoly(cc);
+                        addConstraintToList(cs);
                         nd++;
                     }
                 }
@@ -605,19 +560,19 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_O_S: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.ONSCIRCLE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
                 break;
             }
             case gib.C_O_AB: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.ONSCIRCLE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.addLn(pp[1], pp[2]);
-                this.addLn(pp[0], pp[2]);
-                this.addLn(pp[3], pp[2]);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                addLn(pp[1], pp[2]);
+                addLn(pp[0], pp[2]);
+                addLn(pp[3], pp[2]);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
                 break;
             }
@@ -626,22 +581,22 @@ public class DrawPanelExtended extends DrawPanel {
                 Constraint cs1 = new Constraint(Constraint.PSQUARE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]));
                 Constraint cs2 = new Constraint(Constraint.NSQUARE, getPt(pp[1]), getPt(pp[0]), getPt(pp[3]));
                 Constraint cs = new Constraint(Constraint.SQUARE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.addConstraintToList(cs1);
-                this.addConstraintToList(cs2);
-                this.addLn(pp[0], pp[1]);
-                this.addLn(pp[1], pp[2]);
-                this.addLn(pp[2], pp[3]);
-                this.addLn(pp[3], pp[0]);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                addConstraintToList(cs1);
+                addConstraintToList(cs2);
+                addLn(pp[0], pp[1]);
+                addLn(pp[1], pp[2]);
+                addLn(pp[2], pp[3]);
+                addLn(pp[3], pp[0]);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
                 break;
             }
             case gib.C_ISO_TRI: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.ISO_TRIANGLE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[0]);
@@ -656,21 +611,21 @@ public class DrawPanelExtended extends DrawPanel {
                 Constraint cs = new Constraint(Constraint.PETRIANGLE, p0, p1, p2);
 //                            constraint cs1 = new constraint(constraint.EQDISTANCE, p0, p1, p0, p2, false);
 //                            constraint cs2 = new constraint(constraint.EQDISTANCE, p1, p0, p1, p2, false);
-                this.addConstraintToList(cs);
-//                            this.addConstraintToList(cs1);
-//                            this.addConstraintToList(cs2);
+                addConstraintToList(cs);
+//                            addConstraintToList(cs1);
+//                            addConstraintToList(cs2);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[0]);
-                this.charsetAndAddPoly(cc);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
                 break;
             }
             case gib.C_R_TRI: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.RIGHT_ANGLED_TRIANGLE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[0]);
@@ -680,8 +635,8 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_R_TRAPEZOID: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.RIGHT_ANGLE_TRAPEZOID, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[3]);
@@ -692,8 +647,8 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_TRAPEZOID: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.TRAPEZOID, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[3]);
@@ -704,8 +659,8 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_PARALLELOGRAM: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.PARALLELOGRAM, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[3]);
@@ -716,8 +671,8 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_RECTANGLE: {
                 while (addGTPt(pt)) ;
                 Constraint cs = new Constraint(Constraint.RECTANGLE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 addLn(pp[0], pp[1]);
                 addLn(pp[1], pp[2]);
                 addLn(pp[2], pp[3]);
@@ -729,7 +684,7 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     addAllLn(pp);
                     Constraint cs = new Constraint(Constraint.TRIANGLE, SelectList);
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     nd++;
                     SelectList.clear();
                 }
@@ -739,7 +694,7 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     addAllLn(pp);
                     Constraint cs = new Constraint(Constraint.QUADRANGLE, SelectList);
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     nd++;
                     SelectList.clear();
                 }
@@ -749,7 +704,7 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     addAllLn(pp);
                     Constraint cs = new Constraint(Constraint.PENTAGON, SelectList);
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     nd++;
                     SelectList.clear();
                 }
@@ -759,7 +714,7 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     addAllLn(pp);
                     Constraint cs = new Constraint(Constraint.POLYGON, SelectList);
-                    this.addConstraintToList(cs);
+                    addConstraintToList(cs);
                     nd++;
                     SelectList.clear();
                 }
@@ -769,10 +724,10 @@ public class DrawPanelExtended extends DrawPanel {
                 break;
             case gib.C_REF: {
                 cp = addPt(index, x, y);
-                GELine ln = this.findLineGivenTwoPoints(getPt(pp[3]), getPt(pp[4]));
-                Constraint cs = new Constraint(Constraint.MIRROR, cp, this.getPt(pp[1]), ln);
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                GELine ln = findLineGivenTwoPoints(getPt(pp[3]), getPt(pp[4]));
+                Constraint cs = new Constraint(Constraint.MIRROR, cp, getPt(pp[1]), ln);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
             }
             break;
@@ -780,8 +735,8 @@ public class DrawPanelExtended extends DrawPanel {
                 cp = addPt(index);
                 Constraint cs = new Constraint(Constraint.SYMPOINT, cp,
                         getPt(pp[0]), getPt(pp[1]));
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
 
             }
@@ -789,17 +744,17 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_I_RR: {
                 while (addGTPt(pt)) ;
                 cp = fd_point(pp[0]);
-                GEPoint o = this.fd_point(pp[1]);
-                GEPoint a = this.fd_point(pp[2]);
-                GEPoint b = this.fd_point(pp[3]);
+                GEPoint o = fd_point(pp[1]);
+                GEPoint a = fd_point(pp[2]);
+                GEPoint b = fd_point(pp[3]);
                 Constraint cs = new Constraint(Constraint.EQDISTANCE, cp, o, a, b);
-                GEPoint o1 = this.fd_point(pp[4]);
-                GEPoint a1 = this.fd_point(pp[5]);
-                GEPoint b1 = this.fd_point(pp[6]);
+                GEPoint o1 = fd_point(pp[4]);
+                GEPoint a1 = fd_point(pp[5]);
+                GEPoint b1 = fd_point(pp[6]);
                 Constraint cs1 = new Constraint(Constraint.EQDISTANCE, cp, o1, a1, b1);
-                this.addConstraintToList(cs);
-                this.addConstraintToList(cs1);
-                this.charsetAndAddPoly(cc);
+                addConstraintToList(cs);
+                addConstraintToList(cs1);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
             }
             break;
@@ -808,14 +763,14 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_I_LR: {
                 while (addGTPt(pt)) ;
                 {
-                    cp = this.fd_point(pp[0]);
-                    GEPoint o = this.fd_point(pp[3]);
-                    GEPoint a = this.fd_point(pp[4]);
-                    GEPoint b = this.fd_point(pp[5]);
+                    cp = fd_point(pp[0]);
+                    GEPoint o = fd_point(pp[3]);
+                    GEPoint a = fd_point(pp[4]);
+                    GEPoint b = fd_point(pp[5]);
                     Constraint cs = new Constraint(Constraint.EQDISTANCE, cp, o, a, b);
-                    this.addConstraintToList(cs);
-                    this.addPointToLine(cp, addLn(pp[1], (pp[2])), false);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    addPointToLine(cp, addLn(pp[1], (pp[2])), false);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
                 break;
@@ -823,14 +778,14 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_I_TC: {
                 while (addGTPt(pt)) ;
                 {
-                    GELine lp1 = this.addTLn(pp[1], pp[2], pp[3]);
-                    GECircle c1 = this.ad_circle(pp[4], pp[5]);
+                    GELine lp1 = addTLn(pp[1], pp[2], pp[3]);
+                    GECircle c1 = ad_circle(pp[4], pp[5]);
                     cp = fd_point(pp[0]);
-//                                this.MeetLCToDefineAPoint(lp1,c1,false,0,0);
-                    this.addPointToLine(cp, lp1, false);
+//                                MeetLCToDefineAPoint(lp1,c1,false,0,0);
+                    addPointToLine(cp, lp1, false);
                     Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c1);
-                    this.addConstraintToList(cs2);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -840,12 +795,12 @@ public class DrawPanelExtended extends DrawPanel {
                     while (addGTPt(pt)) ;
                     addLn(pp[0], pp[1]);
                     addLn(pp[2], pp[3]);
-                    GECircle c = this.add_rcircle(pp[4], pp[5], pp[6]);
+                    GECircle c = add_rcircle(pp[4], pp[5], pp[6]);
                     cp = fd_point(pp[0]);
                     Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c);
                     //constraint cs1 = new constraint(constraint.PERPENDICULAR, fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]), fd_point(pp[3]));
-                    this.addConstraintToList(cs2);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -856,13 +811,13 @@ public class DrawPanelExtended extends DrawPanel {
                     while (addGTPt(pt)) ;
                     GELine lp1 = null;
                     GECircle c1 = null;
-                    lp1 = this.addPLn(pp[1], pp[2], pp[3]);
-                    c1 = this.addCr(pp[4], pp[5]);
+                    lp1 = addPLn(pp[1], pp[2], pp[3]);
+                    c1 = addCr(pp[4], pp[5]);
                     cp = fd_point(pp[0]);
-                    this.addPointToLine(cp, lp1, false);
+                    addPointToLine(cp, lp1, false);
                     Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c1);
-                    this.addConstraintToList(cs2);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -872,12 +827,12 @@ public class DrawPanelExtended extends DrawPanel {
                 lp1 = lp2 = null;
                 {
                     while (addGTPt(pt)) ;
-                    lp1 = this.addTLn(pp[1], pp[2], pp[3]);
-                    lp2 = this.addTLn(pp[4], pp[5], pp[6]);
+                    lp1 = addTLn(pp[1], pp[2], pp[3]);
+                    lp2 = addTLn(pp[4], pp[5], pp[6]);
                     cp = fd_point(pp[0]);
-                    this.addPointToLine(cp, lp1, false);
-                    this.addPointToLine(cp, lp2, false);
-                    charsetAndAddPoly(cc);
+                    addPointToLine(cp, lp1, false);
+                    addPointToLine(cp, lp2, false);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
 
@@ -888,12 +843,12 @@ public class DrawPanelExtended extends DrawPanel {
                 lp1 = lp2 = null;
                 while (addGTPt(pt)) ;
                 {
-                    lp1 = this.addPLn(pp[1], pp[2], pp[3]);
-                    lp2 = this.addTLn(pp[4], pp[5], pp[6]);
+                    lp1 = addPLn(pp[1], pp[2], pp[3]);
+                    lp2 = addTLn(pp[4], pp[5], pp[6]);
                     cp = fd_point(pp[0]);
-                    this.addPointToLine(cp, lp1, false);
-                    this.addPointToLine(cp, lp2, false);
-                    charsetAndAddPoly(cc);
+                    addPointToLine(cp, lp1, false);
+                    addPointToLine(cp, lp2, false);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -903,21 +858,21 @@ public class DrawPanelExtended extends DrawPanel {
                 {
                     ln = addLn(pp[1], pp[2]);
                     cp = fd_point(pp[0]);
-                    GECircle c2 = this.fd_circle(pp[3], pp[4], pp[5]);
-                    GEPoint pi = this.lcmeet(c2, ln);
+                    GECircle c2 = fd_circle(pp[3], pp[4], pp[5]);
+                    GEPoint pi = lcmeet(c2, ln);
                     if (pi == null) {
                         Constraint cs = new Constraint(Constraint.PONLINE, cp, ln);
                         Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c2);
-                        this.addConstraintToList(cs);
-                        this.addConstraintToList(cs2);
-                        this.charsetAndAddPoly(cc);
+                        addConstraintToList(cs);
+                        addConstraintToList(cs2);
+                        characteristicSetMethodAndAddPoly(cc);
                     } else {
-                        if (this.lcmeet(c2, ln, pi) != null) {
+                        if (lcmeet(c2, ln, pi) != null) {
                             return;
                         }
                         Constraint cs = new Constraint(Constraint.LC_MEET, cp, pi, ln, c2);
-                        this.charsetAndAddPoly(cc);
-                        this.addConstraintToList(cs);
+                        characteristicSetMethodAndAddPoly(cc);
+                        addConstraintToList(cs);
                     }
                     nd++;
                 }
@@ -925,23 +880,23 @@ public class DrawPanelExtended extends DrawPanel {
             }
             break;
             case gib.C_I_SS: {
-                GECircle c1 = this.fd_circle(pp[1], pp[2], pp[3]);
-                GECircle c2 = this.fd_circle(pp[4], pp[5], pp[6]);
+                GECircle c1 = fd_circle(pp[1], pp[2], pp[3]);
+                GECircle c2 = fd_circle(pp[4], pp[5], pp[6]);
                 HashSet<GEPoint> s = GECircle.CommonPoints(c1, c2);
                 if (s.isEmpty()) {
                     cp = addPt(index, x, y);
                     Constraint cs = new Constraint(Constraint.PONCIRCLE, cp, c1);
                     Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c2);
-                    this.charsetAndAddPoly(cc);
-                    this.addConstraintToList(cs);
-                    this.addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    addConstraintToList(cs2);
                     nd++;
                 } else if (s.size() == 1) {
                     cp = addPt(index);
                     GEPoint pi = s.iterator().next();
                     Constraint cs = new Constraint(Constraint.INTER_CC1, cp, pi, c1, c2);
-                    this.charsetAndAddPoly(cc);
-                    this.addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
+                    addConstraintToList(cs);
                     nd++;
                 } else {
                     cp = addPt(index);
@@ -956,16 +911,16 @@ public class DrawPanelExtended extends DrawPanel {
                 lp1 = null;
                 while (addGTPt(pt)) ;
 
-                if ((lp1 = this.findLineGivenTwoPointIndices(pp[1], pp[2])) == null) {
-                    this.addLn(pp[1], pp[2]);
-                } else if ((this.findLineGivenTwoPointIndices(pp[4], pp[5])) == null) {
-                    this.addLn(pp[4], pp[5]);
+                if ((lp1 = findLineGivenTwoPointIndices(pp[1], pp[2])) == null) {
+                    addLn(pp[1], pp[2]);
+                } else if ((findLineGivenTwoPointIndices(pp[4], pp[5])) == null) {
+                    addLn(pp[4], pp[5]);
                 } else {
                     cp = fd_point(pp[0]);
-                    this.addPointToLine(cp, lp1, false);
+                    addPointToLine(cp, lp1, false);
                     Constraint cs = new Constraint(Constraint.PERPBISECT, cp, fd_point(pp[3]), fd_point(pp[4]), fd_point(pp[5]));
-                    this.addConstraintToList(cs);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -974,17 +929,17 @@ public class DrawPanelExtended extends DrawPanel {
                 GELine lp1, lp2;
                 lp1 = lp2 = null;
                 while (addGTPt(pt)) ;
-                if ((lp1 = this.fd_t_line(pp[1], pp[2], pp[3])) == null) {
-                    this.addLn(pp[1], pp[2]);
-                } else if ((lp2 = this.findLineGivenTwoPointIndices(pp[4], pp[5])) == null) {
-                    this.addLn(pp[4], pp[5]);
+                if ((lp1 = fd_t_line(pp[1], pp[2], pp[3])) == null) {
+                    addLn(pp[1], pp[2]);
+                } else if ((lp2 = findLineGivenTwoPointIndices(pp[4], pp[5])) == null) {
+                    addLn(pp[4], pp[5]);
                 } else {
                     cp = fd_point(pp[0]);
                     Constraint cs1 = new Constraint(Constraint.PERPBISECT, lp1, lp2);
                     Constraint cs2 = new Constraint(Constraint.PERPBISECT, cp, fd_point(pp[3]), fd_point(pp[4]));
-                    this.addConstraintToList(cs1);
-                    this.addConstraintToList(cs2);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs1);
+                    addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -993,17 +948,17 @@ public class DrawPanelExtended extends DrawPanel {
                 GELine lp1, lp2;
                 lp1 = lp2 = null;
                 while (addGTPt(pt)) ;
-                if ((lp1 = this.fd_p_line(pp[1], pp[2], pp[3])) == null) {
-                    this.addPLn(pp[1], pp[2], pp[3]);
-                } else if ((lp2 = this.findLineGivenTwoPointIndices(pp[4], pp[5])) == null) {
-                    this.addLn(pp[4], pp[5]);
+                if ((lp1 = fd_p_line(pp[1], pp[2], pp[3])) == null) {
+                    addPLn(pp[1], pp[2], pp[3]);
+                } else if ((lp2 = findLineGivenTwoPointIndices(pp[4], pp[5])) == null) {
+                    addLn(pp[4], pp[5]);
                 } else {
                     cp = fd_point(pp[0]);
                     Constraint cs1 = new Constraint(Constraint.PARALLEL, lp1, lp2);
                     Constraint cs2 = new Constraint(Constraint.PERPBISECT, cp, fd_point(pp[3]), fd_point(pp[4]));
-                    this.addConstraintToList(cs1);
-                    this.addConstraintToList(cs2);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs1);
+                    addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -1012,14 +967,14 @@ public class DrawPanelExtended extends DrawPanel {
 //                CLine lp1, lp2;
 //                lp1 = lp2 = null;
                 {
-                    this.addLn(pp[1], pp[2]);
-                    this.addLn(pp[3], pp[4]);
+                    addLn(pp[1], pp[2]);
+                    addLn(pp[3], pp[4]);
                     if (!addGTPt(pt)) {
                         Constraint cs1 = new Constraint(Constraint.PERPBISECT, fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]));
                         Constraint cs2 = new Constraint(Constraint.PERPBISECT, fd_point(pp[0]), fd_point(pp[3]), fd_point(pp[4]));
-                        this.addConstraintToList(cs1);
-                        this.addConstraintToList(cs2);
-                        charsetAndAddPoly(cc);
+                        addConstraintToList(cs1);
+                        addConstraintToList(cs2);
+                        characteristicSetMethodAndAddPoly(cc);
                         nd++;
                     }
                 }
@@ -1029,18 +984,18 @@ public class DrawPanelExtended extends DrawPanel {
                 //CLine lp1 = null;
                 //Circle c1 = null;
                 while (addGTPt(pt)) ;
-                if ((this.findLineGivenTwoPointIndices(pp[1], pp[2])) == null) {
-                    this.addLn(pp[1], pp[2]);
-                } else if ((this.fd_circle(pp[3], pp[4])) == null) {
-                    this.addCr(pp[3], pp[4]);
+                if ((findLineGivenTwoPointIndices(pp[1], pp[2])) == null) {
+                    addLn(pp[1], pp[2]);
+                } else if ((fd_circle(pp[3], pp[4])) == null) {
+                    addCr(pp[3], pp[4]);
                 } else {
                     cp = fd_point(pp[0]);
                     Constraint cs1 = new Constraint(Constraint.PERPBISECT, cp, fd_point(pp[1]), fd_point(pp[2]));
-                    GECircle c = this.fd_circle(pp[1], pp[2]);
+                    GECircle c = fd_circle(pp[1], pp[2]);
                     Constraint cs2 = new Constraint(Constraint.PONCIRCLE, cp, c);
-                    this.addConstraintToList(cs1);
-                    this.addConstraintToList(cs2);
-                    charsetAndAddPoly(cc);
+                    addConstraintToList(cs1);
+                    addConstraintToList(cs2);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -1052,10 +1007,10 @@ public class DrawPanelExtended extends DrawPanel {
                 paraCounter++;
                 cp = addPt(index);
                 Constraint cs = new Constraint(Constraint.PETRIANGLE, fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]));
-                this.addLn(index, pp[1]);
-                this.addLn(index, pp[2]);
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(cc);
+                addLn(index, pp[1]);
+                addLn(index, pp[2]);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(cc);
                 nd++;
             }
             break;
@@ -1065,8 +1020,8 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.INCENTER,
                             fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]), fd_point(pp[3]));
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -1075,8 +1030,8 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     Constraint cs1 = new Constraint(Constraint.ORTHOCENTER,
                             fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]), fd_point(pp[3]));
-                    this.addConstraintToList(cs1);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs1);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
             }
@@ -1087,8 +1042,8 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.TRATIO, fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[2]), fd_point(pp[3]),
                             new Integer(pp[4]), new Integer(pp[5]));
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     addLn(pp[0], pp[1]);
                     nd++;
                 }
@@ -1098,8 +1053,8 @@ public class DrawPanelExtended extends DrawPanel {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.PRATIO, fd_point(pp[0]), fd_point(pp[1]),
                             fd_point(pp[2]), fd_point(pp[3]), new Integer(pp[4]), new Integer(pp[5]));
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     addLn(pp[0], pp[1]);
                     nd++;
                 }
@@ -1108,34 +1063,34 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.C_LRATIO: {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.LRATIO, fd_point(pp[0]), fd_point(pp[1]), fd_point(pp[3]), new Integer(pp[4]), new Integer(pp[5]));
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     addLn(pp[1], pp[3]);
                     nd++;
                 }
             }
             break;
             case gib.C_CONSTANT: {
-                param p = this.getANewParam();
+                param p = getANewParam();
                 Constraint cs = new Constraint(Constraint.CONSTANT, pss[0], pss[1], p);
-                this.addConstraintToList(cs);
-                this.charsetAndAddPoly(false);
+                addConstraintToList(cs);
+                characteristicSetMethodAndAddPoly(false);
                 nd++;
             }
             break;
             case gib.C_LINE:
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.LINE, getPt(pp[0]), getPt(pp[1]));
-                    this.addLn(pp[0], pp[1]);
-                    this.addConstraintToList(cs);
+                    addLn(pp[0], pp[1]);
+                    addConstraintToList(cs);
                     nd++;
                 }
                 break;
             case gib.C_CIRCLE:
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.CIRCLE, getPt(pp[0]), getPt(pp[1]));
-                    this.addCr(pp[0], pp[1]);
-                    this.addConstraintToList(cs);
+                    addCr(pp[0], pp[1]);
+                    addConstraintToList(cs);
                     nd++;
                     break;
                 }
@@ -1143,8 +1098,8 @@ public class DrawPanelExtended extends DrawPanel {
             {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.EQDISTANCE, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
                 break;
@@ -1163,41 +1118,41 @@ public class DrawPanelExtended extends DrawPanel {
                     GELine ln4 = addLn(pp[4], pp[5]);
                     GEAngle ag1 = new GEAngle(ln1, ln2, p1, p3);
                     GEAngle ag2 = new GEAngle(ln3, ln4, p4, p6);
-                    this.addAngleToList(ag1);
-                    this.addAngleToList(ag2);
+                    addAngleToList(ag1);
+                    addAngleToList(ag2);
                     Constraint cs = new Constraint(Constraint.EQANGLE, ag1, ag2);
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
                 break;
             }
             case gib.C_CCTANGENT: {
                 if (!addGTPt(pt)) {
-                    GECircle c1 = this.addCr(pp[1], pp[2]);
-                    GECircle c2 = this.addCr(pp[4], pp[5]);
+                    GECircle c1 = addCr(pp[1], pp[2]);
+                    GECircle c2 = addCr(pp[4], pp[5]);
                     Constraint cs = new Constraint(Constraint.CCTANGENT, c1, c2);
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
                 break;
             }
             case gib.C_EQANGLE3P: {
                 if (!addGTPt(pt)) {
-                    GELine l1 = this.addLn(pp[0], pp[1]);
-                    GELine l2 = this.addLn(pp[1], pp[2]);
-                    GELine l3 = this.addLn(pp[3], pp[4]);
-                    GELine l4 = this.addLn(pp[4], pp[5]);
-                    GELine l5 = this.addLn(pp[6], pp[7]);
-                    GELine l6 = this.addLn(pp[7], pp[8]);
-                    GEAngle ag1 = new GEAngle(l1, l2, this.fd_point(pp[0]), fd_point(pp[2]));
-                    GEAngle ag2 = new GEAngle(l3, l4, this.fd_point(pp[3]), fd_point(pp[5]));
-                    GEAngle ag3 = new GEAngle(l5, l6, this.fd_point(pp[6]), fd_point(pp[8]));
+                    GELine l1 = addLn(pp[0], pp[1]);
+                    GELine l2 = addLn(pp[1], pp[2]);
+                    GELine l3 = addLn(pp[3], pp[4]);
+                    GELine l4 = addLn(pp[4], pp[5]);
+                    GELine l5 = addLn(pp[6], pp[7]);
+                    GELine l6 = addLn(pp[7], pp[8]);
+                    GEAngle ag1 = new GEAngle(l1, l2, fd_point(pp[0]), fd_point(pp[2]));
+                    GEAngle ag2 = new GEAngle(l3, l4, fd_point(pp[3]), fd_point(pp[5]));
+                    GEAngle ag3 = new GEAngle(l5, l6, fd_point(pp[6]), fd_point(pp[8]));
                     param pm = findConstantParam(pss[9].toString());
                     Constraint cs = new Constraint(Constraint.EQANGLE3P, ag1, ag2, ag3, pm);
-                    this.addConstraintToList(cs);
-                    this.charsetAndAddPoly(cc);
+                    addConstraintToList(cs);
+                    characteristicSetMethodAndAddPoly(cc);
                     nd++;
                 }
                 break;
@@ -1226,20 +1181,20 @@ public class DrawPanelExtended extends DrawPanel {
         int n = UtilityMiscellaneous.getFlashInterval();
 
         if (c1 != null) {
-            Flash f = this.getObjectFlash(c1);
+            Flash f = getObjectFlash(c1);
             f.setDealy(n / 2);
             addFlash1(f);
         }
 
         if (c2 != null) {
 
-            Flash f = this.getObjectFlash(c2);
+            Flash f = getObjectFlash(c2);
             f.setDealy(n / 2);
             addFlash1(f);
         }
 
         if (c2 != null) {
-            Flash f = this.getObjectFlash(c3);
+            Flash f = getObjectFlash(c3);
             f.setDealy(n / 2);
             addFlash1(f);
         }
@@ -1251,7 +1206,7 @@ public class DrawPanelExtended extends DrawPanel {
             return;
         switch (c.type) {
             case gib.C_POINT:
-//                this.setObjectListForFlash(this.fd_line());
+//                setObjectListForFlash(fd_line());
                 break;
             case gib.C_O_L:
                 addObjectFlash(fd_point(c.ps[0]), findLineGivenTwoPointIndices(c.ps[1], c.ps[2]), null);
@@ -1308,24 +1263,24 @@ public class DrawPanelExtended extends DrawPanel {
     public void finishConstruction() {
         gxInstance.setActionMove();
         SetCurrentAction(MOVE);
-        gxInstance.getpprove().setListSelectionLast();
-        gxInstance.getpprove().finishedDrawing();
+        gxInstance.getProofPanel().setListSelectionLast();
+        gxInstance.getProofPanel().finishedDrawing();
         flashCond(gterm().getConc(), true);
     }
 
     public void addConcLineOrCircle(cond cc) {
-        if (cc == null) return;
-
-        switch (cc.pred) {
-            case gib.CO_ACONG:
-                this.drawLineAndAdd(fd_point(cc.p[0]), fd_point(cc.p[1]));
-                this.drawLineAndAdd(fd_point(cc.p[2]), fd_point(cc.p[3]));
-                this.drawLineAndAdd(fd_point(cc.p[4]), fd_point(cc.p[5]));
-                this.drawLineAndAdd(fd_point(cc.p[6]), fd_point(cc.p[7]));
-                break;
-            case gib.CO_CONG:
-                this.drawLineAndAdd(fd_point(cc.p[0]), fd_point(cc.p[1]));
-                this.drawLineAndAdd(fd_point(cc.p[2]), fd_point(cc.p[3]));
+        if (cc != null) {
+	        switch (cc.pred) {
+	            case gib.CO_ACONG:
+	                drawLineAndAdd(fd_point(cc.p[0]), fd_point(cc.p[1]));
+	                drawLineAndAdd(fd_point(cc.p[2]), fd_point(cc.p[3]));
+	                drawLineAndAdd(fd_point(cc.p[4]), fd_point(cc.p[5]));
+	                drawLineAndAdd(fd_point(cc.p[6]), fd_point(cc.p[7]));
+	                break;
+	            case gib.CO_CONG:
+	                drawLineAndAdd(fd_point(cc.p[0]), fd_point(cc.p[1]));
+	                drawLineAndAdd(fd_point(cc.p[2]), fd_point(cc.p[3]));
+	        }
         }
     }
 
@@ -1344,9 +1299,9 @@ public class DrawPanelExtended extends DrawPanel {
                 p2 = p;
             }
             if (p1 != 0 && p2 != 0)
-                this.addToSelectList(addLn(p1, p2));
+                addToSelectList(addLn(p1, p2));
         }
-        this.addToSelectList(addLn(p2, pp[0]));
+        addToSelectList(addLn(p2, pp[0]));
     }
 
     GEPoint getPt(int i) {
@@ -1375,8 +1330,7 @@ public class DrawPanelExtended extends DrawPanel {
             GEText t = cp.textNametag;
             t.setText(pt.name);
             t.setXY(pt.getX1(), pt.getY1());
-            pointlist.add(cp);
-            textlist.add(t);
+            addPointToList(cp);
             if (PX != 0 && PY != 0 && cp.getx() == 0 && cp.gety() == 0)
                 cp.setXY(PX, PY);
         }
@@ -1384,7 +1338,7 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     GEPoint addPt(int index, double x, double y) {
-        GEPoint p = this.addPt(index);
+        GEPoint p = addPt(index);
         p.setXY(x, y);
         return p;
     }
@@ -1443,7 +1397,7 @@ public class DrawPanelExtended extends DrawPanel {
                 GEPoint p3 = (GEPoint) cs.getelement(1);
 
                 if (A == p1 && ((B == p2 && C == p3) || (B == p3 && C == p2))) {
-                    return this.findLineGivenTwoPointIndices(b, c);
+                    return findLineGivenTwoPointIndices(b, c);
                 }
             }
         }
@@ -1475,29 +1429,29 @@ public class DrawPanelExtended extends DrawPanel {
 
     GELine addTLn(int a, int b, int c) {
         GEPoint p1 = getPt(a);
-        GELine lp = this.findLineGivenTwoPointIndices(b, c);
+        GELine lp = findLineGivenTwoPointIndices(b, c);
         if (lp == null) {
-            lp = this.addLn(b, c);
+            lp = addLn(b, c);
         }
         GELine ln = new GELine(GELine.TLine, p1);
         Constraint cs = new Constraint(Constraint.PERPENDICULAR, ln, lp);
         ln.addConstraint(cs);
-        this.addLineToList(ln);
-        this.addConstraintToList(cs);
+        addLineToList(ln);
+        addConstraintToList(cs);
         return ln;
     }
 
     GELine addPLn(int a, int b, int c) {
         GEPoint p1 = getPt(a);
-        GELine lp = this.findLineGivenTwoPointIndices(b, c);
+        GELine lp = findLineGivenTwoPointIndices(b, c);
         if (lp == null) {
-            lp = this.addLn(b, c);
+            lp = addLn(b, c);
         }
         GELine ln = new GELine(GELine.PLine, p1);
         Constraint cs = new Constraint(Constraint.PARALLEL, ln, lp);
         ln.addConstraint(cs);
-        this.addLineToList(ln);
-        this.addConstraintToList(cs);
+        addLineToList(ln);
+        addConstraintToList(cs);
         return ln;
     }
 
@@ -1507,10 +1461,10 @@ public class DrawPanelExtended extends DrawPanel {
 
         GEPoint p1 = getPt(a);
         GEPoint p2 = getPt(b);
-        GELine ln = this.findLineGivenTwoPoints(p1, p2);
+        GELine ln = findLineGivenTwoPoints(p1, p2);
         if (p1 != null && p2 != null && ln == null) {
             GELine line = new GELine(p1, p2);
-            this.addLineToList(line);
+            addLineToList(line);
             return line;
 
         } else {
@@ -1551,12 +1505,12 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     public void flashCond(cond co, boolean fb) {
-        if (this.pointlist.size() == 0) {
+        if (pointlist.size() == 0) {
             return;
         }
 
         if (co.p[0] == 0 && co.p[1] == 0) {
-            this.flashattr(co.get_attr(), panel);
+            flashattr(co.get_attr(), panel);
         } else {
             if (co.pred == gib.CO_ACONG || co.pred == gib.CO_ATNG) {
                 int[] vp = co.p;
@@ -1567,17 +1521,16 @@ public class DrawPanelExtended extends DrawPanel {
                     addFlash1(f);
                 }
             } else {
-                this.addFlash(this.getCond(co, fb));
+                addFlash(getCond(co, fb));
             }
         }
     }
 
 
     public Flash getCond(cond co, boolean fb) {
-        if (this.pointlist.size() == 0) {
+        if (pointlist.size() == 0) {
             return null;
         }
-        JPanel panel = this.panel;
         return getFlashCond(panel, co, fb);
     }
 
@@ -1588,23 +1541,23 @@ public class DrawPanelExtended extends DrawPanel {
         if (co.pred == gib.CO_ACONG) {
             addAcongFlash(co, cl);
         } else {
-            this.addFlash1(this.getFlashCond(panel, co, cl));
+            addFlash1(getFlashCond(panel, co, cl));
         }
     }
 
     public void addAcongFlash(cond co, boolean cl) {
         if (co.pred == gib.CO_ACONG) {
             if (cl) {
-                this.clearFlash();
+                clearFlash();
             }
             int[] vp = co.p;
             if (vp[0] == 0) {
                 return;
             }
             Flash f = getAngleFlash(panel, vp[0], vp[1], vp[2], vp[3]);
-            this.addFlash1(f);
+            addFlash1(f);
             f = getAngleFlash(panel, vp[4], vp[5], vp[6], vp[7]);
-            this.addFlash1(f);
+            addFlash1(f);
         }
     }
 
@@ -1650,7 +1603,7 @@ public class DrawPanelExtended extends DrawPanel {
         Object o = c.getPTN(n);
         if (o == null) return null;
         String s = o.toString();
-        return this.findPoint(s);
+        return findPoint(s);
 
     }
 
@@ -1665,7 +1618,7 @@ public class DrawPanelExtended extends DrawPanel {
 
         switch (co.type) {
             case gib.CO_COLL: {
-                GELine ln = this.addLnWC(getPtN(co, 0), getPtN(co, 1), DrawData.RED, d);
+                GELine ln = addLnWC(getPtN(co, 0), getPtN(co, 1), DrawData.RED, d);
                 ln.add(getPtN(co, 2));
                 //vl.add(ln);
             }
@@ -1675,8 +1628,8 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.CO_CONG:
 
             {
-                //CLine ln1 = this.addLnWC(getPtN(co, 0), getPtN(co, 1), drawData.RED, d);
-                //CLine ln2 = this.addLnWC(getPtN(co, 2), getPtN(co, 3), drawData.RED, d);
+                //CLine ln1 = addLnWC(getPtN(co, 0), getPtN(co, 1), drawData.RED, d);
+                //CLine ln2 = addLnWC(getPtN(co, 2), getPtN(co, 3), drawData.RED, d);
                 //vl.add(ln1);
                 //vl.add(ln2);
             }
@@ -1684,11 +1637,11 @@ public class DrawPanelExtended extends DrawPanel {
             case gib.CO_ACONG:
                 break;
             case gib.CO_MIDP: {
-                this.add_Line(getPtN(co, 0), getPtN(co, 1));
-                this.add_Line(getPtN(co, 2), getPtN(co, 3));
+                add_Line(getPtN(co, 0), getPtN(co, 1));
+                add_Line(getPtN(co, 2), getPtN(co, 3));
                 int n = getEMarkNum() / 2 + 1;
-                GEEqualDistanceMark m1 = this.addedMark(getPtN(co, 0), getPtN(co, 1));
-                GEEqualDistanceMark m2 = this.addedMark(getPtN(co, 2), getPtN(co, 3));
+                GEEqualDistanceMark m1 = addedMark(getPtN(co, 0), getPtN(co, 1));
+                GEEqualDistanceMark m2 = addedMark(getPtN(co, 2), getPtN(co, 3));
                 if (m1 != null) {
                     m1.setdnum(n);
                 }
@@ -1706,13 +1659,13 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     public Flash getFlashCond(JPanel panel, cond co, boolean fb) {
-        Flash f = this.getFlashCond(panel, co);
+        Flash f = getFlashCond(panel, co);
         return f;
     }
 
     public Flash getFlashCond(JPanel panel, cond co) {
 
-        if (this.pointlist.size() == 0) {
+        if (pointlist.size() == 0) {
             return null;
         }
 
@@ -1742,7 +1695,7 @@ public class DrawPanelExtended extends DrawPanel {
                 int[] p = co.p;
                 FlashTLine f = new FlashTLine(panel, fd_point(p[0]), fd_point(p[1]),
                         fd_point(p[2]), fd_point(p[3]));
-                this.addFlash1(f);
+                addFlash1(f);
                 return (f);
             }
             case gib.CO_CONG: {
@@ -1812,17 +1765,17 @@ public class DrawPanelExtended extends DrawPanel {
     public Flash getMAngleFlash(JPanel panel, GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4, int t) {
         GEAngle ag = fd_angle_m(p1, p2, p3, p4);
         if (ag != null) {
-            Flash f = this.getObjectFlash(ag);
+            Flash f = getObjectFlash(ag);
             return f;
         }
         FlashAngle f = new FlashAngle(panel, p1, p2, p3, p4);
         f.setFtype(t);
 
         GELine ln1, ln2;
-        if ((ln1 = this.findLineGivenTwoPoints(p1, p2)) != null) {
+        if ((ln1 = findLineGivenTwoPoints(p1, p2)) != null) {
             f.setDrawLine1(false);
         }
-        if ((ln2 = this.findLineGivenTwoPoints(p3, p4)) != null) {
+        if ((ln2 = findLineGivenTwoPoints(p3, p4)) != null) {
             f.setDrawLine2(false);
         }
         if (ln1 != null && ln2 != null && GELine.commonPoint(ln1, ln2) != null) {
@@ -1852,7 +1805,7 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     public Flash getAreaFlash(mdrobj d) {
-        int n = this.getAreaFlashNumber();
+        int n = getAreaFlashNumber();
         ArrayList<GEPoint> v = new ArrayList<GEPoint>();
         for (int i = 0; i < d.getObjectNum(); i++)
             v.add(d.getObject(i));
@@ -1888,7 +1841,7 @@ public class DrawPanelExtended extends DrawPanel {
             return (getAreaFlash(d));
         } else if (t1 == mdrobj.ANGLE) {
             if (d.getObjectNum() == 3) {
-                Flash f = this.getMAngleFlash(panel, d.getObject(0), d.getObject(1),
+                Flash f = getMAngleFlash(panel, d.getObject(0), d.getObject(1),
                         d.getObject(1), d.getObject(2), 3);
                 return f;
             }
@@ -1913,7 +1866,7 @@ public class DrawPanelExtended extends DrawPanel {
             return;
         }
         if (clear) {
-            this.clearFlash();
+            clearFlash();
         }
         int t = obj.getType();
         switch (t) {
@@ -1921,7 +1874,7 @@ public class DrawPanelExtended extends DrawPanel {
                 mdrobj d = (mdrobj) obj;
                 Flash f = getDrobjFlash(d);
                 if (f != null) {
-                    this.addFlash1(f);
+                    addFlash1(f);
                 }
             }
             break;
@@ -1933,7 +1886,7 @@ public class DrawPanelExtended extends DrawPanel {
             }
             break;
             case mobject.ASSERT:
-                this.flashassert((massertion) obj);
+                flashassert((massertion) obj);
                 break;
             case mobject.EQUATION: {
                 mequation eq = (mequation) obj;
@@ -1942,13 +1895,13 @@ public class DrawPanelExtended extends DrawPanel {
                     meqterm tm = eq.getTerm(i);
                     mdrobj dj = tm.getObject();
                     if (dj != null) {
-                        Flash fs = this.getDrobjFlash(dj);
+                        Flash fs = getDrobjFlash(dj);
                         if (tm.isEqFamily() && !dj.isPolygon())
                             cd++;
 
                         if (fs != null) {
                             fs.setColor(DrawData.getColorSinceRed(cd));
-                            this.addFlash1(fs);
+                            addFlash1(fs);
                         }
                     }
                 }
@@ -1978,7 +1931,6 @@ public class DrawPanelExtended extends DrawPanel {
         if (ass == null)
             return;
 
-        JPanel panel = this.panel;
         switch (ass.getAssertionType()) {
             case massertion.COLL: {
                 FlashLine f = new FlashLine(panel);
@@ -2018,7 +1970,7 @@ public class DrawPanelExtended extends DrawPanel {
                 GEPoint p3 = (GEPoint) ass.getObject(2);
                 GEPoint p4 = (GEPoint) ass.getObject(3);
                 FlashTLine f = new FlashTLine(panel, p1, p2, p3, p4);
-                this.addFlash1(f);
+                addFlash1(f);
             }
             break;
 
@@ -2048,12 +2000,12 @@ public class DrawPanelExtended extends DrawPanel {
             case massertion.EQANGLE:
             case massertion.ANGLESS: {
                 if (ass.getobjNum() == 6) {
-                    Flash f = this.getMAngleFlash(panel, (GEPoint) ass.getObject(0), (GEPoint) ass.getObject(1),
+                    Flash f = getMAngleFlash(panel, (GEPoint) ass.getObject(0), (GEPoint) ass.getObject(1),
                             (GEPoint) ass.getObject(1), (GEPoint) ass.getObject(2), 3);
-                    this.addFlash1(f);
-                    f = this.getMAngleFlash(panel, (GEPoint) ass.getObject(3), (GEPoint) ass.getObject(4),
+                    addFlash1(f);
+                    f = getMAngleFlash(panel, (GEPoint) ass.getObject(3), (GEPoint) ass.getObject(4),
                             (GEPoint) ass.getObject(4), (GEPoint) ass.getObject(5), 3);
-                    this.addFlash1(f);
+                    addFlash1(f);
                 }
             }
             break;
@@ -2065,10 +2017,10 @@ public class DrawPanelExtended extends DrawPanel {
                     GEPoint p3 = (GEPoint) ass.getObject(2);
                     f.addACg(p1, p2);
                     f.addACg(p1, p3);
-                    if (this.fd_edmark(p1, p2) != null)
+                    if (fd_edmark(p1, p2) != null)
                         f.setDrawdTT(false);
 
-                    this.addFlash1(f);
+                    addFlash1(f);
                 }
                 break;
             case massertion.CONG:
@@ -2082,23 +2034,23 @@ public class DrawPanelExtended extends DrawPanel {
                             (GEPoint) ass.getObject(4),
                             (GEPoint) ass.getObject(5), false,
                             DrawData.LIGHTCOLOR);
-                    this.addFlash1(f);
+                    addFlash1(f);
                 }
             }
             break;
 
             case massertion.R_TRIANGLE: {
-                this.addAreaFlash(ass);
+                addAreaFlash(ass);
                 GEPoint p1 = (GEPoint) ass.getObject(0);
                 GEPoint p2 = (GEPoint) ass.getObject(1);
                 GEPoint p3 = (GEPoint) ass.getObject(2);
 //                CPoint p4 = (CPoint) ass.getObject(3);
                 FlashTLine f = new FlashTLine(panel, p1, p2, p1, p3);
-                this.addFlash1(f);
+                addFlash1(f);
                 break;
             }
             case massertion.R_ISO_TRIANGLE: {
-                this.addAreaFlash(ass);
+                addAreaFlash(ass);
 
                 GEPoint p1 = (GEPoint) ass.getObject(0);
                 GEPoint p2 = (GEPoint) ass.getObject(1);
@@ -2106,7 +2058,7 @@ public class DrawPanelExtended extends DrawPanel {
                 addCGFlash(p1, p2, p1, p3);
 
                 FlashTLine f = new FlashTLine(panel, p1, p2, p1, p3);
-                this.addFlash1(f);
+                addFlash1(f);
                 break;
             }
 
@@ -2114,11 +2066,11 @@ public class DrawPanelExtended extends DrawPanel {
             case massertion.TRAPEZOID:
             case massertion.SQUARE:
             case massertion.RECTANGLE: {
-                this.addAreaFlash(ass);
+                addAreaFlash(ass);
                 break;
             }
             case massertion.EQ_TRIANGLE: {
-                this.addAreaFlash(ass);
+                addAreaFlash(ass);
                 GEPoint p1 = (GEPoint) ass.getObject(0);
                 GEPoint p2 = (GEPoint) ass.getObject(1);
                 GEPoint p3 = (GEPoint) ass.getObject(2);
@@ -2136,13 +2088,13 @@ public class DrawPanelExtended extends DrawPanel {
                 f3.addACg(p2, p3);
                 if (null != fd_edmark(p1, p3))
                     f3.setDrawdTT(false);
-                this.addFlash1(f1);
-                this.addFlash1(f2);
-                this.addFlash1(f3);
+                addFlash1(f1);
+                addFlash1(f2);
+                addFlash1(f3);
                 break;
             }
             case massertion.ISO_TRIANGLE: {
-                this.addAreaFlash(ass);
+                addAreaFlash(ass);
                 GEPoint p1 = (GEPoint) ass.getObject(0);
                 GEPoint p2 = (GEPoint) ass.getObject(1);
                 GEPoint p3 = (GEPoint) ass.getObject(2);
@@ -2151,7 +2103,7 @@ public class DrawPanelExtended extends DrawPanel {
 
             }
             case massertion.PARALLELOGRAM: {
-                this.addAreaFlash(ass);
+                addAreaFlash(ass);
                 break;
             }
 
@@ -2159,7 +2111,7 @@ public class DrawPanelExtended extends DrawPanel {
                 GEPoint p1 = (GEPoint) ass.getObject(0);
                 GEPoint p2 = (GEPoint) ass.getObject(1);
                 GEPoint p3 = (GEPoint) ass.getObject(2);
-                this.addPtEnlargeFlash(p1);
+                addPtEnlargeFlash(p1);
                 addlineFlash(p2, p3);
                 break;
             }
@@ -2171,14 +2123,14 @@ public class DrawPanelExtended extends DrawPanel {
                 GEPoint p3 = (GEPoint) ass.getObject(2);
                 GEPoint p4 = (GEPoint) ass.getObject(3);
                 addPtEnlargeFlash(p1);
-                Flash f = this.getMAngleFlash(panel, p2, p3, p3, p4, 3);
-                this.addFlash1(f);
+                Flash f = getMAngleFlash(panel, p2, p3, p3, p4, 3);
+                addFlash1(f);
                 break;
             }
             case massertion.TRIANGLE_INSIDE: {
-                this.addAreaFlash1(ass);
+                addAreaFlash1(ass);
                 GEPoint p1 = (GEPoint) ass.getObject(0);
-                this.addPtEnlargeFlash(p1);
+                addPtEnlargeFlash(p1);
                 break;
             }
             case massertion.OPPOSITE_SIDE: {
@@ -2187,9 +2139,9 @@ public class DrawPanelExtended extends DrawPanel {
                 GEPoint p2 = (GEPoint) ass.getObject(1);
                 GEPoint p3 = (GEPoint) ass.getObject(2);
                 GEPoint p4 = (GEPoint) ass.getObject(3);
-                this.addInfinitelineFlash(p3, p4);
+                addInfinitelineFlash(p3, p4);
                 FlashArrow f = new FlashArrow(panel, p1, p2, 0);
-                this.addFlash1(f);
+                addFlash1(f);
                 break;
             }
             case massertion.SAME_SIDE: {
@@ -2197,14 +2149,14 @@ public class DrawPanelExtended extends DrawPanel {
                 GEPoint p2 = (GEPoint) ass.getObject(1);
                 GEPoint p3 = (GEPoint) ass.getObject(2);
                 GEPoint p4 = (GEPoint) ass.getObject(3);
-                this.addInfinitelineFlash(p3, p4);
+                addInfinitelineFlash(p3, p4);
                 FlashArrow f = new FlashArrow(panel, p1, p2, 1);
-                this.addFlash1(f);
+                addFlash1(f);
                 break;
             }
             case massertion.PARA_INSIDE: {
-                this.addAreaFlash1(ass);
-                this.addPtEnlargeFlash((GEPoint) ass.getObject(0));
+                addAreaFlash1(ass);
+                addPtEnlargeFlash((GEPoint) ass.getObject(0));
                 break;
             }
         }
@@ -2213,7 +2165,7 @@ public class DrawPanelExtended extends DrawPanel {
 
     public void addPtEnlargeFlash(GEPoint pt) {
         FlashPoint f = new FlashPoint(panel, pt);
-        this.addFlash1(f);
+        addFlash1(f);
     }
 
     public void addCGFlash(GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4) {
@@ -2226,26 +2178,26 @@ public class DrawPanelExtended extends DrawPanel {
         if (null != fd_edmark(p3, p4))
             f2.setDrawdTT(false);
         FlashSegmentMoving fn = new FlashSegmentMoving(panel, p1, p2, p3, p4, 3, 3);
-        this.addCgFlash(f1, f2, fn);
-        this.startFlash();
+        addCgFlash(f1, f2, fn);
+        startFlash();
     }
 
     public void addAreaFlash1(massertion ass) {
-        int n = this.getAreaFlashNumber();
+        int n = getAreaFlashNumber();
         FlashArea f = new FlashArea(panel, n);
         for (int i = 1; i < ass.getobjNum(); i++) {
             f.addAPoint((GEPoint) ass.getObject(i));
         }
-        this.addFlash1(f);
+        addFlash1(f);
     }
 
     public void addAreaFlash(massertion ass) {
-        int n = this.getAreaFlashNumber();
+        int n = getAreaFlashNumber();
         FlashArea f = new FlashArea(panel, n);
         for (int i = 0; i < ass.getobjNum(); i++) {
             f.addAPoint((GEPoint) ass.getObject(i));
         }
-        this.addFlash1(f);
+        addFlash1(f);
     }
 
     public Flash getAngleFlashLL(JPanel panel, int p, l_line l1, l_line l2) {
@@ -2267,7 +2219,7 @@ public class DrawPanelExtended extends DrawPanel {
         if (cc == null)
             return;
 
-        if (this.pointlist.size() == 0)
+        if (pointlist.size() == 0)
             return;
 
         if (cc instanceof angles) {
@@ -2322,7 +2274,7 @@ public class DrawPanelExtended extends DrawPanel {
 
         } else if (cc instanceof sim_tri) {
             sim_tri sm = (sim_tri) cc;
-            this.clearFlash();
+            clearFlash();
             int cn = DrawData.LIGHTCOLOR;
             FlashTriangle f = new FlashTriangle(panel, fd_point(sm.p1[0]), fd_point(sm.p1[1]), fd_point(sm.p1[2]),
                     fd_point(sm.p2[0]), fd_point(sm.p2[1]), fd_point(sm.p2[2]),
@@ -2356,7 +2308,7 @@ public class DrawPanelExtended extends DrawPanel {
             for (int i = 0; i < ag.no; i++) {
                 Flash f = getAngleFlash(panel, ag.ln1[i].pt[0], ag.ln1[i].pt[1],
                         ag.ln2[i].pt[0], ag.ln2[i].pt[1]);
-                this.addFlash1(f);
+                addFlash1(f);
             }
         } else if (cc instanceof anglet) {
             anglet at = (anglet) cc;
@@ -2371,10 +2323,10 @@ public class DrawPanelExtended extends DrawPanel {
             else
                 b = at.l2.pt[0];
             Flash f = getAngleFlash(panel, a, p, b, p);
-            this.addFlash1(f);
+            addFlash1(f);
         } else if (cc instanceof angtn) {
             angtn atn = (angtn) cc;
-            this.clearFlash();
+            clearFlash();
             Flash f1 = getAngleFlashLL(panel, atn.t1, atn.ln1, atn.ln2);
             Flash f2 = getAngleFlashLL(panel, atn.t2, atn.ln3, atn.ln4);
             addFlash1(f1);
@@ -2383,7 +2335,7 @@ public class DrawPanelExtended extends DrawPanel {
         } else if (cc instanceof s_tris) {
             s_tris sm = (s_tris) cc;
             int n = sm.no;
-            this.clearFlash();
+            clearFlash();
 
             for (int i = 0; i < n; i++) {
                 int cn = DrawData.LIGHTCOLOR;
@@ -2499,7 +2451,7 @@ public class DrawPanelExtended extends DrawPanel {
             f.start();
         } else {
             f = getAngleFlash(panel, a, b, c, d);
-            this.addFlash1(f);
+            addFlash1(f);
             if (x.getPV() < 0) {
                 f.setColor(Color.magenta);
             }
@@ -2523,18 +2475,18 @@ public class DrawPanelExtended extends DrawPanel {
             f.start();
         } else {
             f = getAngleFlash(panel, a, b, c, d);
-            this.addFlash1(f);
+            addFlash1(f);
             panel.repaint();
         }
         return f;
     }
 
     public void addauxPoint(int m1, int m2) {
-        GELine ln = this.findLineGivenTwoPointIndices(m1, m2);
+        GELine ln = findLineGivenTwoPointIndices(m1, m2);
         if (ln != null) {
             return;
         }
-        ln = this.addLn(m1, m2);
+        ln = addLn(m1, m2);
         ln.m_dash = 3;
         ln.m_color = DrawData.getColorIndex(Color.red);
         ln.m_width = 1;
@@ -2571,8 +2523,8 @@ public class DrawPanelExtended extends DrawPanel {
                     if (p1[0] == p2[0] && p1[1] == p2[1] ||
                             p1[0] == p2[1] && p1[1] == p2[0]) {
                     } else {
-                        GEEqualDistanceMark ce1 = this.addedMark(p1[0], p1[1]);
-                        GEEqualDistanceMark ce2 = this.addedMark(p2[0], p2[1]);
+                        GEEqualDistanceMark ce1 = addedMark(p1[0], p1[1]);
+                        GEEqualDistanceMark ce2 = addedMark(p2[0], p2[1]);
                         aux_mark++;
                         ce1.setdnum(aux_mark);
                         ce2.setdnum(aux_mark);
@@ -2584,18 +2536,18 @@ public class DrawPanelExtended extends DrawPanel {
                         flashStep(v);
                     }
                 }
-                this.addLn(p1[0], p1[1]);
-                this.addLn(p2[0], p2[1]);
+                addLn(p1[0], p1[1]);
+                addLn(p2[0], p2[1]);
             }
             break;
             case gddbase.CO_ACONG: {
                 //int[] vp = co.p;
                 /*if (vp[0] != 0 && false) {
-                    CLine ln1 = this.addLn(co.p[0], co.p[1]);
-                    CLine ln2 = this.addLn(co.p[2], co.p[3]);
-                    CLine ln3 = this.addLn(co.p[4], co.p[5]);
-                    CLine ln4 = this.addLn(co.p[6], co.p[7]);
-                    int[] p = this.get4PtsForAngle(co.p);
+                    CLine ln1 = addLn(co.p[0], co.p[1]);
+                    CLine ln2 = addLn(co.p[2], co.p[3]);
+                    CLine ln3 = addLn(co.p[4], co.p[5]);
+                    CLine ln4 = addLn(co.p[6], co.p[7]);
+                    int[] p = get4PtsForAngle(co.p);
 
                     CPoint p1 = fd_point(p[0]);
                     CPoint p2 = fd_point(p[1]);
@@ -2604,8 +2556,8 @@ public class DrawPanelExtended extends DrawPanel {
                     p2 = fd_point(p[3]);
                     CAngle ang1 = new CAngle(ln3, ln4, p1, p2);
 
-                    CAngle ta = this.fd_angle(ang);
-                    CAngle ta1 = this.fd_angle(ang1);
+                    CAngle ta = fd_angle(ang);
+                    CAngle ta1 = fd_angle(ang1);
 
                     if (ta == null || ta1 == null) {
                         aux_angle++;
@@ -2614,24 +2566,24 @@ public class DrawPanelExtended extends DrawPanel {
 
                     String ss1, ss2;
                     if (ta == null) {
-                        ss1 = this.getAngleSimpleName();
+                        ss1 = getAngleSimpleName();
                         ang.setColor(aux_angle);
                         ang.radius = ang.radius + 5 * aux_angle;
                         ang.ptext.setText(ss1);
                         ang.ptext.setColor(ang.getColorIndex());
-                        this.addAngleToList(ang);
+                        addAngleToList(ang);
                         v.add(ang);
                     } else {
                         v.add(ta);
                         ss1 = ta.ptext.getText();
                     }
                     if (ta1 == null) {
-                        ss2 = this.getAngleSimpleName();
+                        ss2 = getAngleSimpleName();
                         ang1.setColor(aux_angle);
                         ang1.radius = ang1.radius + 5 * aux_angle;
                         ang1.ptext.setText(ss2);
                         ang1.ptext.setColor(ang1.getColorIndex());
-                        this.addAngleToList(ang1);
+                        addAngleToList(ang1);
                         v.add(ang1);
                     } else {
                         v.add(ta1);
@@ -2661,8 +2613,8 @@ public class DrawPanelExtended extends DrawPanel {
                     poly2.addAPoint(fd_point(co.p[i]));
                 }
                 poly2.addAPoint(fd_point(co.p[3]));
-                this.polygonlist.add(poly1);
-                this.polygonlist.add(poly2);
+                addGraphicEntity(polygonlist, poly1);
+                addGraphicEntity(polygonlist, poly2);
                 ArrayList<GraphicEntity> v = new ArrayList<GraphicEntity>();
                 v.add(poly1);
                 v.add(poly2);
@@ -2677,27 +2629,27 @@ public class DrawPanelExtended extends DrawPanel {
                         p[k++] = co.p[i];
                     }
                 }
-                GEPoint p1 = this.fd_point(p[0]);
-                GEPoint p2 = this.fd_point(p[1]);
-                GEPoint p3 = this.fd_point(p[2]);
-                GEPoint p4 = this.fd_point(p[3]);
+                GEPoint p1 = fd_point(p[0]);
+                GEPoint p2 = fd_point(p[1]);
+                GEPoint p3 = fd_point(p[2]);
+                GEPoint p4 = fd_point(p[3]);
 
-                GECircle c = this.fd_circle(p[0], p[1], p[2]);
+                GECircle c = fd_circle(p[0], p[1], p[2]);
                 if (c == null) {
-                    GEPoint pt = this.CreateANewPoint(0, 0);
+                    GEPoint pt = CreateANewPoint(0, 0);
                     //constraint cs = new constraint(constraint.CIRCUMCENTER, pt, p1, p2, p3);
-                    this.charsetAndAddPoly(false);
-                    this.addPointToList(pt);
+                    characteristicSetMethodAndAddPoly(false);
+                    addPointToList(pt);
                     GECircle cc = new GECircle(pt, p1, p2, p3);
                     cc.add(p4);
-                    this.addCircleToList(cc);
+                    addCircleToList(cc);
                 }
                 //proveFlash(5, p, null);
                 break;
             }
 
         }
-        this.UndoAdded("step");
+        UndoAdded("step");
     }
 
     int[] get4PtsForAngle(int[] pt) {
@@ -2757,16 +2709,16 @@ public class DrawPanelExtended extends DrawPanel {
             return p;
         }
 
-        GELine ln1 = this.findLineGivenTwoPoints(fd_point(pt[0]), fd_point(pt[1]));
-        GELine ln2 = this.findLineGivenTwoPoints(fd_point(pt[2]), fd_point(pt[3]));
+        GELine ln1 = findLineGivenTwoPoints(fd_point(pt[0]), fd_point(pt[1]));
+        GELine ln2 = findLineGivenTwoPoints(fd_point(pt[2]), fd_point(pt[3]));
         GEPoint pcm = GELine.commonPoint(ln1, ln2);
         if (pcm == null) {
             return p;
         }
         int nc1 = pointlist.indexOf(pcm) + 1;
 
-        ln1 = this.findLineGivenTwoPoints(fd_point(pt[4]), fd_point(pt[5]));
-        ln2 = this.findLineGivenTwoPoints(fd_point(pt[6]), fd_point(pt[7]));
+        ln1 = findLineGivenTwoPoints(fd_point(pt[4]), fd_point(pt[5]));
+        ln2 = findLineGivenTwoPoints(fd_point(pt[6]), fd_point(pt[7]));
         pcm = GELine.commonPoint(ln1, ln2);
         if (pcm == null) {
             return p;
@@ -2775,10 +2727,10 @@ public class DrawPanelExtended extends DrawPanel {
 
         for (int k = 0; k <= 1; k++) {
             for (int m = 2; m <= 3; m++) {
-                double ct1 = this.cos3Pt(pt[k], pt[m], nc1);
+                double ct1 = cos3Pt(pt[k], pt[m], nc1);
                 for (int i = 4; i <= 5; i++) {
                     for (int j = 6; j <= 7; j++) {
-                        double ct2 = this.cos3Pt(pt[i], pt[j], nc2);
+                        double ct2 = cos3Pt(pt[i], pt[j], nc2);
                         if (Math.abs(ct2 - ct1) < UtilityMiscellaneous.ZERO) {
                             p[0] = pt[k];
                             p[1] = pt[m];
@@ -2795,16 +2747,13 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
     double cos3Pt(int a, int b, int c) {
-        GEPoint p1 = this.fd_point(a);
-        GEPoint p2 = this.fd_point(b);
-        GEPoint cp = this.fd_point(c);
-        double dc = Math.sqrt(Math.pow(p1.getx() - p2.getx(), 2) +
-                Math.pow(p1.gety() - p2.gety(), 2));
-        double da = Math.sqrt(Math.pow(p1.getx() - cp.getx(), 2) +
-                Math.pow(p1.gety() - cp.gety(), 2));
-        double db = Math.sqrt(Math.pow(p2.getx() - cp.getx(), 2) +
-                Math.pow(p2.gety() - cp.gety(), 2));
-        double cs = (da * da + db * db - dc * dc) / (2 * da * db);
+        GEPoint p1 = fd_point(a);
+        GEPoint p2 = fd_point(b);
+        GEPoint cp = fd_point(c);
+        double dc2 = Math.pow(p1.getx() - p2.getx(), 2) + Math.pow(p1.gety() - p2.gety(), 2);
+        double da = Math.sqrt(Math.pow(p1.getx() - cp.getx(), 2) + Math.pow(p1.gety() - cp.gety(), 2));
+        double db = Math.sqrt(Math.pow(p2.getx() - cp.getx(), 2) + Math.pow(p2.gety() - cp.gety(), 2));
+        double cs = (da * da + db * db - dc2) / (2 * da * db);
         return cs;
     }
 
@@ -2812,26 +2761,21 @@ public class DrawPanelExtended extends DrawPanel {
         int num = 0;
         double[] p = GELine.Intersect(ag.lstart, ag.lend);
         if (p != null) {
-            for (int k = 0; k < anglelist.size(); k++) {
-                GEAngle ag1 = anglelist.get(k);
+            for (GEAngle ag1 : anglelist) {
                 double[] pp = GELine.Intersect(ag1.lstart, ag1.lend);
-                if (pp == null) {
-                    continue;
-                }
-                if (Math.abs(p[0] - pp[0]) < UtilityMiscellaneous.ZERO &&
-                        Math.abs(p[1] - pp[1]) < UtilityMiscellaneous.ZERO) {
-                    num++;
+                if (pp != null && Math.abs(p[0] - pp[0]) < UtilityMiscellaneous.ZERO && Math.abs(p[1] - pp[1]) < UtilityMiscellaneous.ZERO) {
+                    ++num;
                 }
             }
-            if (num != 0) {
+            if (num > 0) {
                 ag.setRadius(15 * num + ag.getRadius());
             }
         }
-        this.addAngleToList(ag);
+        addAngleToList(ag);
     }
 
 
-    Constraint find_constraint(int t, Object obj1, Object obj2) {
+    Constraint findConstraint(int t, Object obj1, Object obj2) {
     	for (Constraint c : constraintlist) {
     		if (c.GetConstraintType() == t) {
     			Set<Object> s = new HashSet<Object>();

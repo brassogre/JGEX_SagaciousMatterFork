@@ -775,7 +775,7 @@ public class gterm extends Object {
             c.pss[id++] = list[i];
         }
         c.no = id;
-        c.bHasConclusion = true;
+        c.setHasConclusion(true);
         premises.add(c);
         return true;
     }

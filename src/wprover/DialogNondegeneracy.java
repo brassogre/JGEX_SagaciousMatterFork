@@ -141,7 +141,7 @@ public class DialogNondegeneracy extends DialogBase implements ActionListener, M
         int n = tabel1.getSelectedRow();
         cons c = (cons) model1.getValueAt(n, 0);
         if (gxInstance != null)
-            gxInstance.getpprove().setSelectedConstruction(c);
+            gxInstance.getProofPanel().setSelectedConstruction(c);
         Object o = model1.getValueAt(n, 1);
         if (o != null && o instanceof cndg) {
 

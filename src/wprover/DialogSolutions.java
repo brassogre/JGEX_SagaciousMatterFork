@@ -129,7 +129,7 @@ public class DialogSolutions extends DialogBase implements ActionListener, Windo
     }
 
     public void autoFiltered() {
-        cns = gxInstance.getpprove().getConstructionTerm().getConclusion();
+        cns = gxInstance.getProofPanel().getConstructionTerm().getConclusion();
         if (cns != null) {
             dlg = new DialogConclusion(gxInstance, ("Filter"));
 	    ArrayList<GEPoint> vv = new ArrayList<GEPoint>();

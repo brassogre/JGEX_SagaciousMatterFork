@@ -11,7 +11,6 @@ public class LanguageFactory {
     Language[] lan = new Language[20];
     int dlan = 0;
 
-
     public String[] getLanguageInfo() {
         int n = 0;
         for (int i = 0; i < lan.length; i++)

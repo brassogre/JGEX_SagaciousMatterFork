@@ -282,7 +282,7 @@ public class DialogRuleList extends DialogBase {
         public RuleViewPane(DrawPanelFrame gx) {
             gxInstance = gx;
             xx = yy = 0;
-            dx = new DrawPanelExtended();
+            dx = new DrawPanelExtended(gx);
             dx.setCurrentDrawPanel(this);
             dx.setRecal(false);
             dx.SetCurrentAction(DrawPanel.MOVE);

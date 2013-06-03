@@ -487,9 +487,9 @@ public class DialogConclusion extends DialogBase implements ActionListener, Item
             returnValue = CONCLUSION_OK;
             this.setVisible(false);
             if (type == 0)
-                gxInstance.getpprove().set_conclusion(getProve(), this.checkValid());
+                gxInstance.getProofPanel().set_conclusion(getProve(), this.checkValid());
             else
-                gxInstance.getpprove().add_ndgs(getProve());
+                gxInstance.getProofPanel().add_ndgs(getProve());
 
         } else if (command.equalsIgnoreCase("Cancel")) {
             returnValue = CONCLUSION_CANCEL;
@@ -714,7 +714,7 @@ public class DialogConclusion extends DialogBase implements ActionListener, Item
             c.add_pt(o1, 4);
             sn += " " + o1;
         }
-        c.set_conc(true);
+        c.setHasConclusion(true);
         return c;
     }
 

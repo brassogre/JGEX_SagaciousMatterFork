@@ -1171,7 +1171,7 @@ public class PolyBasic {
 		return result;
 	}
 
-	public double[] calculv_2v(final TMono mm, final param[] p) {
+	public static double[] calculv_2v(final TMono mm, final param[] p) {
 		if (mm.next != null)
 			return calculv(mm.next.coef, p);
 		else
@@ -1184,7 +1184,7 @@ public class PolyBasic {
 
 	// }
 
-	public double[] calculate_online(final TMono mm, final param[] p,
+	public static double[] calculate_online(final TMono mm, final param[] p,
 			final int dx, final int dy) {
 		if ((mm.deg != 1) && (mm.x != dy))
 			return null;
@@ -1222,7 +1222,7 @@ public class PolyBasic {
 		return result;
 	}
 
-	public double[] calculate_oncr(TMono mm, final param[] p, final int dx,
+	public static double[] calculate_oncr(TMono mm, final param[] p, final int dx,
 			final int dy) {
 
 		if ((mm.deg != 2) && (mm.x != dy))

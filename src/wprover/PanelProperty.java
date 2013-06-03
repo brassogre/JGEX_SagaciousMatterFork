@@ -50,7 +50,7 @@ public class PanelProperty extends JPanel implements ActionListener {
 	 * to set their color, thickness, dashed lines, proportions, etc.
 	 */
 	private static final long serialVersionUID = 5910258280771203685L;
-	private final PanelDraw d;
+	private final DrawPanelOverlay d;
 	private final Language lan;
 
 	private final JLabel label = new JLabel("Nothing Selected");
@@ -65,7 +65,7 @@ public class PanelProperty extends JPanel implements ActionListener {
 	private final Panel_text ptex;
 	private final Panel_arrow parrow;
 
-	public PanelProperty(PanelDraw dd, Language lan) {
+	public PanelProperty(DrawPanelOverlay dd, Language lan) {
 		d = dd;
 		this.lan = lan;
 
@@ -1017,9 +1017,9 @@ public class PanelProperty extends JPanel implements ActionListener {
 
 			if ((row == 0) && (src == model)) {
 				final int n = Integer.parseInt(data.toString());
-				ts.setNumPts(n);
+				ts.setMaxNumberOfPoints(n);
 			} else if ((row == 0) && (src == model1)) {
-				ts.setDLns(Boolean.parseBoolean(data.toString()));
+				ts.setDrawLines(Boolean.parseBoolean(data.toString()));
 			}
 			d.repaintAndCalculate();
 		}
@@ -1027,7 +1027,7 @@ public class PanelProperty extends JPanel implements ActionListener {
 		public void setVariable(GETrace tc) {
 			ts = tc;
 			table.setValueAt((tc.getPointSize()), 0, 1);
-			table1.setValueAt(tc.isDrawLines(), 0, 1);
+			table1.setValueAt(tc.doesDrawLines(), 0, 1);
 			d.repaint();
 		}
 	}

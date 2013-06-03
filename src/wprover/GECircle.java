@@ -520,8 +520,7 @@ public class GECircle extends GraphicEntity implements Pointed {
     	HashSet<GEPoint> vlist = new HashSet<GEPoint>();
         for (GEPoint p : c1.points) {
             if (c2.points.contains(p)) {
-                //if (!vlist.contains(p))
-                    vlist.add(p);
+                vlist.add(p);
             }
         }
         return vlist;

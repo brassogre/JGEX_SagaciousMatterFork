@@ -33,8 +33,6 @@ import org.w3c.dom.ls.*;
 import pdf.PDFJob;
 import UI.*;
 
-//import javax.swing.WindowConstants;
-
 public class DrawPanelFrame extends JFrame implements ActionListener, KeyListener,
 		DropTargetListener, WindowListener { // APPLET ONLY.
 
@@ -56,7 +54,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 
 	private JToggleButton buttonMove, buttonSelect;
 
-	public PanelDraw d;
+	public DrawPanelOverlay d;
 	public DrawPanelExtended dp;
 	public PanelProperty cp;
 	public ListTree lp;
@@ -74,21 +72,21 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 	private PopupMenuAbout adialog = null;
 	private JDialog prefdialog = null;
 
-	public JScrollPane scroll;
+	private JScrollPane scroll;
 	private ToolBarProof provePanelbar;
 	private ToolBarStyle styleDialog;
 	// private JPopExView rview;
 	private JToggleButton anButton;
 	private PanelMProofInput inputm;
 
-	private ProofPanel pprove;
+	private ProofPanel panelProof;
 	private JPanel ppanel;
 	private JSplitPane contentPane;
 	private JFileChooser filechooser;
 
 	private JToggleButton BK1, BK2, BK3, BK4;
 	private final ArrayList<ImageIcon> iconPool = new ArrayList<ImageIcon>();
-	public String _command;
+	private String _command;
 
 	public DrawPanelFrame() {
 		super("Java Geometry Expert"); // GAPPLET.
@@ -98,9 +96,9 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		showWelcome();
 		UtilityMiscellaneous.Reset();
 		UtilityMiscellaneous.initFont();
-		setLocal();
+		setLocale();
 		setLookAndFeel();
-		setIconImage(DrawPanelFrame.createImageIcon("images/gexicon.gif").getImage());
+		//setIconImage(DrawPanelFrame.createImageIcon("images/gexicon.gif").getImage());
 		//loadRules();
 		loadPreference();
 		loadLanguage();
@@ -111,8 +109,8 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		if (UtilityOSValidator.isMac())
 			new UtilityAppleUI(this);
 
-		d = new PanelDraw(this);
-		dp = d.dp;
+		dp = new DrawPanelExtended(this);
+		d = new DrawPanelOverlay(this, dp);
 		dp.setCurrentDrawPanel(d);
 		dp.setLanguage(language);
 
@@ -129,13 +127,11 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		scroll.setAutoscrolls(true);
 		panel.add(scroll);
 
-		pprove = new ProofPanel(this, d, dp, true, -1);
-		inputm = pprove.getmInputPanel();
+		panelProof = new ProofPanel(this, d, dp, true, -1);
+		inputm = panelProof.getmInputPanel();
 		ppanel = new JPanel();
 		ppanel.setLayout(new BoxLayout(ppanel, BoxLayout.Y_AXIS));
-		final JToolBar ptoolbar = pprove.createToolBar();
-		ppanel.add(ptoolbar);
-		ppanel.add(pprove);
+		ppanel.add(panelProof.createToolBar());
 		ppanel.setBorder(null);
 		contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, ppanel, panel);
 		contentPane.setContinuousLayout(true);
@@ -155,6 +151,36 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		setVisible(true);
 	}
 
+/*	 Some code to detect low memory conditions so that extra memory can be dumped.
+ * 
+	// heuristic to find the tenured pool (largest heap) as seen on http://www.javaspecialists.eu/archive/Issue092.html
+	MemoryPoolMXBean tenuredGenPool = null;
+	for (MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans()) {
+	  if (pool.getType() == MemoryType.HEAP && pool.isUsageThresholdSupported()) {
+	    tenuredGenPool = pool;
+	  }
+	}
+	// we do something when we reached 80% of memory usage
+	tenuredGenPool.setCollectionUsageThreshold((int)Math.floor(tenuredGenPool.getUsage().getMax()*0.8));
+	
+	//set a listener
+	MemoryMXBean mbean = ManagementFactory.getMemoryMXBean();
+	NotificationEmitter emitter = (NotificationEmitter) mbean;
+	emitter.addNotificationListener(new NotificationListener() {
+	public void handleNotification(Notification n, Object hb) {
+	if (n.getType().equals(
+	  MemoryNotificationInfo.MEMORY_COLLECTION_THRESHOLD_EXCEEDED)) {
+	   // this is the signal => end the application early to avoid OOME
+	}
+	}}, null, null);
+
+
+Alternative ===>     package org.apache.pig.impl.util;
+http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/util/SpillableMemoryManager.java.html 
+
+*/
+	
+	
 	void handleAbout() {
 		if (adialog == null)
 			adialog = new PopupMenuAbout();
@@ -228,8 +254,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 
 		language = new Language();
 		final String user_directory = getUserDir();
-		final File f = new File(user_directory + "/language/" + UtilityMiscellaneous.lan
-				+ ".lan");
+		final File f = new File(user_directory + "/language/" + UtilityMiscellaneous.lan + ".lan");
 		language.load(f);
 		Language.setLanguage(language);
 	}
@@ -238,7 +263,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		if (UtilityMiscellaneous.isApplet())
 			return;
 
-		if ((language != null) && !language.isEnglish()) {
+		if (language != null && !language.isEnglish()) {
 			final Font f = language.getFont();
 
 			if (f != null) {
@@ -248,7 +273,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		}
 	}
 
-	public static void setLocal() {
+	public static void setLocale() {
 		Locale.setDefault(Locale.ENGLISH);
 		if (language != null)
 			language.setLocal();
@@ -282,8 +307,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 	public void loadCursor() {
 	}
 
-	public void createCursor(final Toolkit kit, final String file,
-			final String name) {
+	public void createCursor(final Toolkit kit, final String file, final String name) {
 	}
 
 	// public static Cursor getDefinedCursor(String name) {
@@ -294,7 +318,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		return ppanel.isVisible();
 	}
 
-	public void showppanel(final boolean t) {
+	public void showProofPanel(final boolean t) {
 		show_button.setSelected(t);
 		ppanel.setVisible(!t);
 		contentPane.resetToPreferredSizes();
@@ -308,19 +332,8 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		return contentPane;
 	}
 
-	// public void showRulePanel(String s, int x, int y) {
-	// if (rview == null) {
-	// rview = new JPopExView(this);
-	// }
-	// if (rview.loadRule(s)) {
-	// rview.setLocationRelativeTo(d);
-	// rview.setLocation(x, y);
-	// rview.setVisible(true);
-	// }
-	// }
-
-	public ProofPanel getpprove() {
-		return pprove;
+	public ProofPanel getProofPanel() {
+		return panelProof;
 	}
 
 	public boolean hasAFrame() {
@@ -466,7 +479,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 	}
 
 	public int getProveStatus() {
-		return pprove.getSelectedIndex();
+		return panelProof.getSelectedIndex();
 	}
 
 	public ToolBarStyle getStyleDialog() {
@@ -581,7 +594,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final JToggleButton b = (JToggleButton) e.getSource();
-				showppanel(b.isSelected());
+				showProofPanel(b.isSelected());
 			}
 		});
 
@@ -1105,7 +1118,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		addRadioButtonMenuItem(menu, "Free Transform", null,
 				"Transform polygon freely", null);
 
-		menu = pprove.getProveMenu();
+		menu = panelProof.getProveMenu();
 		// addAMenu(menu, "All Solutions", "All Solutions", this);
 		menuBar.add(menu);
 
@@ -1278,7 +1291,40 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		sendAction(command, src);
 	}
 
-	public void sendAction(final String command, final Object src) {
+	public void conductAction(final String sCommand) { // TODO: Fill out this command handler.
+		switch (sCommand) {
+		
+		case "postscriptsave":
+			saveAsPostscript();
+			break;
+		
+		case "pdfsave":
+			saveAsPDF();
+			break;
+		
+		case "imagesave":
+			saveAsImage();
+			break;
+		
+		case "animationsave":
+			saveAsGIF();
+			break;
+		
+		case "save":
+			saveAFile(false);
+			break;
+		
+		case "saveas":
+			saveAFile(true);
+			break;			
+			//
+			
+		default:
+			break;
+		}
+	}
+	
+	public void sendAction(final String command, final Object src) { // TODO: Revise this method to use a switch. Ensure that all languages are picked out in the menu.
 		String tip = null;
 		String ps = null;
 		String pname = null;
@@ -1312,45 +1358,6 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 			if (!need_save())
 				return;
 
-			final DialogPsProperty dlg = new DialogPsProperty(this);
-			centerDialog(dlg);
-			dlg.setVisible(true);
-			final int r = dlg.getSavePsType();
-			final boolean ptf = dlg.getPointfilled();
-			// boolean pts = dlg.getisProveTextSaved();
-
-			if ((r == 0) || (r == 1) || (r == 2)) {
-				final JFileChooser chooser = new JFileChooser();
-				chooser.setFileFilter(new FileFilter() {
-					@Override
-					public boolean accept(final File f) {
-						return f.isDirectory() || f.getName().endsWith("ps");
-					}
-
-					@Override
-					public String getDescription() {
-						return "PostScript (*.ps)";
-					}
-				});
-				final String dr = getUserDir();
-				chooser.setCurrentDirectory(new File(dr));
-
-				final int result = chooser.showSaveDialog(this);
-				if (result == JFileChooser.CANCEL_OPTION)
-					return;
-				try {
-					final File file = chooser.getSelectedFile();
-					String path = file.getPath();
-					if (!path.endsWith(".ps"))
-						path += ".ps";
-					if (file.exists()
-							&& getUserOverwriteOption(file.getName()))
-						return;
-					dp.write_ps(path, r, ptf, true);
-				} catch (final Exception ee) {
-					UtilityMiscellaneous.print(ee.toString() + "\n" + ee.getStackTrace());
-				}
-			}
 
 		} else if (command.equalsIgnoreCase("Save as PDF"))
 			saveAsPDF();
@@ -1390,7 +1397,11 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		 * }
 		 * 
 		 * } }
-		 */else if (command.equals("Open"))
+		 */
+		
+		else if (command.equals("ps")) {
+		saveAsPostscript();
+	} else if (command.equals("Open"))
 			try {
 				// final File file = chooser.getSelectedFile();
 				openFromXMLFile(null);
@@ -1874,10 +1885,10 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		resetAllButtonStatus();
 		ComboBoxInteger.resetAll();
 		setActionMove();
-		dp.clearAll();
+		dp.initialize();
 		d.clearAll();
-		if (pprove != null)
-			pprove.finishedDrawing();
+		if (panelProof != null)
+			panelProof.finishedDrawing();
 		updateTitle();
 		scroll.revalidate();
 
@@ -2033,7 +2044,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 																		// Element
 			root.appendChild(item); // Attach Element to previous element down
 									// tree
-			pprove.saveIntoXMLDocument(item);
+			panelProof.saveIntoXMLDocument(item);
 
 			final DOMImplementationRegistry registry = DOMImplementationRegistry
 					.newInstance();
@@ -2443,7 +2454,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		// if (f.getName().endsWith("gex.xml")) {
 
 		dp.stopUndoFlash();
-		dp.clearAll();
+		dp.initialize();
 		dp.setFile(f);
 
 		final Document document = jgex_IO.openXMLfile(path);
@@ -2458,7 +2469,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 					if (sEntry.equalsIgnoreCase("DrawProcess"))
 						dp.openFromXMLDocument((Element) nn);
 					if (sEntry.equalsIgnoreCase("PProve"))
-						 pprove.openFromXMLDocument((Element) nn);
+						 panelProof.openFromXMLDocument((Element) nn);
 				}
 			}
 
@@ -2470,6 +2481,49 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 
 		return true;
 	}
+
+	private void saveAsPostscript() {
+		final DialogPsProperty dlg = new DialogPsProperty(this);
+		centerDialog(dlg);
+		dlg.setVisible(true);
+		final int r = dlg.getSavePsType();
+		final boolean ptf = dlg.getPointfilled();
+		// boolean pts = dlg.getisProveTextSaved();
+
+		if ((r == 0) || (r == 1) || (r == 2)) {
+			final JFileChooser chooser = new JFileChooser();
+			chooser.setFileFilter(new FileFilter() {
+				@Override
+				public boolean accept(final File f) {
+					return f.isDirectory() || f.getName().endsWith("ps");
+				}
+
+				@Override
+				public String getDescription() {
+					return "PostScript (*.ps)";
+				}
+			});
+			final String dr = getUserDir();
+			chooser.setCurrentDirectory(new File(dr));
+
+			final int result = chooser.showSaveDialog(this);
+			if (result == JFileChooser.CANCEL_OPTION)
+				return;
+			try {
+				final File file = chooser.getSelectedFile();
+				String path = file.getPath();
+				if (!path.endsWith(".ps"))
+					path += ".ps";
+				if (file.exists()
+						&& getUserOverwriteOption(file.getName()))
+					return;
+				dp.write_ps(path, r, ptf, true);
+			} catch (final Exception ee) {
+				UtilityMiscellaneous.print(ee.toString() + "\n" + ee.getStackTrace());
+			}
+		}
+	}
+	
 
 	protected void addRightButtons(final JToolBar toolBar) {
 		JToggleButton button = null;
@@ -2748,6 +2802,20 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		return button;
 	}
 
+	protected JToggleButton constructToggleButton(final String actionCommand) {
+		final ImageIcon icon = JGEXapp.retrieveIconResource(actionCommand);
+		final String sToolTip = JGEXapp.retrieveToolTipResource(actionCommand);
+
+		final JToggleButton button = new ActionButton(icon);
+		button.setActionCommand(actionCommand);
+		if (sToolTip != null && !sToolTip.isEmpty())
+			button.setToolTipText(sToolTip);
+		button.addActionListener(this);
+		button.setText(null);
+		// button.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
+		return button;
+	}
+	
 	protected JToggleButton makeAButton(final String imageName,
 			final String actionCommand, final String toolTipText,
 			final String altText) {
@@ -2816,7 +2884,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		if (anButton != null)
 			anButton.setEnabled(false);
 		restorScroll();
-		pprove.clearAll();
+		panelProof.clearAll();
 		d.setCursor(Cursor.getDefaultCursor());
 		BK1.setEnabled(true);
 		BK2.setEnabled(true);
@@ -2859,7 +2927,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 	}
 
 	public void setActionTip(final String name, final String tip) {
-		if (pprove.isProverRunning())
+		if (panelProof.isProverRunning())
 			return;
 
 		label.setText(" " + name);
@@ -3531,7 +3599,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 				break;
 			case KeyEvent.VK_S:
 				if (event.isShiftDown())
-					dp.stateChange();
+					dp.toggleStatus();
 				break;
 			case KeyEvent.VK_Z:
 				if (event.isShiftDown() && event.isControlDown())

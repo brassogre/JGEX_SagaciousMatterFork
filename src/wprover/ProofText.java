@@ -325,7 +325,7 @@ public class ProofText {
     public String getHead() {
         return head;
     }
-
+ 
     public void setHead(String s) {
         head = s;
     }

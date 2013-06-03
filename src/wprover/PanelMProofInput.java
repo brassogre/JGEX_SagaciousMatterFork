@@ -212,7 +212,7 @@ public class PanelMProofInput extends JToolBar implements ActionListener {
         mdPanel.repaint();
     }
 
-    public PanelMProofInput(DrawPanelFrame gx, PanelDraw pp, DrawPanelExtended dp, JTree tree) {
+    public PanelMProofInput(DrawPanelFrame gx, DrawPanelOverlay pp, DrawPanelExtended dp, JTree tree) {
         super("Manual Input Toolbar");
         super.setVisible(true);
         super.setFloatable(true);

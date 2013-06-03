@@ -5,8 +5,7 @@ import gprover.gib;
 
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import javax.swing.JOptionPane;
 
@@ -71,6 +70,7 @@ public class DrawPanelBase {
     protected ArrayList<GEText> textlist = new ArrayList<GEText>();
     protected ArrayList<GETrace> tracelist = new ArrayList<GETrace>();
     protected ArrayList<GraphicEntity> otherlist = new ArrayList<GraphicEntity>();
+    protected HashMap<Integer, GraphicEntity> gemap = new HashMap<Integer, GraphicEntity>();
 
     ArrayList<Flash> flashlist = new ArrayList<Flash>();
 
@@ -106,9 +106,6 @@ public class DrawPanelBase {
     protected int pnameCounter = 0;
     protected int plineCounter = 1;
     protected int pcircleCounter = 1;
-
-    protected static GeoPoly poly = GeoPoly.getPoly();
-    protected static CharacteristicSetMethod charset = CharacteristicSetMethod.getinstance();
 
     protected boolean isPointOnObject = false;
     protected boolean isPointOnIntersection = false;
@@ -213,8 +210,8 @@ public class DrawPanelBase {
         return 1;
     }
 
-    public void setLanguage(Language lan) {
-        this.lan = lan;
+    public void setLanguage(Language l) {
+        lan = l;
     }
 
     public String getLanguage(int n, String s) {
@@ -255,14 +252,10 @@ public class DrawPanelBase {
 
     final public static void setAntiAlias(Graphics2D g2) {
         if (UtilityMiscellaneous.AntiAlias) {
-            RenderingHints qualityHints = new RenderingHints(RenderingHints.
-                    KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+            RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setRenderingHints(qualityHints);
         } else {
-            RenderingHints qualityHints = new RenderingHints(RenderingHints.
-                    KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_OFF);
+            RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             g2.setRenderingHints(qualityHints);
         }
     }
@@ -376,7 +369,7 @@ public class DrawPanelBase {
 
     }
 
-    final public int getPointSize() {
+    final public int getNumberOfPoints() {
         return pointlist.size();
     }
 
@@ -525,7 +518,7 @@ public class DrawPanelBase {
     }
 
     public void drawPointOrCross(Graphics2D g2) {
-        if (this.isPointOnObject) {
+        if (isPointOnObject) {
             if (!isPointOnIntersection)
                 DrawPanelBase.drawCross((int) CatchPoint.getx(), (int) CatchPoint.gety(), 5, g2);
             else
@@ -708,14 +701,14 @@ public class DrawPanelBase {
     }
 
     public boolean isLineDrawn(GEPoint p1, GEPoint p2) {
-        GELine ln = this.findLineGivenTwoPoints(p1, p2);
+        GELine ln = findLineGivenTwoPoints(p1, p2);
         return ln != null && ln.isdraw();
     }
 
     public static void drawSelect(ArrayList<GraphicEntity> list, Graphics2D g2) {
-        for (GraphicEntity cc : list) {
-            if (cc != null)
-                cc.draw(g2, true);
+        for (GraphicEntity ge : list) {
+            if (ge != null)
+                ge.draw(g2, true);
         }
     }
 
@@ -728,8 +721,7 @@ public class DrawPanelBase {
     }
 
 
-    public static void drawcircle2p(double x1, double y1, double x2, double y2,
-                             Graphics2D g2) {
+    public static void drawcircle2p(double x1, double y1, double x2, double y2, Graphics2D g2) {
         int r = (int) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         g2.drawOval((int) (x1 - r), (int) (y1 - r), 2 * r, 2 * r);
     }
@@ -739,18 +731,44 @@ public class DrawPanelBase {
         p.draw(g2, false); // Before edit, this method called draw(g2) instead of draw(g2, false). I don't know why two different draw methods were implemented.
     }
 
-    public void addLine(GELine ln) {
-        if (!linelist.contains(ln)) {
-            linelist.add(ln);
-        }
+    public void addLine(GELine ge) {
+        addGraphicEntity(linelist, ge);
     }
 
-    public void addCircle(GECircle c) {
-        if (!circlelist.contains(c)) {
-            circlelist.add(c);
-        }
+    public void addCircle(GECircle ge) {
+        addGraphicEntity(circlelist, ge);
     }
 
+    public void selectGraphicEntity(GraphicEntity ge) {
+    	SelectList.add(ge);
+    }    
+    
+    public <T extends GraphicEntity> boolean addGraphicEntity(Collection<T> collection, T ge) {
+        Integer id = ge.id();
+        GraphicEntity existingGe = gemap.get(id);
+        if (existingGe == null) {
+        	assert(!gemap.containsValue(ge));
+            gemap.put(id, ge);
+            return collection.add(ge);
+        } else {
+        	assert(existingGe == ge);
+        }
+        return false;
+    }
+
+    public <T extends GraphicEntity> GraphicEntity removeGraphicEntity(Collection<T> collection, T ge) {
+        Integer id = ge.id();
+        GraphicEntity existingGe = gemap.get(id);
+        if (existingGe == null) {
+        	assert(!gemap.containsValue(ge));
+        	return null;
+        } else {
+        	assert(existingGe == ge);
+            collection.remove(ge);
+            return gemap.remove(id);
+        }
+    }    
+    
     public GEPoint findPoint(String name) {
         for (GEPoint p : pointlist) {
             if (p != null) {

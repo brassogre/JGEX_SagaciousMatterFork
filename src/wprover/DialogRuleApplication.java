@@ -21,7 +21,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
 	private static final long serialVersionUID = 1810053645363982913L;
 	private DrawPanelFrame gxInstance;
     private GApplet app1;
-    private PanelDraw dpane;
+    private DrawPanelOverlay dpane;
     private DrawPanelExtended dpp;
 
 
@@ -38,7 +38,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
     private JDialog ruleDialog;
 
 
-    public DialogRuleApplication(DrawPanelFrame gx, PanelDraw d, DrawPanelExtended dp) {
+    public DialogRuleApplication(DrawPanelFrame gx, DrawPanelOverlay d, DrawPanelExtended dp) {
         super(gx.getFrame());
         this.dpane = d;
         this.dpp = dp;
@@ -48,7 +48,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
         init();
     }
 
-    public DialogRuleApplication(GApplet gx, PanelDraw d, DrawPanelExtended dp) {
+    public DialogRuleApplication(GApplet gx, DrawPanelOverlay d, DrawPanelExtended dp) {
         super(gx.getFrame());
         this.app1 = gx;
         this.dpane = d;
@@ -462,7 +462,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
             xx = yy = 0;
 
 
-            dx = new DrawPanelExtended();
+            dx = new DrawPanelExtended(gx);
             dx.setCurrentDrawPanel(this);
             dx.setRecal(false);
             dx.SetCurrentAction(DrawPanel.MOVE);

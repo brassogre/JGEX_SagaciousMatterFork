@@ -2,29 +2,29 @@ package maths;
 
 public class CharacteristicSetMethod {
     final private static boolean DEBUG = false;
-    private static CharacteristicSetMethod charset = new CharacteristicSetMethod();
+    //private static CharacteristicSetMethod charset = new CharacteristicSetMethod();
     private static int REDUCE_LEN = 2;
 
     public static boolean debug() {
         return DEBUG;
     }
 
-    public static CharacteristicSetMethod getinstance() {
-        return charset;
-    }
+//    public static CharacteristicSetMethod getinstance() {
+//        return charset;
+//    }
 
     public static long freemonos() {
         return 0;
     }
 
-    public TPoly charset(TPoly pp) {
+    public static TPoly charset(TPoly pp) {
         TPoly rm, ch, chend, p, output;
         output = null;
         p = pp;
         rm = p;
 
         if (rm == null) return pp;
-        pp = reduce1(pp);
+        pp = reduceReverse(pp);
 
         while (rm != null) {
             TPoly tp;
@@ -103,7 +103,7 @@ public class CharacteristicSetMethod {
         return tp;
     }
 
-    public TPoly reduce1(TPoly poly) // 1, 2, 3, 4, 5
+    public static TPoly reduceReverse(TPoly poly) // 1, 2, 3, 4, 5
     {
         poly = reverse(poly);
         reduce(poly);
@@ -158,6 +158,11 @@ public class CharacteristicSetMethod {
         }
     }
 
+    /**
+     * Returns a TPoly that has the reverse order of the given TPoly.
+     * @param pp The polynomial whose terms are to be used in constructing the reverse.
+     * @return A copy of pp in reverse.
+     */
     public static TPoly reverse(TPoly pp) {
         TPoly out = null;
         while (pp != null) {
@@ -173,13 +178,10 @@ public class CharacteristicSetMethod {
             }
         }
         return out;
-
     }
 
     public static TPoly pushpoly(TMono p, TPoly pp) {
-        TPoly pt = new TPoly();
-        pt.setNext(pp);
-        pt.setPoly(p);
+        TPoly pt = new TPoly(p, pp);
         return pt;
     }
 

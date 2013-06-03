@@ -73,7 +73,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
 		frozen = DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("frozen"), false);
 		setChosenColor(DrawPanelFrame.safeParseBoolean(thisElement.getAttribute("hasSetColor"), false));
 		setColorDefault();
-		textNametag = new GEText(this, 5, -20, GEText.NAME_TEXT);
+		textNametag = new GEText(this, 5, -20, GEText.NAME_TEXT); // XXX This method does not create a GEText with the same id number as is listed in the XML file.
 		
 		NodeList elist = thisElement.getChildNodes();		
 		for (int i = 0; i < elist.getLength(); ++i) {
@@ -244,15 +244,16 @@ public class GEPoint extends GraphicEntity implements Pointed {
 
     @Override
     public void draw(Graphics2D g2, boolean bSelected) {
-        if (bSelected)
-        	prepareToBeDrawnAsSelected(g2);
-        else
-        	prepareToBeDrawnAsUnselected(g2);
         int radius = getRadius();
         assert(x1.value == x1.value);
         assert(y1.value == y1.value);
         int x = (int) getx() - radius;
         int y = (int) gety() - radius;
+        if (bSelected) {
+        	prepareToBeDrawnAsSelected(g2);
+        	g2.drawOval(x, y, 2 * radius, 2 * radius);
+        }
+        prepareToBeDrawnAsUnselected(g2);
         g2.setColor(getColor());
         g2.fillOval(x, y, 2 * radius, 2 * radius);
         g2.setColor(Color.BLACK);
@@ -430,11 +431,11 @@ public class GEPoint extends GraphicEntity implements Pointed {
             return;
         }
         if (!x1.Solved && !y1.Solved) {
-            this.m_color = DrawData.pointcolor;
+            m_color = DrawData.pointcolor;
         } else if (x1.Solved && y1.Solved) {
-            this.m_color = DrawData.pointcolor_decided;
+            m_color = DrawData.pointcolor_decided;
         } else {
-            this.m_color = DrawData.pointcolor_half_decided;
+            m_color = DrawData.pointcolor_half_decided;
         }
     }
 

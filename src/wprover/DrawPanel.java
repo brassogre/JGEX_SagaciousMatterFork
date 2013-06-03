@@ -30,10 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.Timer;
 
-import maths.PolyBasic;
-import maths.TMono;
-import maths.TPoly;
-import maths.param;
+import maths.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -108,7 +105,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	private Timer timer = null;
 	private int timer_type; // 1: auto-undoredo , 2: prove;
 
-	private boolean IsButtonDown = false;
+	private boolean bLeftButtonDown = false;
 	private boolean isRecal = true;
 	private int v1, v2;
 	private double vx1, vy1, vangle = 0;
@@ -133,7 +130,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void stateChange() {
+	public void toggleStatus() {
 		status = !status;
 	}
 
@@ -147,7 +144,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 	public gterm gterm() {
 		if (gt == null)
-			gt = gxInstance.getpprove().getConstructionTerm();
+			gt = gxInstance.getProofPanel().getConstructionTerm();
 		return gt;
 	}
 
@@ -182,7 +179,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		for (final GETrace tr : tracelist) {
 			if (tr.isTracePt(CTrackPt)) {
 				final GETrace t = new GETrace(CTrackPt);
-				addGraphicEntityToList(t, tracelist);
+				addGraphicEntity(tracelist, t);
 				UndoAdded(t.toString());
 				return;
 			}
@@ -207,11 +204,11 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public GEPoint getPointById(final int id) {
-		final GraphicEntity c = getObjectInListById(id, pointlist);
+		final GraphicEntity c = getObjectById(id);
 		return (c instanceof GEPoint) ? (GEPoint) c : null;
 	}
 
-	public void getAllConstraints(final ArrayList<Constraint> v) {
+	public void getAllConstraints(Collection<Constraint> v) {
 		v.addAll(constraintlist);
 	}
 
@@ -224,19 +221,19 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public GELine getLineByid(final int id) {
-		return (GELine) getObjectInListById(id, linelist);
+		return (GELine) getObjectById(id);
 	}
 
 	public GECircle getCircleByid(final int id) {
-		return (GECircle) getObjectInListById(id, circlelist);
+		return (GECircle) getObjectById(id);
 	}
 
 	public GETrace getTraceById(final int id) {
-		return (GETrace) getObjectInListById(id, tracelist);
+		return (GETrace) getObjectById(id);
 	}
 
 	public GEAngle getAngleByid(final int id) {
-		return (GEAngle) getObjectInListById(id, anglelist);
+		return (GEAngle) getObjectById(id);
 	}
 
 	public void getAllSolidObj(final Collection<Object> v) {
@@ -257,33 +254,38 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public GraphicEntity getObjectById(final int id) {
-		GraphicEntity cc = getObjectInListById(id, pointlist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, linelist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, circlelist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, anglelist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, distancelist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, polygonlist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, textlist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, tracelist);
-		if (cc != null)
-			return cc;
-		cc = getObjectInListById(id, otherlist);
-		return cc;
+		return gemap.get(id);
+		//		GraphicEntity cc = getObjectInListById(id, pointlist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, linelist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, circlelist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, anglelist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, distancelist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, polygonlist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, textlist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, tracelist);
+		//		if (cc != null)
+		//			return cc;
+		//		cc = getObjectInListById(id, otherlist);
+		//		return cc;
 	}
+
+	//	public GraphicEntity getObjectInListById(final int id) {
+	//		return gemap.get(id);
+	//	}
 
 	public static GraphicEntity getObjectInListById(final int id, final Collection<? extends GraphicEntity> v) {
 		for (final GraphicEntity cc : v)
@@ -322,7 +324,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		proportion = prop;
 	}
 
-	public void clearAll() {
+	public void initialize() {
 		CurrentAction = SELECT;
 		SelectList.clear();
 		CatchList.clear();
@@ -338,7 +340,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 		paraCounter = 1;
 		FirstPnt = SecondPnt = null;
-		IsButtonDown = false;
+		bLeftButtonDown = false;
 		polylist = null;
 		pblist = null;
 		anglelist.clear();
@@ -385,7 +387,6 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		name = "";
 		CAL_MODE = 0;
 		status = true;
-
 	}
 
 	public void setSavedTag() {
@@ -970,32 +971,32 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 		for (int t = 0; t < paraCounter; t++) {
 			final param pm = parameter[t];
-			if (pm == null)
-				continue;
-			final TMono m1 = pm.m;
+			if (pm != null) {
+				final TMono m1 = pm.m;
 
-			for (int k = 0; k < vlist.size(); k++) {
-				final double[] rt = vlist.get(k);
-				if (m1 == null) {
-					rt[t] = parameter[t].value;
-					continue;
-				}
-				for (int m = 0; m < t; m++)
-					parameter[m].value = rt[m];
-				final double[] result = calcu_m1(m1);
-				if ((result == null) || (result.length == 0))
-					rt[t] = parameter[t].value;
-				else if (result.length == 1)
-					rt[t] = result[0];
-				else {
-					rt[t] = result[0];
-					for (int i = 1; i < result.length; i++) {
-						final double[] r2 = new double[n];
-						for (int c = 0; c < t; c++)
-							r2[c] = rt[c];
-						r2[t] = result[i];
-						vlist.add(k, r2);
-						k++;
+				for (int k = 0; k < vlist.size(); k++) {
+					final double[] rt = vlist.get(k);
+					if (m1 == null) {
+						rt[t] = parameter[t].value;
+						continue;
+					}
+					for (int m = 0; m < t; m++)
+						parameter[m].value = rt[m];
+					final double[] result = calcu_m1(m1);
+					if ((result == null) || (result.length == 0))
+						rt[t] = parameter[t].value;
+					else if (result.length == 1)
+						rt[t] = result[0];
+					else {
+						rt[t] = result[0];
+						for (int i = 1; i < result.length; i++) {
+							final double[] r2 = new double[n];
+							for (int c = 0; c < t; c++)
+								r2[c] = rt[c];
+							r2[t] = result[i];
+							vlist.add(k, r2);
+							k++;
+						}
 					}
 				}
 			}
@@ -1331,7 +1332,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 		assert(p.x1.value == p.x1.value);
 		assert(p.y1.value == p.y1.value);
-		
+
 		final GEPoint cp = p;
 		final param pm1 = cp.x1;
 		final param pm2 = cp.y1;
@@ -1370,9 +1371,9 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			assert(cp.x1.value == cp.x1.value);
 			assert(cp.y1.value == cp.y1.value);
 			if (v == 1)
-				r = poly.calculate_online(m2, parameter, cp.x1.xindex, cp.y1.xindex);
+				r = GeoPoly.calculate_online(m2, parameter, cp.x1.xindex, cp.y1.xindex);
 			else if (v == 2)
-				r = poly.calculate_oncr(m2, parameter, cp.x1.xindex, cp.y1.xindex);
+				r = GeoPoly.calculate_oncr(m2, parameter, cp.x1.xindex, cp.y1.xindex);
 			if (r != null) {
 				cp.x1.value = r[0];
 				cp.y1.value = r[1];
@@ -1554,7 +1555,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				if (m1 == null)
 					m = m2;
 
-				final double[] r = poly.calculv_2v(m, parameter);
+				final double[] r = GeoPoly.calculv_2v(m, parameter);
 				if ((r != null) && (r.length != 0))
 					parameter[lva - 2].value = r[0];
 				return null;
@@ -1591,7 +1592,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		return result;
 	}
 
-	public void charsetAndAddPoly(final boolean bRecalculate) {
+	public void characteristicSetMethodAndAddPoly(final boolean bRecalculate) {
 		final TPoly plist = Constraint.getPolyListAndSetNull();
 		if (plist != null) {
 			TPoly plist2 = plist;
@@ -1633,7 +1634,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				// CMisc.print("----------------------");
 				// printPoly(polylist);
 				// polylist = optmizePolygonOnLine(polylist);
-				polylist = charset.charset(polylist);
+				polylist = CharacteristicSetMethod.charset(polylist);
 				// CMisc.print("======================");
 				// printPoly(polylist);
 			} catch (final OutOfMemoryError ee) {
@@ -1885,8 +1886,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		for (final Object obj : otherlist) {
 			if (obj instanceof GEEqualDistanceMark) {
 				final GEEqualDistanceMark ln = (GEEqualDistanceMark) obj;
-				if (((ln.p1 == p1) && (ln.p2 == p2))
-						|| ((ln.p2 == p1) && (ln.p1 == p2)))
+				if (((ln.p1 == p1) && (ln.p2 == p2)) || ((ln.p2 == p1) && (ln.p1 == p2)))
 					return ln;
 			}
 		}
@@ -1973,11 +1973,11 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public void proveStop() {
-		if (timer_type != 2)
-			return;
-		timer.stop();
-		timer_type = 0;
-		cpfield.run_to_end(this);
+		if (timer_type == 2) {
+			timer.stop();
+			timer_type = 0;
+			cpfield.run_to_end(this);
+		}
 	}
 
 	public boolean run_to_prove(final UndoStruct u, final UndoStruct u1) {
@@ -1994,7 +1994,6 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			return true;
 		}
 		runto1(u1);
-
 		repaint();
 		return true;
 	}
@@ -2018,20 +2017,18 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public void runto1(final UndoStruct u) {
-		if (u == null)
-			return;
-		UndoStruct ux;
-		if (already_redo(u))
-			return;
-
-		while (true) {
-			ux = redo_step(false);
-			if ((ux == null) || (ux == u)) {
-				U_Obj = null;
-				return;
-			} else if (!all_flash_finished()) {
-				U_Obj = u;
-				return;
+		if (u != null && !already_redo(u)) {
+			UndoStruct ux;
+			while (true) {
+				ux = redo_step(false);
+				if (ux == null || ux == u) {
+					U_Obj = null;
+					return;
+				}
+				if (!all_flash_finished()) {
+					U_Obj = u;
+					return;
+				}
 			}
 		}
 	}
@@ -2050,8 +2047,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	public void prove_run_to_end() {
 		if (cpfield != null)
 			cpfield.run_to_end(this);
-		else if ((gxInstance != null) && (gxInstance.getpprove() != null))
-			gxInstance.getpprove().m_runtoend();
+		else if ((gxInstance != null) && (gxInstance.getProofPanel() != null))
+			gxInstance.getProofPanel().m_runtoend();
 
 	}
 
@@ -2060,7 +2057,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			cpfield.run_to_end(this);
 			cpfield.run_to_begin(this);
 		} else
-			gxInstance.getpprove().m_runtobegin();
+			gxInstance.getProofPanel().m_runtobegin();
 	}
 
 	public void Regenerate_Prove_Text() {
@@ -2139,7 +2136,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			paraCounter++;
 			final Constraint cs = new Constraint(Constraint.SPECIFIC_ANGLE, p1, in);
 			addConstraintToList(cs);
-			charsetAndAddPoly(false);
+			characteristicSetMethodAndAddPoly(false);
 		}
 		if ((paraCounter % 2) != 0) {
 			// paraCounter += 2;
@@ -2422,7 +2419,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		} else {
 			final Object obj = popSelect(v, (int) x, (int) y);
 			if ((obj != null) && (obj instanceof GraphicEntity))
-				addGraphicEntityToList((GraphicEntity) obj, SelectList);
+				selectGraphicEntity((GraphicEntity) obj);
 		}
 		return v;
 	}
@@ -2492,7 +2489,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	public void DWButtonDown(double x, double y) {
 		GEPoint p = null;
 		CatchList.clear();
-		IsButtonDown = true;
+		bLeftButtonDown = true;
 		if (SNAP && (CurrentAction != SELECT)) {
 			final double[] r = getSnap(x, y);
 			x = r[0];
@@ -2535,7 +2532,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 			} else {
 				if (gxInstance.hasManualInputBar()) {
-					final ProofPanel pp = gxInstance.getpprove();
+					final ProofPanel pp = gxInstance.getProofPanel();
 					bClear = pp.selectAPoint(t);
 					if (bClear)
 						setObjectListForFlash(t);
@@ -2971,7 +2968,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 							addPointToList(pt);
 							addLineToList(ln);
 							addConstraintToList(cs);
-							charsetAndAddPoly(false);
+							characteristicSetMethodAndAddPoly(false);
 							clearSelection();
 							STATUS = 0;
 							UndoAdded(ln.getSimpleName()
@@ -3032,7 +3029,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final Constraint cs = new Constraint(
 						Constraint.RIGHT_ANGLED_TRIANGLE, p, p1, p2);
 				addConstraintToList(cs);
-				charsetAndAddPoly(false);
+				characteristicSetMethodAndAddPoly(false);
 				if (!doesLineBetweenTwoPointsExist(p1, p2)) {
 					final GELine lp = new GELine(p1, p2);
 					addLineToList(lp);
@@ -3084,7 +3081,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final Constraint cs = new Constraint(Constraint.CIRCLE,
 						FirstPnt, p);
 				addConstraintToList(cs);
-				charsetAndAddPoly(false);
+				characteristicSetMethodAndAddPoly(false);
 				UndoAdded(c.getDescription());
 				STATUS = 0;
 				clearSelection();
@@ -3099,7 +3096,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (SelectList.size() < 2) {
 				p = (GEPoint) CatchList(pointlist, x, y);
 				if (p != null)
-					addGraphicEntityToList(p, SelectList);
+					selectGraphicEntity(p);
 			} else {
 				p = SmartgetApointFromXY(x, y);
 				final GEPoint p1 = (GEPoint) SelectList.get(0);
@@ -3123,7 +3120,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (SelectList.size() < 2) {
 				p = SelectAPoint(x, y);
 				if (p != null)
-					addGraphicEntityToList(p, SelectList);
+					selectGraphicEntity(p);
 				else
 					clearSelection();
 			} else {
@@ -3168,7 +3165,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (SelectList.size() < 2) {
 				p = SelectAPoint(x, y);
 				if (p != null)
-					addGraphicEntityToList(p, SelectList);
+					selectGraphicEntity(p);
 			} else {
 				p = SmartgetApointFromXY(x, y);
 				if (SelectList.size() != 2)
@@ -3251,7 +3248,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						addPointToLine(pt, ln, false);
 						final Constraint cs = new Constraint(
 								Constraint.EQDISTANCE, p1, p2, p3, pt);
-						charsetAndAddPoly(true);
+						characteristicSetMethodAndAddPoly(true);
 						if (mulSolutionSelect(pt)) {
 							addConstraintToList(cs);
 							addPointToList(pt);
@@ -3285,7 +3282,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 								Constraint.EQDISTANCE, p1, p2, p3, pt);
 						final Constraint cs1 = new Constraint(
 								Constraint.PONCIRCLE, pt, c);
-						charsetAndAddPoly(true);
+						characteristicSetMethodAndAddPoly(true);
 						if (mulSolutionSelect(pt)) {
 							addConstraintToList(cs);
 							addConstraintToList(cs1);
@@ -3319,7 +3316,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (p == null)
 				break;
 			if (SelectList.size() == 0)
-				addGraphicEntityToList(p, SelectList);
+				selectGraphicEntity(p);
 			else {
 				if (p == SelectList.get(0))
 					break;
@@ -3350,7 +3347,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				}
 				if (ln != null)
 					ln.add(pp);
-				charsetAndAddPoly(false);
+				characteristicSetMethodAndAddPoly(false);
 				clearSelection();
 				UndoAdded(pp.TypeString() + ":  " + p1.m_name + pp.m_name
 						+ " / " + pp.m_name + p.m_name + " = " + 1 + "/"
@@ -3367,7 +3364,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				clearSelection();
 				break;
 			}
-			addGraphicEntityToList(cc, SelectList);
+			selectGraphicEntity(cc);
 
 			if (SelectList.size() == 1)
 				break;
@@ -3386,14 +3383,14 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (p == null) {
 				ln = SmartPLine(CatchPoint);
 				if (ln != null)
-					addGraphicEntityToList(ln, SelectList);
+					selectGraphicEntity(ln);
 				else {
 					final GECircle c = SmartPCircle(CatchPoint);
 					if (c != null)
-						addGraphicEntityToList(c, SelectList);
+						selectGraphicEntity(c);
 				}
 			} else
-				addGraphicEntityToList(p, SelectList);
+				selectGraphicEntity(p);
 
 			if (SelectList.size() == 2) {
 				Object obj1, obj2;
@@ -3712,19 +3709,19 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						po = pu;
 					clearSelection();
 				} else
-					addGraphicEntityToList(tp, SelectList);
+					selectGraphicEntity(tp);
 		}
 		break;
 		case D_3PCIRCLE: {
 			if (STATUS == 0) { // first click
 				clearSelection();
 				p = SmartgetApointFromXY(x, y);
-				addGraphicEntityToList(p, SelectList);
+				selectGraphicEntity(p);
 				STATUS = 1;
 
 			} else if (STATUS == 1) {
 				p = SmartgetApointFromXY(x, y);
-				addGraphicEntityToList(p, SelectList);
+				selectGraphicEntity(p);
 				if (SelectList.size() == 2)
 					STATUS = 2;
 
@@ -3875,7 +3872,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					final Constraint cs = new Constraint(Constraint.EQDISTANCE,
 							pt1, pt2, pt3, pt);
 					addConstraintToList(cs);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 					clearSelection();
 					UndoAdded(pt1.m_name + pt2.m_name + " = " + pt3.m_name
 							+ pt.m_name);
@@ -3883,7 +3880,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					final Constraint cs = new Constraint(Constraint.NRATIO,
 							pt1, pt2, pt3, pt, new Integer(v1), new Integer(v2));
 					addConstraintToList(cs);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 					clearSelection();
 					UndoAdded(pt1.m_name + pt2.m_name + " = " + STATUS + " "
 							+ pt3.m_name + pt.m_name);
@@ -3918,7 +3915,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						final Constraint cs = new Constraint(
 								Constraint.EQANGLE, ag1, ag);
 						addConstraintToList(cs);
-						charsetAndAddPoly(false);
+						characteristicSetMethodAndAddPoly(false);
 						// mulSolutionSelect(pd);
 						// reCalculate();
 						UndoAdded(ag.getDescription() + " = "
@@ -3954,7 +3951,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					final Constraint cs = new Constraint(Constraint.EQANGLE3P,
 							ag1, ag2, ag, pm, va);
 					addConstraintToList(cs);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 					clearSelection();
 					UndoAdded(ag1.getDescription() + " + "
 							+ ag2.getDescription() + " + "
@@ -3975,7 +3972,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final GECircle c0 = (GECircle) SelectList.get(0);
 				final Constraint cs = new Constraint(Constraint.CCTANGENT, c0,
 						c);
-				charsetAndAddPoly(false);
+				characteristicSetMethodAndAddPoly(false);
 				addConstraintToList(cs);
 				UndoAdded(c0.getDescription() + " tangent to "
 						+ c.getDescription());
@@ -4020,7 +4017,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (SelectList.size() == 0) {
 				final GECircle c = SmartPCircle(CatchPoint);
 				if (c != null)
-					addGraphicEntityToList(c, SelectList);
+					selectGraphicEntity(c);
 			} else if (SelectList.size() == 1) {
 				final GECircle c = SmartPCircle(CatchPoint);
 				if (c != null) {
@@ -4142,7 +4139,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					addALine(p1, p4);
 					addPointToList(p4);
 					addConstraintToList(cs);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 				} else
 					p4 = pu;
 
@@ -4186,7 +4183,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					addALine(p1, p4);
 					addPointToList(p4);
 					addConstraintToList(cs1);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 				} else
 					p4 = pu;
 				reCalculate();
@@ -4232,7 +4229,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					addALine(p2, p3);
 					addALine(p3, p4);
 					addConstraintToList(cs);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 				} else
 					p4 = pu;
 				UndoAdded("parallelogram " + p1.m_name + p2.m_name + p3.m_name
@@ -4300,7 +4297,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					addALine(p3, p4);
 					addCTMark(tl1, tl2);
 					addConstraintToList(cs1);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 				} else
 					p4 = pu;
 				UndoAdded("rectangle " + p1.m_name + p2.m_name + p3.m_name
@@ -4338,7 +4335,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final GEPoint pu = addADecidedPointWithUnite(pt);
 				if (pu == null) {
 					addPointToList(pt);
-					charsetAndAddPoly(false);
+					characteristicSetMethodAndAddPoly(false);
 					addConstraintToList(cs1);
 					addConstraintToList(cs);
 					addLineToList(ln1);
@@ -4417,7 +4414,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				}
 			if (!r) {
 				final GETrace t = new GETrace(CTrackPt);
-				addGraphicEntityToList(t, tracelist);
+				addGraphicEntity(tracelist, t);
 				UndoAdded(t.toString());
 				if (gxInstance != null)
 					gxInstance.setActionMove();
@@ -4435,7 +4432,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 								"The point should be a fix point", "Warning",
 								JOptionPane.WARNING_MESSAGE);
 					else
-						addGraphicEntityToList(pt, SelectList);
+						selectGraphicEntity(pt);
 					final int k = SelectList.size();
 					if (k == 1)
 						gxInstance.setTipText("Please select the second point");
@@ -4450,13 +4447,13 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 				if (ln != null) {
 					final GETrace t = new GETrace(pt, pt1, ln);
-					addGraphicEntityToList(t, tracelist);
+					addGraphicEntity(tracelist, t);
 					UndoAdded(t.toString());
 				} else {
 					final GECircle c = SelectACircle(x, y);
 					if (c != null) {
 						final GETrace t = new GETrace(pt, pt1, c);
-						addGraphicEntityToList(t, tracelist);
+						addGraphicEntity(tracelist, t);
 						UndoAdded(t.toString());
 					} else {
 					}
@@ -4473,7 +4470,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			final GEPoint pt = createTempPoint(x, y);
 			final GEPoint tp = SmartPoint(pt);
 			if (tp != null)
-				addGraphicEntityToList(tp, SelectList);
+				selectGraphicEntity(tp);
 			if (SelectList.size() == 3) {
 				final GEPoint p1 = (GEPoint) SelectList.get(0);
 				final GEPoint p2 = (GEPoint) SelectList.get(1);
@@ -4553,13 +4550,13 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (pt == null)
 				break;
 			if (SelectList.size() == 0)
-				addGraphicEntityToList(pt, SelectList);
+				selectGraphicEntity(pt);
 			else {
 				final GEPoint tp = (GEPoint) SelectList.get(0);
 				if (tp == pt)
 					break;
 				final GEArrow ar = new GEArrow(pt, tp);
-				otherlist.add(ar);
+				addGraphicEntity(otherlist, ar);
 				clearSelection();
 				UndoAdded("Arrow " + ar.getDescription());
 			}
@@ -4570,13 +4567,13 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (pt == null)
 				break;
 			if (SelectList.size() == 0)
-				addGraphicEntityToList(pt, SelectList);
+				selectGraphicEntity(pt);
 			else {
 				final GEPoint tp = (GEPoint) SelectList.get(0);
 				if (tp == pt)
 					break;
 				final GEDistance dis = new GEDistance(pt, tp);
-				distancelist.add(dis);
+				addGraphicEntity(distancelist, dis);
 				clearSelection();
 				UndoAdded("measure " + dis.getDescription());
 			}
@@ -4588,14 +4585,14 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (pt == null)
 				break;
 			if (SelectList.size() == 0)
-				addGraphicEntityToList(pt, SelectList);
+				selectGraphicEntity(pt);
 			else {
 				final GEPoint tp = (GEPoint) SelectList.get(0);
 				if (tp == pt)
 					break;
 
 				final GEEqualDistanceMark ce = new GEEqualDistanceMark(pt, tp, STATUS);
-				otherlist.add(ce);
+				addGraphicEntity(otherlist, ce);
 				clearSelection();
 				UndoAdded("mark of " + pt.m_name + tp.m_name);
 			}
@@ -4606,7 +4603,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (ln == null)
 				break;
 			if (SelectList.size() == 0)
-				addGraphicEntityToList(ln, SelectList);
+				selectGraphicEntity(ln);
 			else {
 				final GELine ln1 = (GELine) SelectList.get(0);
 				if (ln == ln1)
@@ -4763,11 +4760,11 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						addPointToList(p1);
 						addPointToList(p2);
 						addConstraintToList(cs);
-						charsetAndAddPoly(false);
+						characteristicSetMethodAndAddPoly(false);
 						UndoAdded("TANGENT LINE");
 					}
 				} else
-					addGraphicEntityToList(c, SelectList);
+					selectGraphicEntity(c);
 			}
 		}
 		break;
@@ -4784,7 +4781,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final Constraint cs = new Constraint(Constraint.RATIO,
 						SelectList);
 				addConstraintToList(cs);
-				charsetAndAddPoly(false);
+				characteristicSetMethodAndAddPoly(false);
 				UndoAdded("RATIO");
 				clearSelection();
 			}
@@ -4794,7 +4791,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (STATUS == 0) {
 				final GEPolygon g = (GEPolygon) selectFromList(polygonlist, x, y);
 				if (g != null) {
-					addGraphicEntityToList(g, SelectList);
+					selectGraphicEntity(g);
 					STATUS = 1;
 				}
 			} else if (STATUS == 1) {
@@ -4828,7 +4825,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			} else if (STATUS == 2) {
 				final GEPolygon g = (GEPolygon) SelectList.get(0);
 				final GEPoint p1 = (GEPoint) SelectList.get(1);
-				final GEPoint t1 = g.getPreviousePoint(p1);
+				final GEPoint t1 = g.getPreviousPoint(p1);
 				final GEPoint t2 = g.getNextPoint(p1);
 				final double[] r = getPTInterSection(x, y, p1.getx(),
 						p1.gety(), t1.getx(), t1.gety(), t2.getx(), t2.gety());
@@ -4849,7 +4846,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						g.setVisible(false);
 						final Constraint cs = new Constraint(Constraint.EQUIVALENCE1, g, poly);
 						addConstraintToList(cs);
-						addGraphicEntityToList(poly, polygonlist);
+						addGraphicEntity(polygonlist, poly);
 						UndoAdded("Area-Preserving");// + g.getDescription() +
 						// " transformed to " +
 						// poly.getDescription());
@@ -4888,7 +4885,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						final Constraint cs = new Constraint(
 								Constraint.EQUIVALENCE2, g, poly);
 						addConstraintToList(cs);
-						addGraphicEntityToList(poly, polygonlist);
+						addGraphicEntity(polygonlist, poly);
 						UndoAdded("Area-Preserving");// g.getDescription() +
 						// " transformed to " +
 						// poly.getDescription());
@@ -4906,7 +4903,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final GEPolygon g = SelectAPolygon(x, y);// SelectFromAList(polygonlist,
 				// x, y);
 				if (g != null) {
-					addGraphicEntityToList(g, SelectList);
+					selectGraphicEntity(g);
 					STATUS = 1;
 				}
 			} else {
@@ -4945,7 +4942,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final GEPolygon g = SelectAPolygon(x, y); // SelectFromAList(polygonlist,
 				// x, y);
 				if (g != null) {
-					addGraphicEntityToList(g, SelectList);
+					selectGraphicEntity(g);
 					catchX = x;
 					catchY = y;
 					STATUS = 1;
@@ -5028,7 +5025,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 							} else {
 							}
 							if (r != 2) {
-								addGraphicEntityToList(poly1, polygonlist);
+								addGraphicEntity(polygonlist, poly1);
 								poly1.copy(poly);
 								addConstraintToList(cs);
 								// String s = "Isometry Transforming";
@@ -5066,7 +5063,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		final Constraint cs = new Constraint(Constraint.TRANSFORM1, p, p1, null);
 		p.setVisible(false);
 		addConstraintToList(cs);
-		addGraphicEntityToList(p1, polygonlist);
+		addGraphicEntity(polygonlist, p1);
 		clearSelection();
 		STATUS = 0;
 		p.setDraggedPointsNull();
@@ -5288,28 +5285,49 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public void addPointToList(final GEPoint p) {
-		if (p == null)
-			return;
-
-		if (pointlist.contains(p))
-			return;
-
-		while (true && !p.hasNameSet()) {
-			final String s = getPointNameByCount(pnameCounter);
-			if (null == findPoint(s)) {
-				p.m_name = s;
+		assert(p != null);
+		if (p != null) {
+			while (!p.hasNameSet()) {
+				final String s = getPointNameByCount(pnameCounter);
+				if (findPoint(s) == null) {
+					p.m_name = s;
+				}
 				pnameCounter++;
-				// p.textNametag; // XXX In theory this line should not be needed.
-				break;
 			}
-			pnameCounter++;
+			p.setColorDefault();
+
+			if (addGraphicEntity(pointlist, p) && 
+					addGraphicEntity(textlist, p.getNametag())) {
+				if (pointlist.size() == 2)
+					optimizePolynomial();
+				reCalculate();
+			}
 		}
-		p.setColorDefault();
-		pointlist.add(p);
-		textlist.add(p.getNametag());
-		if (pointlist.size() == 2)
-			optimizePolynomial();
-		reCalculate();
+	}
+
+	public void addPointsToList(final Collection<GEPoint> listPoints) {
+		assert(listPoints != null);
+		if (listPoints != null) {
+			for (GEPoint p : listPoints) {
+				if (p != null && !pointlist.contains(p)) {
+
+					while (!p.hasNameSet()) {
+						final String s = getPointNameByCount(pnameCounter);
+						if (findPoint(s) == null) {
+							p.m_name = s;
+						}
+						pnameCounter++;
+					}
+					p.setColorDefault();
+
+					if (addGraphicEntity(pointlist, p))
+						addGraphicEntity(textlist, p.getNametag());				
+				}
+			}
+			if (pointlist.size() == 2)
+				optimizePolynomial();
+			reCalculate();
+		}
 	}
 
 	public static String getPointNameByCount(final int n) {
@@ -5330,58 +5348,26 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public void addAngleToList(final GEAngle ag) {
-		if (anglelist.contains(ag))
-			return;
-		anglelist.add(ag);
-		textlist.add(ag.getText());
+		if (addGraphicEntity(anglelist, ag))
+			addGraphicEntity(textlist, ag.getText());
 	}
 
 	public void addLineToList(final GELine line) {
-		if ((line != null) && !linelist.contains(line)) {
-
-			// int in = (plineCounter) / 26;
-			// int number = plineCounter - in * 26;
-			// if (in == 0) {
-			// char[] c = new char[1];
-			// c[0] = (char) (number + 'a');
-			// line.m_name = new String(c);
-			// } else {
-			// char[] c = new char[2];
-			// c[0] = (char) (number + 'a');
-			// c[1] = (char) ('0' + in);
-			// line.m_name = new String(c);
-			// }
-			final String str = new String("l")
-			+ new Integer(plineCounter).toString();
-			line.m_name = str;
-			plineCounter++;
-			linelist.add(line);
+		if (line != null) {
+			line.m_name = "l" + String.valueOf(linelist.size() + 1);
+			addGraphicEntity(linelist, line);
 		}
 	}
 
 	public void addPolygonToList(final GEPolygon p) {
-		if ((p == null) || polygonlist.contains(p))
-			return;
-		String s = "poly";
-		int i = 0;
+		assert(p != null);
+		p.m_name = "polygon" + String.valueOf(polygonlist.size() + 1);
+		addGraphicEntity(polygonlist, p);
+	}
 
-		while (true) {
-			final String s1 = s + i;
-			boolean fd = false;
-			for (final GEPolygon p1 : polygonlist)
-				if (s1.equalsIgnoreCase(p1.m_name)) {
-					fd = true;
-					break;
-				}
-			if (!fd) {
-				s = s1;
-				break;
-			}
-			i++;
-		}
-
-		p.m_name = s;
-		polygonlist.add(p);
+	public void addCircleToList(final GECircle c) {
+		c.m_name = "c" + String.valueOf(circlelist.size() + 1);
+		addGraphicEntity(circlelist, c);
 	}
 
 	public void drawLineAndAdd(final GEPoint p1, final GEPoint p2) {
@@ -5394,26 +5380,6 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		}
 	}
 
-	public void addCircleToList(final GECircle c) {
-		if (circlelist.contains(c))
-			return;
-		String str = "c";
-		str += new Integer(pcircleCounter).toString();
-		pcircleCounter++;
-		c.m_name = str;
-		circlelist.add(c);
-	}
-
-	public <T extends GraphicEntity> boolean addGraphicEntityToList(final T ge, final Collection<T> list) {
-		if (ge != null && list != null && !list.contains(ge)) {
-			if (list == SelectList)
-				addToSelectList(ge);
-			else
-				list.add(ge);
-			return true;
-		}
-		return false;
-	}
 
 	public void addConstraintToList(final Constraint cs) {
 		if (cs != null && !constraintlist.contains(cs))
@@ -5464,7 +5430,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	}
 
 	public void DWButtonUp(double x, double y) {
-		IsButtonDown = false;
+		bLeftButtonDown = false;
 
 		if (SNAP && (CurrentAction != SELECT)) {
 			final double[] r = getSnap(x, y);
@@ -5500,7 +5466,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (p == null)
 				p = SmartgetApointFromXY(x, y);
 			final Constraint cs = new Constraint(Constraint.HORIZONAL, FirstPnt, p);
-			charsetAndAddPoly(false);
+			characteristicSetMethodAndAddPoly(false);
 			addPointToList(p);
 			addConstraintToList(cs);
 			final GELine ln = new GELine(FirstPnt, p);
@@ -5525,7 +5491,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (p == null)
 				p = SmartgetApointFromXY(x, y);
 			final Constraint cs = new Constraint(Constraint.VERTICAL, FirstPnt, p);
-			charsetAndAddPoly(false);
+			characteristicSetMethodAndAddPoly(false);
 			addPointToList(p);
 			addConstraintToList(cs);
 			final GELine ln = new GELine(FirstPnt, p);
@@ -5594,7 +5560,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		case D_IOSTRI:
 			break;
 		}
-		IsButtonDown = false;
+		bLeftButtonDown = false;
 	}
 
 	public void smartPVDragLine() {
@@ -5667,7 +5633,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		break;
 
 		case D_POINT: {
-			if (IsButtonDown && !SelectList.isEmpty()) {
+			if (bLeftButtonDown && !SelectList.isEmpty()) {
 				assert(SelectList.size() == 1);
 				final GEPoint p = (GEPoint) SelectList.get(0);
 				p.setXY(x, y);
@@ -6019,7 +5985,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (STATUS == 2) {
 				final GEPolygon p = (GEPolygon) SelectList.get(0);
 				final GEPoint p1 = (GEPoint) SelectList.get(1);
-				final GEPoint t1 = p.getPreviousePoint(p1);
+				final GEPoint t1 = p.getPreviousPoint(p1);
 				final GEPoint t2 = p.getNextPoint(p1);
 				final double[] r = getPTInterSection(x, y, p1.getx(),
 						p1.gety(), t1.getx(), t1.gety(), t2.getx(), t2.gety());
@@ -6278,7 +6244,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				addPointToLine(p, (GELine) obj, false);
 			} else if (obj instanceof GECircle)
 				addPointToCircle(p, (GECircle) obj, false);
-			charsetAndAddPoly(false);
+			characteristicSetMethodAndAddPoly(false);
 		}
 		return p;
 	}
@@ -6654,7 +6620,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 		switch (CurrentAction) {
 		case SELECT: {
-			if (IsButtonDown) {
+			if (bLeftButtonDown) {
 				g2.setColor(Color.black);
 				g2.setStroke(UtilityMiscellaneous.DashedStroke);
 				drawRect((int) vx1, (int) vy1, (int) CatchPoint.getx(), (int) CatchPoint.gety(), g2);
@@ -6663,7 +6629,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		break;
 		case D_POINT: {
 			drawCatchRect(g2);
-			if (IsButtonDown)
+			if (bLeftButtonDown)
 				for (final GraphicEntity ge : SelectList) {
 					if (ge instanceof GEPoint)
 						drawPointNameLocation((GEPoint)ge, g2);
@@ -6707,7 +6673,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			int n = SelectList.size();
 			if (n == 3)
 				drawPointOrCross(g2);
-			if (!IsButtonDown) {
+			if (!bLeftButtonDown) {
 				n = SelectList.size();
 				if (n == 3) {
 					final GELine ln1 = (GELine) SelectList.get(0);
@@ -6786,8 +6752,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				GEPoint p3 = null;
 				if (n == 2) {
 					// if (CatchList.size() == 1) {
-					// CClass c = (CClass) CatchList.get(0);
-					// if (c instanceof CPoint)
+						// CClass c = (CClass) CatchList.get(0);
+						// if (c instanceof CPoint)
 					// p3 = (CPoint) c;
 					// }
 				} else if (n == 3)
@@ -7060,20 +7026,20 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					drawCatchRect(g2);
 			} else { // 1
 				final GEPoint pt = (GEPoint) SelectList.get(0);
-				final GEPoint pt1 = (GEPoint) SelectList.get(1);
-				final GEPoint pt2 = (GEPoint) SelectList.get(2);
-				final double x = CatchPoint.getx();
-				final double y = (((pt.gety() - pt1.gety()) * (x - pt2.getx())) / (pt
-						.getx() - pt1.getx())) + pt2.gety();
+			final GEPoint pt1 = (GEPoint) SelectList.get(1);
+			final GEPoint pt2 = (GEPoint) SelectList.get(2);
+			final double x = CatchPoint.getx();
+			final double y = (((pt.gety() - pt1.gety()) * (x - pt2.getx())) / (pt
+					.getx() - pt1.getx())) + pt2.gety();
 
-				g2.setColor(Color.red);
-				g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) pt1.getx(),
-						(int) pt1.gety());
-				g2.drawLine((int) pt2.getx(), (int) pt2.gety(),
-						(int) pt1.getx(), (int) pt1.gety());
-				g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) x, (int) y);
-				g2.drawLine((int) pt2.getx(), (int) pt2.gety(), (int) x,
-						(int) y);
+			g2.setColor(Color.red);
+			g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) pt1.getx(),
+					(int) pt1.gety());
+			g2.drawLine((int) pt2.getx(), (int) pt2.gety(),
+					(int) pt1.getx(), (int) pt1.gety());
+			g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) x, (int) y);
+			g2.drawLine((int) pt2.getx(), (int) pt2.gety(), (int) x,
+					(int) y);
 			}
 		}
 		break;
@@ -7304,7 +7270,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (STATUS == 2) {
 				final GEPolygon p = (GEPolygon) SelectList.get(0);
 				final GEPoint p1 = (GEPoint) SelectList.get(1);
-				final GEPoint t1 = p.getPreviousePoint(p1);
+				final GEPoint t1 = p.getPreviousPoint(p1);
 				final GEPoint t2 = p.getNextPoint(p1);
 				if ((p1 != null) && (t1 != null) && (t2 != null)) {
 					drawAuxLine((int) p1.getx(), (int) p1.gety(),
@@ -7505,7 +7471,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final GELine lp = new GELine(p1, p2);
 				addLineToList(lp);
 			}
-			charsetAndAddPoly(false);
+			characteristicSetMethodAndAddPoly(false);
 			UndoAdded("isoceles triangle " + p1.m_name + p2.m_name + pt.m_name);
 		}
 
@@ -7747,7 +7713,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				addPointToLine(p, line1, false);
 				addPointToLine(p, line2, false);
 
-				charsetAndAddPoly(false);
+				characteristicSetMethodAndAddPoly(false);
 
 				final GEPoint tp = addADecidedPointWithUnite(p);
 				if (tp != null) {
@@ -7827,7 +7793,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			addPointToLine(pt, line, false);
 			if (m)
 				pt.setXY(x, y);
-			charsetAndAddPoly(true);
+			characteristicSetMethodAndAddPoly(true);
 			if (m || mulSolutionSelect(pt)) {
 				addConstraintToList(cs1);
 				c.add(pt);
@@ -7846,7 +7812,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		final GEPoint pout = CreateANewPoint(0, 0);
 		addPointToList(pout);
 		final Constraint css = new Constraint(Constraint.INTER_LC, pout, line, c);
-		charsetAndAddPoly(false);
+		characteristicSetMethodAndAddPoly(false);
 		if (m)
 			pout.setXY(x, y);
 
@@ -7907,7 +7873,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					c2);
 			if (m)
 				pt.setXY(x, y);
-			charsetAndAddPoly(true);
+			characteristicSetMethodAndAddPoly(true);
 			if (m || mulSolutionSelect(pt)) {
 				addConstraintToList(cs);
 				// addConstraintToList(cs1);
@@ -7939,7 +7905,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			addPointToList(pt);
 			c1.add(pt);
 			c2.add(pt);
-			charsetAndAddPoly(false);
+			characteristicSetMethodAndAddPoly(false);
 			reCalculate();
 			UndoAdded(pt.m_name + ": intersection of " + c1.getDescription()
 					+ " and " + c2.getDescription());
@@ -8100,10 +8066,10 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 	public GEPoint addADecidedPointWithUnite(final GEPoint p) {
 		assert(p != null);
-
-		pointlist.add(p);
-		charsetAndAddPoly(false);
-		pointlist.remove(pointlist.size() - 1);
+		addGraphicEntity(pointlist, p);
+		characteristicSetMethodAndAddPoly(false);
+		GEPoint pp = pointlist.get(pointlist.size() - 1);
+		removeGraphicEntity(pointlist, pp);
 
 		final GEPoint tp = checkCommonPoint(p);
 
@@ -8253,7 +8219,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (cs.bPolyGenerate) {
 				cs.clear_all_cons();
 				cs.PolyGenerate();
-				charsetAndAddPoly(true);
+				characteristicSetMethodAndAddPoly(true);
 			}
 			addConstraintToList(cs);
 		}
@@ -8362,7 +8328,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 										if (sType.equalsIgnoreCase("point")) {
 											GEPoint pNew = new GEPoint(this, (Element)nn2);
 											bDocumentSemanticallyValid &= pNew.isValid();
-											pointlist.add(pNew);
+											addPointToList(pNew);
 											ge = pNew;
 											int index = ge.id();
 											if (index <= 0 || mapGE.containsKey(index)) {
@@ -8381,7 +8347,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 										if (sType.equalsIgnoreCase("line")) {
 											GELine geNew = new GELine(this, (Element)nn2, mapGE);
 											bDocumentSemanticallyValid &= geNew.isValid();
-											linelist.add(geNew);
+											addLineToList(geNew);
 											ge = geNew;
 											int index = ge.id();
 											if (index <= 0 || mapGE.containsKey(index)) {
@@ -8406,40 +8372,40 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 										if (sType.equalsIgnoreCase("circle")) {
 											GECircle geNew = new GECircle(this, (Element)nn2, mapGE);
 											bDocumentSemanticallyValid &= geNew.isValid();
-											circlelist.add(geNew);
+											addCircleToList(geNew);
 											ge = geNew;
 										}
 										if (sType.equalsIgnoreCase("angle")) {
 											GEAngle geNew = new GEAngle(this, (Element)nn2, mapGE);
-											anglelist.add(geNew);
+											addAngleToList(geNew);
 											ge = geNew;
 										}
 										if (sType.equalsIgnoreCase("distance")) {
 											GEDistance geNew = new GEDistance(this, (Element)nn2, mapGE);
-											distancelist.add(geNew);
+											addGraphicEntity(distancelist, geNew);
 											ge = geNew;
 										}
 										if (sType.equalsIgnoreCase("polygon")) {
 											GEPolygon geNew = new GEPolygon(this, (Element)nn2, mapGE);
 											bDocumentSemanticallyValid &= geNew.isValid();
-											polygonlist.add(geNew);
+											addPolygonToList(geNew);
 											ge = geNew;
 										}
 										if (sType.equalsIgnoreCase("text")) {
 											GEText geNew = new GEText(this, (Element)nn2, mapGE);
-											textlist.add(geNew);
+											addGraphicEntity(textlist, geNew);
 											ge = geNew;
 										}
 										if (sType.equalsIgnoreCase("trace")) {
 											GETrace geNew = new GETrace(this, (Element)nn2, mapGE);
-											tracelist.add(geNew);
+											addGraphicEntity(tracelist, geNew);
 											ge = geNew;
 										}
 										if (sType.equalsIgnoreCase("other")) {
 											System.out.println("File contained an unknown type of entity. It will be ignored.");
-//											GraphicEntity geNew = new GraphicEntity(this, (Element)nn2); // GraphicEntity is an abstract class and cannot serve as a generic entity.
-//											otherlist.add(geNew);
-//											ge = geNew;
+											//											GraphicEntity geNew = new GraphicEntity(this, (Element)nn2); // GraphicEntity is an abstract class and cannot serve as a generic entity.
+											//											otherlist.add(geNew);
+											//											ge = geNew;
 										}
 										if (ge == null) {
 											System.err.println("Loaded file had an unknown entry type: "+sType+".");
@@ -8483,28 +8449,28 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						}
 					}
 				}
-				
+
 				for (GEPoint p : pointlist) {
 					bDocumentSemanticallyValid &= p.setConstraints(mapC);
 				}
 				if (pnameCounter < 0)
 					pnameCounter = pointlist.size();
 				assert(pointlist.size() == pnameCounter);
-				
+
 				for (GELine l : linelist) {
 					bDocumentSemanticallyValid &= l.setConstraints(mapC);
 				}
 				if (plineCounter < 0)
 					plineCounter = linelist.size();
 				assert(linelist.size() == plineCounter);
-				
+
 				for (GECircle c : circlelist) {
 					bDocumentSemanticallyValid &= c.setConstraints(mapC);
 				}
 				if (pcircleCounter < 0)
 					pcircleCounter = circlelist.size();
 				assert(circlelist.size() == pcircleCounter);
-				
+
 				if (!bDocumentSemanticallyValid) {
 					System.err.println("Loaded file had an invalid structure.");
 				}
@@ -8609,390 +8575,6 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			//			}
 		}
 	}
-
-	/*boolean Save(final DataOutputStream out) throws IOException {
-		if (cpfield != null)
-			cpfield.run_to_end(this);
-
-		final String title = "GE";
-		out.write(title.getBytes(), 0, title.length());
-		out.writeDouble(CMisc.version);
-
-		Save_global(out);
-
-		out.writeInt(CMisc.id_count);
-		out.writeInt(GridX);
-		out.writeInt(GridY);
-		out.writeBoolean(DRAWGRID);
-		out.writeBoolean(SNAP);
-
-		out.writeInt(CurrentAction);
-
-		out.writeInt(pnameCounter);
-		out.writeInt(plineCounter);
-		out.writeInt(pcircleCounter);
-
-		out.writeInt(paraCounter);
-
-		for (int i = 0; i < (paraCounter - 1); i++)
-			parameter[i].Save(out);
-
-		for (int i = 0; i < (paraCounter - 1); i++)
-			out.writeDouble(paraBackup[i]);
-
-		out.writeInt(constraintlist.size());
-		for (final constraint cs : constraintlist)
-			out.writeInt(cs.id);
-
-		out.writeInt(pointlist.size());
-		for (final GEPoint p : pointlist)
-			p.Save(out);
-
-		out.writeInt(linelist.size());
-		for (final GELine ln : linelist)
-			ln.Save(out);
-
-		out.writeInt(circlelist.size());
-		for (final GECircle c : circlelist)
-			c.Save(out);
-
-		out.writeInt(anglelist.size());
-		for (final CAngle ag : anglelist)
-			ag.Save(out);
-
-		out.writeInt(distancelist.size());
-		for (final CDistance dis : distancelist)
-			dis.Save(out);
-
-		out.writeInt(polygonlist.size());
-		for (final GEPolygon poly : polygonlist)
-			poly.Save(out);
-
-		out.writeInt(textlist.size());
-		for (final CText tx : textlist)
-			tx.Save(out);
-
-		out.writeInt(tracelist.size());
-		for (final GeometricEntity tr : tracelist)
-			tr.Save(out);
-
-		out.writeInt(otherlist.size());
-		for (final GeometricEntity ge : otherlist) {
-			out.writeInt(ge.m_type);
-			ge.Save(out);
-		}
-
-		out.writeInt(constraintlist.size());
-		for (final constraint cs : constraintlist)
-			cs.Save(out);
-
-		out.writeInt(undolist.size());
-		for (final UndoStruct undo : undolist)
-			undo.Save(out);
-
-		currentUndo.Save(out);
-		// if (trackPoint != null) {
-		// out.writeInt(trackPoint.m_id);
-		// } else {
-		out.writeInt(-1);
-		// }
-
-		if ((animate != null) && gxInstance.getAnimateDialog().isVisible()) {
-			out.writeBoolean(true);
-			animate.Save(out);
-		} else
-			out.writeBoolean(false);
-
-		if (cpfield == null)
-			out.writeBoolean(false);
-		else {
-			out.writeBoolean(true);
-			cpfield.Save(out);
-		}
-		setSavedTag();
-		return true;
-	}
-
-	DataInputStream openInputFile(final String path) throws IOException {
-		final File f = new File(path);
-
-		if (f.exists()) {
-			final FileInputStream fp = new FileInputStream(f);
-			file = f;
-			final DataInputStream in = new DataInputStream(fp);
-			return in;
-		}
-		return null;
-	}
-
-	boolean Load(final String name) throws IOException {
-		final File f = new File(name);
-		return Load(f);
-	}
-
-	boolean Load(final File f) throws IOException {
-		FileInputStream fp;
-		if (f.exists())
-			fp = new FileInputStream(f);
-		else
-			return false;
-
-		final DataInputStream in = new DataInputStream(fp);
-		final boolean n = Load(in);
-		in.close();
-		return n;
-	}
-
-	boolean Load(final DataInputStream in) throws IOException {
-		final byte[] tl = new byte[2];
-		in.read(tl, 0, tl.length);
-		final String title = new String(tl);
-		if (title.compareTo("GE") != 0)
-			return false;
-
-		final double version = in.readDouble();
-		CMisc.version_load_now = version;
-		if (version < 0.006) {
-			CMisc.eprint(panel, "Error version" + version);
-			return false;
-		}
-		Load_global(in);
-
-		final int idcount = CMisc.id_count = in.readInt();
-		GeoPoly.clearZeroN();
-
-		GridX = in.readInt();
-		GridY = in.readInt();
-		DRAWGRID = in.readBoolean();
-		SNAP = in.readBoolean();
-		CurrentAction = in.readInt();
-		pnameCounter = in.readInt();
-		plineCounter = in.readInt();
-		pcircleCounter = in.readInt();
-		paraCounter = in.readInt();
-
-		for (int i = 0; i < (paraCounter - 1); i++) {
-			final param pm = new param();
-			pm.Load(in);
-			parameter[i] = pm;
-		}
-
-		for (int i = 0; i < (paraCounter - 1); i++)
-			paraBackup[i] = in.readDouble();
-
-		int size;
-
-		if (CMisc.version_load_now < 0.01) {
-			size = in.readInt();
-			final int trackCounter = size;
-			if (CMisc.version_load_now >= 0.008)
-				for (int i = 0; i < (2 * trackCounter); i++)
-					in.readInt();
-			else
-				for (int i = 0; i < trackCounter; i++)
-					in.readInt();
-		} else if (CMisc.version_load_now < 0.012) {
-			size = in.readInt();
-			for (int i = 0; i < size; i++) {
-				final CTrace ct = new CTrace(null);
-				ct.Load(in, this);
-				tracelist.add(ct);
-			}
-		}
-
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final int d = in.readInt();
-			addConstraintToList(new constraint(d));
-		}
-
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final GEPoint p = new GEPoint();
-			p.Load(in, this);
-			pointlist.add(p);
-		}
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final GELine ln = new GELine(0);
-			ln.Load(in, this);
-			linelist.add(ln);
-		}
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final GECircle c = new GECircle();
-			c.Load(in, this);
-			circlelist.add(c);
-		}
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final CAngle ag = new CAngle();
-			ag.Load(in, this);
-			anglelist.add(ag);
-		}
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final CDistance dis = new CDistance();
-			dis.Load(in, this);
-			distancelist.add(dis);
-		}
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-
-			final GEPolygon poly = new GEPolygon();
-			poly.Load(in, this);
-			addPolygonToList(poly);
-		}
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final CText ct = new CText();
-			ct.Load(in, this);
-			textlist.add(ct);
-		}
-
-		if (CMisc.version_load_now >= 0.012) {
-			size = in.readInt();
-			for (int i = 0; i < size; i++) {
-				final CTrace ct = new CTrace(null);
-				ct.Load(in, this);
-				tracelist.add(ct);
-			}
-		}
-
-		if (CMisc.version_load_now >= 0.017) {
-			size = in.readInt();
-			if (CMisc.version_load_now <= 0.040)
-				for (int i = 0; i < size; i++) {
-					final Cedmark ce = new Cedmark();
-					ce.Load(in, this);
-					otherlist.add(ce);
-				}
-			else
-				for (int i = 0; i < size; i++) {
-					final int t = in.readInt();
-					switch (t) {
-
-					case GeometricEntity.TMARK: {
-						final CTMark mt = new CTMark();
-						mt.Load(in, this);
-						otherlist.add(mt);
-					}
-						break;
-					case GeometricEntity.ARROW: {
-						final CArrow ar = new CArrow(null, null);
-						ar.Load(in, this);
-						otherlist.add(ar);
-						break;
-					}
-					case GeometricEntity.EQMARK:
-					case 0: {
-						final Cedmark ce = new Cedmark();
-						ce.Load(in, this);
-						otherlist.add(ce);
-					}
-						break;
-					default:
-						CMisc.eprint(panel, "Mark unidentified!");
-						break;
-					}
-				}
-
-		}
-
-		optmizePolynomial();
-
-		size = in.readInt();
-		for (final constraint cs : constraintlist) {
-			cs.Load(in, this);
-			if (cs.is_poly_genereate) {
-				cs.PolyGenerate();
-				charsetAndAddPoly(true);
-			}
-
-		}
-
-		// for (int i = 0; i < size; i++) {
-		// constraint cs = (constraint) constraintlist.get(i);
-		//
-		// }
-
-		size = in.readInt();
-		for (int i = 0; i < size; i++) {
-			final UndoStruct ud = new UndoStruct(0);
-			ud.Load(in, this);
-			undolist.add(ud);
-			if (ud.m_type == UndoStruct.T_TO_PROVE_NODE)
-				drawData.setProveStatus();
-		}
-
-		currentUndo = new UndoStruct(0);
-		currentUndo.Load(in, this);*/
-
-	/*
-	 * if (version >= 0.006) { int ti = in.readInt(); }
-	 */
-	/*
-		if (CMisc.version_load_now >= 0.009) { // version 0.009 special for web
-												// saver.
-			final boolean isrun = in.readBoolean();
-			if (isrun) {
-				animate = new AnimateC();
-				animate.Load(in, this);
-				if (gxInstance != null) {
-					gxInstance.toggleButton(true);
-					gxInstance.getAnimateDialog().setAttribute(animate);
-					gxInstance.showAnimatePane();
-				}
-			} else if (gxInstance != null) {
-				gxInstance.toggleButton(false);
-			}
-		}
-
-		if (CMisc.version_load_now >= 0.017) {
-			final boolean havep = in.readBoolean();
-			if (havep) {
-				cpfield = new CProveField();
-				cpfield.Load(in, this);
-				// if (gxInstance != null) {
-				// gxInstance.showProveBar(true);
-				// }
-			}
-		}
-		CMisc.id_count = idcount;
-		CurrentAction = MOVE;
-		currentUndo.id = idcount;
-
-		setSavedTag();
-		return true;
-
-	}*/
-
-	//	public static void Save_global(final DataOutputStream out)
-	//			throws IOException {
-	//		drawData.Save(out);
-	//		final int index = UndoStruct.INDEX;
-	//		out.writeInt(index);
-	//		CMisc.Save(out);
-	//	}
-
-	//	public void Load_global(final DataInputStream in) throws IOException {
-	//		if (CMisc.version_load_now < 0.010) {
-	//			final int size = in.readInt();
-	//			if (size > 100000)
-	//				return;
-	//			final byte[] s = new byte[size];
-	//			in.read(s, 0, size);
-	//		}
-	//		drawData.Load(in, this);
-	//		if (CMisc.version_load_now >= 0.030)
-	//			UndoStruct.INDEX = in.readInt();
-	//
-	//		if (CMisc.version_load_now >= 0.040)
-	//			CMisc.Load(in);
-	//
-	//		footMarkShown = CMisc.isFootMarkShown(); // APPLET ONLY.
-	//		footMarkLength = CMisc.FOOT_MARK_LENGTH;
-	//	}
 
 	boolean write_ps(final String name, final int stype, final boolean ptf,
 			final boolean pts) throws IOException { // 0: color 1: gray ; 2:
@@ -9173,7 +8755,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 	public void addText(final GEText tx) {
 		if (tx != null)
-			if (addGraphicEntityToList(tx, textlist))
+			if (addGraphicEntity(textlist, tx))
 				UndoAdded(tx.TypeString());
 	}
 
@@ -9269,7 +8851,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					input.addUndo(Undo, message);
 			}
 			if (gr)
-				gxInstance.getpprove().generate(); // not sure why the pprove needs to be generated (or even what that means)
+				gxInstance.getProofPanel().generate(); // not sure why the pprove needs to be generated (or even what that means)
 			gxInstance.reloadLP();  // What is lp? (method refreshes an undo dialog box if it is visible.)
 			gxInstance.setBKState(); // refresh state of undo and redo buttons to reflect the new item on the undo list.
 		}
@@ -9513,7 +9095,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		}
 
 		if (gxInstance != null)
-			gxInstance.getpprove().generate();
+			gxInstance.getProofPanel().generate();
 		return true;
 
 	}
@@ -9653,16 +9235,16 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 		for (final Object o : Undo.pointlist)
 			if (o instanceof GEPoint)
-				pointlist.add((GEPoint) o);
+				addPointToList((GEPoint) o);
 		for (final Object o : Undo.linelist)
 			if (o instanceof GELine)
-				linelist.add((GELine) o);
+				addLineToList((GELine) o);
 		for (final Object o : Undo.circlelist)
 			if (o instanceof GECircle)
-				circlelist.add((GECircle) o);
+				addCircleToList((GECircle) o);
 		for (final Object o : Undo.anglelist)
 			if (o instanceof GEAngle)
-				anglelist.add((GEAngle) o);
+				addAngleToList((GEAngle) o);
 
 		for (final Constraint cs : Undo.constraintlist) {
 			addConstraintToList(cs);
@@ -9764,16 +9346,16 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		}
 		for (final Object o : Undo.distancelist)
 			if (o instanceof GEDistance)
-				distancelist.add((GEDistance) o);
+				addGraphicEntity(distancelist, (GEDistance) o);
 		for (final Object o : Undo.polygonlist)
 			if (o instanceof GEPolygon)
-				polygonlist.add((GEPolygon) o);
+				addGraphicEntity(polygonlist, (GEPolygon) o);
 		for (final Object o : Undo.textlist)
 			if (o instanceof GEText)
-				textlist.add((GEText) o);
+				addGraphicEntity(textlist, (GEText) o);
 		for (final Object o : Undo.otherlist)
 			if (o instanceof GraphicEntity)
-				otherlist.add((GraphicEntity) o);
+				addGraphicEntity(otherlist, (GraphicEntity) o);
 		re_generate_all_poly();
 		reCalculate();
 
@@ -9809,7 +9391,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		redo_step(Undo);
 		undolist.add(Undo);
 		if (gxInstance != null)
-			gxInstance.getpprove().generate();
+			gxInstance.getProofPanel().generate();
 		return Undo;
 	}
 
@@ -9941,7 +9523,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		final GEPoint p2 = fd_point(b);
 		if ((p1 != null) && (p2 != null) && (fd_edmark(p1, p2) == null)) {
 			final GEEqualDistanceMark ed = new GEEqualDistanceMark(p1, p2);
-			otherlist.add(ed);
+			addGraphicEntity(otherlist, ed);
 			return ed;
 		}
 		return null;
@@ -9950,7 +9532,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	public GEEqualDistanceMark addedMark(final GEPoint p1, final GEPoint p2) {
 		if ((p1 != null) && (p2 != null) && (fd_edmark(p1, p2) == null)) {
 			final GEEqualDistanceMark ed = new GEEqualDistanceMark(p1, p2);
-			otherlist.add(ed);
+			addGraphicEntity(otherlist, ed);
 			return ed;
 		}
 		return null;
@@ -9999,9 +9581,14 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		panel = p;
 	}
 
-	public void setCurrentInstance(final DrawPanelFrame gx) {
+	public DrawPanel(final DrawPanelFrame gx) {
+		super();
 		gxInstance = gx;
 	}
+
+	//	public void setCurrentInstance(final DrawPanelFrame gx) {
+	//		gxInstance = gx;
+	//	}
 
 	public param getANewParam() {
 		// int n = paraCounter;
@@ -10465,7 +10052,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		}
 
 		final GETMark m = new GETMark(ln1, ln2);
-		otherlist.add(m);
+		addGraphicEntity(otherlist, m);
 	}
 
 	public void addCTMark(final GEPoint p1, final GEPoint p2, final GEPoint p3,

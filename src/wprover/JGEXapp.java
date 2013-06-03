@@ -3,6 +3,9 @@
  */
 package wprover;
 
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import wprover.DrawPanelFrame;
@@ -35,12 +38,25 @@ public class JGEXapp {
     private static void createAndShowGUI() {
         //Create and set up the window.
     	mainJFrame = new DrawPanelFrame();
-    	mainJFrame.init();
     	mainJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	mainJFrame.init();
 
         //Display the window.
     	mainJFrame.pack();
     	mainJFrame.setVisible(true);
     }
     
+	public static String retrieveToolTipResource(final String sName) {
+		return sName;
+	}
+	
+	public static ImageIcon retrieveIconResource(final String sName) {
+		final String imgLocation = "images/" + sName + ".gif";
+		final URL imageURL = DrawPanelFrame.class.getResource(imgLocation);
+		String altText = "alt";
+		return new ImageIcon(imageURL, altText);
+	}
+	
+
+
 }

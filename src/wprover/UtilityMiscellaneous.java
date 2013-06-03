@@ -19,8 +19,8 @@ public class UtilityMiscellaneous {
     final public static double version = 0.054;
     public static final boolean DEBUG = false;
 
-    public static int id_count = 1;
-    public static int id_count_onfile = 1;
+    public static int id_count = 0;
+    public static int id_count_onfile = 0;
     public static boolean isDiagramChanged = false;
 
     public static double version_load_now = 0;
@@ -77,7 +77,7 @@ public class UtilityMiscellaneous {
     ////////////////////////////////////////////////
     //** begin of Font.
 
-    public static String defaultFont = "Dialog";
+    public static String defaultFont = "Cambria Math";
     public static Font angleNameFont, nameFont, font, smallnameFont, button_label_font;
     public static Font thmFont, fullFont, gddFont, areaFont, manualFont, fixFont, algebraFont;
     private static int[] FontSizePool = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 36, 40, 48, 64, 72};
@@ -108,7 +108,7 @@ public class UtilityMiscellaneous {
 
     final public static Color ButtonColor = new Color(192, 192, 192);
     final public static Color frameColor = new Color(214, 214, 214);
-    public static int ColorMode = 0; // 1. Gray, 2.Black and white.
+    public static int ColorMode = 0; // 0. Color, 1. Grayscale , 2.Black and white.
     public static boolean AntiAlias = true;
 
 
@@ -215,7 +215,7 @@ public class UtilityMiscellaneous {
     }
 
     public static int getObjectId() {
-        return id_count++;
+        return ++id_count;
     }
 
     public static void onFileSavedOrLoaded() {
@@ -261,16 +261,15 @@ public class UtilityMiscellaneous {
     }
 
     public static void setFont(String f) {
-        if (f == null || f.length() < 1) return;
-        if (defaultFont.equalsIgnoreCase(f))
-            return;
-        defaultFont = f;
-
-        angleNameFont = new Font(defaultFont, Font.PLAIN, 12);
-        nameFont = new Font(defaultFont, Font.BOLD, 16);
-        font = new Font(defaultFont, Font.PLAIN, 12);
-        smallnameFont = new Font(defaultFont, Font.BOLD, 10);
-        button_label_font = new Font(defaultFont, Font.BOLD, 14);
+        if (f != null && !f.isEmpty() && (defaultFont == null || !defaultFont.equalsIgnoreCase(f))) {
+	        defaultFont = f;
+	
+	        angleNameFont = new Font(defaultFont, Font.PLAIN, 12);
+	        nameFont = new Font(defaultFont, Font.BOLD, 16);
+	        font = new Font(defaultFont, Font.PLAIN, 12);
+	        smallnameFont = new Font(defaultFont, Font.BOLD, 10);
+	        button_label_font = new Font(defaultFont, Font.BOLD, 14);
+        }
     }
 
 
@@ -285,8 +284,8 @@ public class UtilityMiscellaneous {
         footMarkShown = true;
         FLASH_INTERVAL = 100;
         GridColor = new Color(220, 220, 220);
-        screenx = 1000;
-        screeny = 750;
+        screenx = 1600;
+        screeny = 950;
         lan = "English";
         full_screen = false;
         ANGLE_TYPE = 1;

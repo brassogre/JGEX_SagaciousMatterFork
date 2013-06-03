@@ -201,7 +201,7 @@ public class Animation {
         }
 
         GETrace ct = (GETrace) onObj;
-        double len = ct.Roud_length();
+        double len = ct.circumference();
         int n = ct.getPointSize();
         if (n == 0) {
             return 0;

@@ -203,7 +203,7 @@ abstract public class GraphicEntity {
 
     public GraphicEntity(int type) {
         m_type = type;
-        m_id = (type != TEMP_POINT) ? UtilityMiscellaneous.getObjectId() : -1;
+        m_id = (type != TEMP_POINT) ? UtilityMiscellaneous.getObjectId() : 0;
         setDefaultAttributes();
     }
     
@@ -338,35 +338,6 @@ abstract public class GraphicEntity {
         g2.setPaint(cc);
     }
 
-//    public static void WriteString(DataOutputStream out, String s) throws IOException {
-//        out.writeInt(s.length());
-//        out.writeChars(s);
-//    }
-//
-//    public static void WriteFont(DataOutputStream out, Font f) throws IOException {
-//        String s = f.getName();
-//        WriteString(out, s);
-//        out.writeInt(f.getStyle());
-//        out.writeInt(f.getSize());
-//    }
-//
-//    public static String ReadString(DataInputStream in) throws IOException {
-//        int size = in.readInt();
-//        String s = new String();
-//        for (int i = 0; i < size; i++)
-//            s += in.readChar();
-//        return s;
-//    }
-//
-//    public static Font ReadFont(DataInputStream in) throws IOException {
-//        String name = ReadString(in);
-//        int style = in.readInt();
-//        int size = in.readInt();
-//        size &= 0x7F; // Ensure that font is not larger than 63 points
-//        
-//        return new Font(name, style, size);
-//    }
-
     public void saveSuperColor(FileOutputStream fp) throws IOException {
         String s = " Color" + new Integer(m_color).toString() + " ";
         fp.write(s.getBytes());
@@ -381,45 +352,5 @@ abstract public class GraphicEntity {
         String s = x1 + " " + y1 + " moveto " + x2 + " " + y2 + " lineto ";
         return s;
     }
-    
-/*    public void Save(DataOutputStream out) throws IOException {
-        out.writeInt(m_id);
 
-        if (m_name == null)
-            out.writeInt(0);
-        else {
-            int size = m_name.length();
-            out.writeInt(size);
-
-            char[] nn = new char[size];
-            m_name.getChars(0, size, nn, 0);
-            for (int i = 0; i < size; i++)
-                out.writeChar(nn[i]);
-//            out.writeChars(m_name);
-        }
-
-        out.writeInt(m_color);
-        out.writeInt(m_dash);
-        out.writeInt(m_width);
-        out.writeBoolean(bVisible);
-    }
-
-    public void Load(DataInputStream in, drawProcess dp) throws IOException {
-        m_id = in.readInt();
-
-        int size = in.readInt();
-        if (size > 0) {
-            m_name = new String();
-            for (int i = 0; i < size; i++)
-                m_name += in.readChar();
-        }
-        if (m_name == null || m_name.length() == 0)
-            m_name = " ";
-
-        m_color = in.readInt();
-        m_dash = in.readInt();
-        m_width = in.readInt();
-        if (CMisc.version_load_now >= 0.017)
-            bVisible = in.readBoolean();
-    }*/
 }

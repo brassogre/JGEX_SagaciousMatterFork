@@ -72,7 +72,7 @@ class ProveBar extends JToolBar implements ActionListener, ChangeListener {
 	 */
 	private static final long serialVersionUID = -7771555826858356048L;
 	//private GExpert gxInstance;
-    private PanelDraw dpane;
+    private DrawPanelOverlay dpane;
     private DrawPanelExtended dp;
     private ProofPanel pproof;
 
@@ -88,11 +88,11 @@ class ProveBar extends JToolBar implements ActionListener, ChangeListener {
         //gxInstance = gex;
         this.dpane = gex.d;
         this.dp = gex.dp;
-        pproof = gex.getpprove();
+        pproof = gex.getProofPanel();
         init();
     }
 
-    public ProveBar(DrawPanelFrame gex, PanelDraw dd, DrawPanelExtended dp, ProofPanel pproof) {
+    public ProveBar(DrawPanelFrame gex, DrawPanelOverlay dd, DrawPanelExtended dp, ProofPanel pproof) {
         super();
         //gxInstance = gex;
         this.dpane = dd;

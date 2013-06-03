@@ -28,8 +28,8 @@ public class DialogLeadVariable extends DialogBase implements MouseListener, Act
     private ArrayList<ArrayList<Object>> vdata = new ArrayList<ArrayList<Object>>();
     private DrawPanelFrame gxInstance;
     private JButton bdtail;
-    protected static GeoPoly poly = GeoPoly.getPoly();
-    protected static CharacteristicSetMethod charset = CharacteristicSetMethod.getinstance();
+    //protected static GeoPoly poly = GeoPoly.getPoly();
+    //protected static CharacteristicSetMethod charset = CharacteristicSetMethod.getinstance();
 
     public DialogLeadVariable(DrawPanelFrame f) {
 
