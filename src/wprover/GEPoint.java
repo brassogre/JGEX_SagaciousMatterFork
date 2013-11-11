@@ -125,7 +125,7 @@ public class GEPoint extends GraphicEntity implements Pointed {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + POINT_RADIUS;
-		result = prime * result + ((cons == null) ? 0 : cons.hashCode());
+		//result = prime * result + ((cons == null) ? 0 : cons.hashCode());
 		result = prime * result + (frozen ? 1231 : 1237);
 		result = prime * result + (hasSetColor ? 1231 : 1237);
 		result = prime * result + m_radius;
@@ -467,6 +467,10 @@ public class GEPoint extends GraphicEntity implements Pointed {
     	return (p != null && (p.x1 == this.x1) && (p.y1 == this.y1));
     }
 
+    public GEPoint getPointOtherThan(GEPoint t) {
+        return (t == this) ? null : this;
+    }
+    
     public boolean hasCoordinates(int x, int y) {
     	assert(x1.value == x1.value);
     	assert(y1.value == y1.value);

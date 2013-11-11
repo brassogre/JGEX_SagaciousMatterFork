@@ -880,8 +880,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
             }
 
             dx.pointlist.addAll(v1);
-            for (int i = 0; i < v1.size(); i++) {
-                GEPoint p = v1.get(i);
+            for (GEPoint p : v1) {
                 dx.textlist.add(p.textNametag);
             }
             v1.clear();

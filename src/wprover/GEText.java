@@ -34,7 +34,6 @@ public class GEText extends GraphicEntity {
 	private String svalue;
 	private double posX, posY;
 
-
 	public GEText() {
 		super(GraphicEntity.TEXT);
 		str = new String();
@@ -850,7 +849,6 @@ public class GEText extends GraphicEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((father == null) ? 0 : father.hashCode());
 		result = prime * result + ((font == null) ? 0 : font.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(h);

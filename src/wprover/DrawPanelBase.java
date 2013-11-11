@@ -751,7 +751,8 @@ public class DrawPanelBase {
             gemap.put(id, ge);
             return collection.add(ge);
         } else {
-        	assert(existingGe == ge);
+        	if (existingGe != ge)
+        		System.err.println(); // This is triggered (sometimes) when user already has some geometry on the board and loads a new file, other times when a point is added where there is already an intersection (without the GEPoint)
         }
         return false;
     }
@@ -904,8 +905,8 @@ public class DrawPanelBase {
     }
 
     static boolean check_para(GELine ln1, GELine ln2) {
-        double k1 = ln1.getK();
-        double k2 = ln2.getK();
+        double k1 = ln1.getSlope();
+        double k2 = ln2.getSlope();
         return isZero(k1 - k2);
     }
 
@@ -1134,8 +1135,8 @@ public class DrawPanelBase {
     static double[] intersect_lc(GELine ln, GECircle cr) {
         double r2 = cr.getRadius();
         r2 *= r2;
-        double k = ln.getK();
-        GEPoint p = ln.getfirstPoint();
+        double k = ln.getSlope();
+        GEPoint p = ln.getFirstPoint();
         if (p == null) return null;
         GEPoint o = cr.o;
         double x2 = p.getx();
@@ -1181,10 +1182,10 @@ public class DrawPanelBase {
     }
 
     public double[] intersect_ll(GELine ln1, GELine ln2) {
-        GEPoint p1 = ln1.getfirstPoint();
-        double k1 = ln1.getK();
-        GEPoint p2 = ln2.getfirstPoint();
-        double k2 = ln2.getK();
+        GEPoint p1 = ln1.getFirstPoint();
+        double k1 = ln1.getSlope();
+        GEPoint p2 = ln2.getFirstPoint();
+        double k2 = ln2.getSlope();
         if (p1 == null || p2 == null) return null;
         double x1 = p1.getx();
         double y1 = p1.gety();
@@ -1433,9 +1434,9 @@ public class DrawPanelBase {
         for (GraphicEntity c : otherlist) {
             if (c.get_type() == GraphicEntity.TMARK) {
                 GETMark m = (GETMark) c;
-                if (m.ln1.containPTs(p1, p2) && m.ln2.containPTs(p3, p4))
+                if (m.ln1.containsPoints(p1, p2) && m.ln2.containsPoints(p3, p4))
                     return m;
-                if (m.ln2.containPTs(p1, p2) && m.ln1.containPTs(p3, p4))
+                if (m.ln2.containsPoints(p1, p2) && m.ln1.containsPoints(p3, p4))
                     return m;
 
             }

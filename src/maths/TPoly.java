@@ -1,5 +1,12 @@
 package maths;
 
+/**
+ * I think <code>TPoly</code> represents a triangular sequence of polynomial equations 
+ * (as a directed tail-recursive list of polynomial functions, construed as being equal to zero).
+ * 
+ * In Wu's method, one represents geometric constraints in terms of polynomial equations where
+ * each polynomial in the tail-recursive list has exactly one variable that does not appear in the tail.
+ */
 public class TPoly {
     public TMono poly;
     public TPoly next;
@@ -73,39 +80,23 @@ public class TPoly {
     }
 
     public int length() {
-        TPoly tp = this;
-        int i = 0;
-
-        while (tp != null) {
-            tp = tp.next;
-            i++;
-        }
-        return i;
-
+    	return (next == null) ? 1 : 1 + next.length();
     }
 
     public long callength() {
         TPoly p = this;
         long len = 0;
-        while (p != null) {
-            long l = TPoly.plength(p.getPoly()) + 1;
-            len = len + l;
+        do {
+        	// Iterate through each polynomial expression in the tail (inclusive of this).
+            TPoly pp = p;
+            while (pp != null) {
+            	// Count every term in every polynomial expression.
+                ++len;
+                pp = pp.next;
+            }
             p = p.getNext();
-        }
+        } while (p != null);
         return len;
-    }
-
-    private static long plength(TMono p) {
-        TMono pt;
-        int i;
-
-        pt = p;
-        i = -1;
-        while (pt != null) {
-            ++i;
-            pt = pt.next;
-        }
-        return i;
     }
 
     public void reduce(int length) { // Original code was in CharacteristicSetMethod.reduce(TPoly poly)

@@ -519,7 +519,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	// Get the non-degenerate conditions from the polynomials.
 	// These are the simplest non-degenerate conditions.
 	public void printNDGS() {
-		final GeoPoly basic = GeoPoly.getPoly();
+		//final GeoPoly basic = GeoPoly.getPoly();
 		// CharSet set = CharSet.getinstance();
 		PolyBasic.setRMCOEF(false);
 		try {
@@ -527,7 +527,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			final ArrayList<TMono> v1 = new ArrayList<TMono>();
 			for (int i = 0; i < v.size(); i++) {
 				TMono m = v.get(i);
-				m = basic.simplify(m, parameter);
+				m = GeoPoly.simplify(m, parameter);
 				if (m != null)
 					v1.add(m);
 			}
@@ -1118,8 +1118,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 	public GELine fd_pt_on_which_line(final GEPoint pt) {
 		for (final GELine ln : linelist) {
 			if (ln.isCoincidentWith(pt) && (ln.getPtsSize() >= 2)) {
-				final GEPoint p1 = ln.getfirstPoint();
-				final GEPoint p2 = ln.getSecondPoint(p1);
+				final GEPoint p1 = ln.getFirstPoint();
+				final GEPoint p2 = ln.getPointOtherThan(p1);
 				if ((p1.x1.xindex < pt.x1.xindex) && (p2.x1.xindex < pt.x1.xindex))
 					return ln;
 			}
@@ -1166,8 +1166,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 		final GELine ln = fd_pt_on_which_line(pt);
 		if (ln != null) {
-			final GEPoint p1 = ln.getfirstPoint();
-			final GEPoint p2 = ln.getSecondPoint(p1);
+			final GEPoint p1 = ln.getFirstPoint();
+			final GEPoint p2 = ln.getPointOtherThan(p1);
 			final double xt = paraBackup[pt.x1.xindex - 1];
 			final double yt = paraBackup[pt.y1.xindex - 1];
 			final double x1 = paraBackup[p1.x1.xindex - 1];
@@ -1224,8 +1224,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		if (type == Constraint.INTER_LC) {
 			final GELine ln = (GELine) cs.getelement(1);
 			final GECircle cr = (GECircle) cs.getelement(2);
-			final GEPoint p1 = ln.getfirstPoint();
-			final GEPoint p2 = ln.getSecondPoint(p1);
+			final GEPoint p1 = ln.getFirstPoint();
+			final GEPoint p2 = ln.getPointOtherThan(p1);
 			if ((p1 == null) || (p2 == null) || (p2 == cp))
 				return false;
 			final GEPoint o = cr.o;
@@ -1668,13 +1668,13 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if ((t == Constraint.PONLINE) || (t == Constraint.INTER_LC)) {
 				final GEPoint t1 = (GEPoint) cs.getelement(0);
 				final GELine l1 = (GELine) cs.getelement(1); // XXX This threw an exception one time (when loading a faulty gex file) CastException [Was GEPoint]
-				if (l1.containPTs(p1, p2))
+				if (l1.containsPoints(p1, p2))
 					GeoPoly.addZ(t1.x1.xindex);
 			} else if (t == Constraint.INTER_LL) {
 				final GEPoint t1 = (GEPoint) cs.getelement(0);
 				final GELine l1 = (GELine) cs.getelement(1);
 				final GELine l2 = (GELine) cs.getelement(2);
-				if (l1.containPTs(p1, p2) || l2.containPTs(p1, p2))
+				if (l1.containsPoints(p1, p2) || l2.containsPoints(p1, p2))
 					GeoPoly.addZ(t1.x1.xindex);
 			}
 		}
@@ -2480,7 +2480,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		if (p.isAFixedPoint())
 			return false;
 
-		if (p.isAFreePoint() && ln.containPT(p))
+		if (p.isAFreePoint() && ln.containsPoints(p))
 			return false;
 		return true;
 	}
@@ -2875,7 +2875,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				GEPoint tt = null;
 				if ((SmartPLine(CatchPoint) == ln3)
 						|| (((tt = SmartPoint(CatchPoint)) != null) && ln3
-								.containPT(tt))) {
+								.containsPoints(tt))) {
 					final GEPoint p1 = SmartgetApointFromXY(x, y);
 					final GELine ln = new GELine(GELine.ALine);
 					ln.add(p1);
@@ -3138,7 +3138,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						addPointToList(p);
 						if (true) {
 							final GELine ln = findLineGivenTwoPoints(p1, p2);
-							if (status && ((ln == null) || !ln.containPT(px))) {
+							if (status && ((ln == null) || !ln.containsPoints(px))) {
 								final GELine ln1 = new GELine(px, p);
 								addLineToList(ln1);
 							} else {
@@ -3437,7 +3437,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					int exist_point_number = 0;
 					final ArrayList<GEPoint> vp = new ArrayList<GEPoint>();
 
-					for (int i = 0; i < line.points.size(); i++) {
+					for (int i = 0; i < line.getPtsSize(); i++) {
 						GEPoint pu = null;
 						GEPoint pp = null;
 						Constraint cs = null;
@@ -3460,7 +3460,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 						vp.add(pp);
 					}
 
-					if (exist_point_number < line.points.size()) {
+					if (exist_point_number < line.getPtsSize()) {
 						if (line.points.contains(p1)) {
 							for (final GEPoint tt : vp)
 								line.add(tt);
@@ -3550,7 +3550,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 							line3.points);
 					addConstraintToList(cs);
 
-					if (exist_point_number < line.points.size()) {
+					if (exist_point_number < line.getPtsSize()) {
 						addLineToList(line3);
 
 						UndoAdded(line3.getDescription2() + " is reflection of "
@@ -4659,7 +4659,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			final int n = SelectList.size();
 			if (n == 0) {
 				final GELine line = SmartPLine(CatchPoint);
-				if ((line != null) && (line.points.size() >= 2))
+				if ((line != null) && (line.getPtsSize() >= 2))
 					addToSelectList(line);
 			} else if (n == 1) {
 				p = SelectAPoint(x, y);
@@ -4671,7 +4671,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				final GELine ln1 = (GELine) SelectList.get(0);
 				p = (GEPoint) SelectList.get(1);
 
-				final double k = ln1.getK();
+				final double k = ln1.getSlope();
 				final double k1 = Constraint.getSpecifiedAnglesMagnitude(STATUS);
 				final double kx1 = (k + k1) / (1 - (k * k1));
 				final double kx2 = (k - k1) / (1 + (k * k1));
@@ -4691,7 +4691,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					I = new Integer(STATUS);
 					id = add_sp_angle_value(STATUS);
 				}
-				final GELine ln = new GELine(GELine.SALine);
+				final GELine ln = new GELine(GELine.SLine);
 				ln.add(p);
 				final Constraint cs = new Constraint(Constraint.SANGLE, ln1,
 						ln, I);
@@ -5571,9 +5571,9 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			final GEPoint pt = (GEPoint) ge;
 			if (!pt.isAFixedPoint()) {
 				for (final GELine ln : linelist) {
-					if (!ln.containPT(pt))
+					if (!ln.containsPoints(pt))
 						continue;
-					final GEPoint pt2 = ln.getSecondPoint(pt);
+					final GEPoint pt2 = ln.getPointOtherThan(pt);
 					if ((pt2 != null) && pt2.isAFreePoint()) {
 						final double r1 = Math.abs(pt.getx() - pt2.getx());
 						final double r2 = Math.abs(pt.gety() - pt2.gety());
@@ -6695,8 +6695,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				drawPointOrCross(g2);
 				if (CatchList.size() > 0) {
 					final GELine ln = (GELine) CatchList.get(0);
-					final double k0 = ln.getK();
-					final GEPoint pt = ln.getfirstPoint();
+					final double k0 = ln.getSlope();
+					final GEPoint pt = ln.getFirstPoint();
 					double x, y;
 					final double x0 = pt.getx();
 					final double y0 = pt.gety();
@@ -7229,7 +7229,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			if (SelectList.size() == 2) {
 				final GELine ln = (GELine) SelectList.get(0);
 				final GEPoint p = (GEPoint) SelectList.get(1);
-				final double k = ln.getK();
+				final double k = ln.getSlope();
 				final double k1 = Constraint.getSpecifiedAnglesMagnitude(STATUS);
 				double kx1 = (k + k1) / (1 - (k * k1));
 				double kx2 = (k - k1) / (1 + (k * k1));
@@ -7704,8 +7704,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				return null;
 			}
 
-			final int size1 = line1.points.size();
-			final int size2 = line2.points.size();
+			final int size1 = line1.getPtsSize();
+			final int size2 = line2.getPtsSize();
 
 			if ((size1 <= 1) || (size2 <= 1)) {
 				GEPoint p = CreateANewPoint(0, 0);
@@ -7767,7 +7767,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 							JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		for (int i = 0; i < line.points.size(); i++) {
+		for (int i = 0; i < line.getPtsSize(); i++) {
 			final Object obj = line.points.get(i);
 			if (c.p_on_circle((GEPoint) obj))
 				if (p == null)
@@ -7954,7 +7954,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 
 			line.add(p);
 
-			if ((line.points.size() > 2) || line.linetype == GELine.CCLine) {
+			if ((line.getPtsSize() > 2) || line.linetype == GELine.CCLine) {
 				final Constraint cs = new Constraint(Constraint.PONLINE, p, line);
 				addConstraintToList(cs);
 				line.addConstraint(cs);
@@ -8016,7 +8016,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					addConstraintToList(cs);
 					break;
 				}
-				case GELine.SALine: {
+				case GELine.SLine: {
 					final Constraint cs = new Constraint(Constraint.PONLINE, p, line, false);
 					addConstraintToList(cs);
 
@@ -8034,7 +8034,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					final Constraint cs = new Constraint(Constraint.PONLINE, p, line, false);
 					addConstraintToList(cs);
 
-					final Constraint cs1 = line.getcons(0);
+					final Constraint cs1 = line.getFirstConstraint();
 					if (cs1 == null)
 						break;
 					line.add(p);
@@ -8455,7 +8455,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				}
 				if (pnameCounter < 0)
 					pnameCounter = pointlist.size();
-				assert(pointlist.size() == pnameCounter);
+				assert(pointlist.size() == pnameCounter); // When loading a second file. Be sure to clear the counters and pointlists. This asserted when there were points and a new file was loaded.
 
 				for (GELine l : linelist) {
 					bDocumentSemanticallyValid &= l.setConstraints(mapC);

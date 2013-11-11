@@ -148,9 +148,9 @@ public class GETMark extends GraphicEntity {
             if (ln1.inside(r[0], r[1]) && ln2.inside(r[0], r[1])) {
                 GEPoint p = GELine.commonPoint(ln1, ln2);
                 if (p == null)
-                    drawTTFoot(g2, r[0], r[1], ln1.getfirstPoint(), ln2.getfirstPoint(), selected);
+                    drawTTFoot(g2, r[0], r[1], ln1.getFirstPoint(), ln2.getFirstPoint(), selected);
                 else
-                    drawTTFoot(g2, r[0], r[1], ln1.getSecondPoint(p), ln2.getSecondPoint(p), selected);
+                    drawTTFoot(g2, r[0], r[1], ln1.getPointOtherThan(p), ln2.getPointOtherThan(p), selected);
             }
         }
     }

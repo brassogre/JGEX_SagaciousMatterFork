@@ -5,14 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.dom.*;
 
 /**
  * Created by IntelliJ IDEA.
  * User: Administrator
  * Date: 2005-1-25
- * Time: 20:24:52
- * To change this template use File | Settings | File Templates.
  */
 public class GEPolygon extends GraphicEntity implements Pointed {
 	int ftype = 0; // 0: polygon, 1:circle.
@@ -21,10 +20,10 @@ public class GEPolygon extends GraphicEntity implements Pointed {
 	int grid = 12;
 	int slope = 0;
 	private boolean showArea = false;
-	ArrayList<GEPoint> points = new ArrayList<GEPoint>();
+	final @NonNull ArrayList<GEPoint> points = new ArrayList<GEPoint>();
 
 	private GEPoint pt1, pt2;
-	private ArrayList<GEPoint> vtrlist = new ArrayList<GEPoint>();
+	private final @NonNull ArrayList<GEPoint> vtrlist = new ArrayList<GEPoint>();
 	private double pdx, pdy;
 	private double area;
 
@@ -581,7 +580,17 @@ public class GEPolygon extends GraphicEntity implements Pointed {
 		return null;
 	}
 
-	public void draw(Graphics2D g2, GEPoint p) {
+
+    public GEPoint getPointOtherThan(GEPoint t) {
+        GEPoint p = null;
+        for (GEPoint pt : points) {
+            if (pt != t && (p == null || p.x1.xindex > pt.x1.xindex))
+                p = pt;
+        }
+        return p;
+    }
+    
+    public void draw(Graphics2D g2, GEPoint p) {
 		if (bVisible && !points.isEmpty()) {
 			int n = points.size() + 2;
 			int[] xpoints = new int[n];

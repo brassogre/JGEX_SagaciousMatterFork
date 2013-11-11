@@ -3,16 +3,13 @@ package maths;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 public class PolyBasic {
 	private static int MAXSTR = 100;
 	private static double ZERO = 10E-6;
-//	private static final PolyBasic basic = new PolyBasic();
 	private static boolean BB_STOP = false;
 	private static boolean RM_SCOEF = true;
-
-//	public static PolyBasic getInstance() {
-//		return basic;
-//	}
 
 	public static void setbbStop(final boolean t) {
 		BB_STOP = t;
@@ -29,18 +26,17 @@ public class PolyBasic {
 		if (p2 == null)
 			return p1;
 
-		TMono poly;
 		if ((p1.x < p2.x) || ((p1.x == p2.x) && (p1.deg < p2.deg))) {
 			final TMono t = p1;
 			p1 = p2;
 			p2 = t;
 		}
-		poly = p1;
+		TMono poly = p1;
 
 		if (p1.x > p2.x)// ||(p1.x == p2.x && p1.deg > p2.deg)) append to the
 			// last one.
 		{
-			while ((p1.next != null) && (p1.deg != 0))
+			while (p1.next != null && p1.deg != 0)
 				p1 = p1.next;
 
 			if (p1.deg != 0) {
@@ -91,8 +87,7 @@ public class PolyBasic {
 				&& (poly.x != 0))
 			poly = poly.coef;
 
-		return (poly);
-
+		return poly;
 	}
 
 	private static TMono pp_minus(final TMono p1, final TMono p2) {
@@ -104,7 +99,13 @@ public class PolyBasic {
 		return cp_times(BigInteger.valueOf(c), p1);
 	}
 
-	private static TMono cp_times(final BigInteger c, final TMono p1) {
+	/**
+	 * Multiplies a polynomial by a constant returns the result.
+	 * @param c
+	 * @param p1
+	 * @return The product of <param>c</param> and <param>p1</param>.
+	 */
+	private static TMono cp_times(final @NonNull BigInteger c, final TMono p1) {
 		if ((p1 == null) || (c.compareTo(BigInteger.ZERO) == 0))
 			return null;
 		if (c.compareTo(BigInteger.ONE) == 0)
@@ -126,7 +127,6 @@ public class PolyBasic {
 	{
 		if ((p1 == null) || (p2 == null))
 			return null;
-		TMono tp;
 		if ((p2.x == 0))
 			return cp_times(p2.val, p1);
 
@@ -134,14 +134,14 @@ public class PolyBasic {
 			return cp_times(p1.val, p2);
 
 		if (p1.x > p2.x) {
-			tp = p1;
+			TMono tp = p1;
 			p1 = p2;
 			p2 = tp;
 		}
 
 		TMono poly = null;
 		while (p1 != null) {
-			tp = p1;
+			TMono tp = p1;
 			p1 = p1.next;
 			tp.next = null;
 			TMono tt;
@@ -161,11 +161,10 @@ public class PolyBasic {
 
 			poly = pp_plus(poly, tt, true);
 		}
-
-		return (poly);
+		return poly;
 	}
 
-	private static TMono mp_times(final TMono p1, TMono p2) // p1.x <= p2.x
+	private static TMono mp_times(final TMono p1, TMono p2) throws IllegalArgumentException // throws IllegalArgumentException if p1.x > p2.x
 	{
 		final TMono poly = p2;
 
@@ -186,18 +185,19 @@ public class PolyBasic {
 			}
 		else if (p1.x < p2.x)
 			while (p2 != null) {
-				if (p2.next != null)
+				//if (p2.next != null) // XXX Why was this if-then used?
 					p2.coef = pp_times(p_copy(p1), p2.coef);
-				else
-					p2.coef = pp_times(p_copy(p1), p2.coef);
+				//else
+					//p2.coef = pp_times(p_copy(p1), p2.coef);
 				p2 = p2.next;
 			}
-		else
-			System.out.println("Error,must p1.x < p2.x");
+		else {
+			throw new IllegalArgumentException();
+		}
 		return (poly);
 	}
 
-	public static boolean check_zero(TMono m) {
+	public static boolean check_zero(@NonNull TMono m) {
 		if ((m != null) && (m.x == 0) && (m.value() == 0))
 			return true;
 
@@ -209,12 +209,12 @@ public class PolyBasic {
 		return false;
 	}
 
-	public static int deg(final TMono p, final int x) {
+	public static int deg(final @NonNull TMono p, final int x) {
 		if (p.x == x)
 			return p.deg;
 		if (p.x > x) {
-			final int d1 = deg(p.coef, x);
-			final int d2 = deg(p.next, x);
+			final int d1 = (p.coef != null) ? deg(p.coef, x) : 0;
+			final int d2 = (p.next != null) ? deg(p.next, x) : 0;
 			return d1 > d2 ? d1 : d2;
 		}
 		return 0;
@@ -225,22 +225,21 @@ public class PolyBasic {
 			return null;
 
 		final int x = m.x;
-		// int d = m.deg;
 		m = p_copy(m);
 
 		int n = 0;
-		for (; n < p.length; n++) {
+		for (; n < p.length; ++n) {
 			final param pm = p[n];
 			if (pm == null)
 				break;
 			else if (pm.xindex == x) {
-				n--;
+				--n;
 				break;
 			} else if (pm.xindex > x)
 				break;
 		}
 
-		for (int i = n; i >= 0; i--) {
+		for (int i = n; i >= 0; --i) {
 			final param pm = p[i];
 			if ((pm != null) && (pm.m != null))
 				m = prem(m, p_copy(pm.m));
@@ -248,13 +247,17 @@ public class PolyBasic {
 		return m;
 	}
 
-	// simplify a tmono to low degree. Note here we don't remove coef.
-	public TMono simplify(TMono m, final param[] p) {
+	/**
+	 * This method simplifies a TMono to low degree. Note here we don't remove coef.
+	 * @param m
+	 * @param p
+	 * @return
+	 */
+	public static TMono simplify(TMono m, final param[] p) {
 		if (m == null)
 			return null;
 
 		final int x = m.x;
-		// int d = m.deg;
 		m = p_copy(m);
 
 		int n = 0;
@@ -268,7 +271,7 @@ public class PolyBasic {
 				break;
 		}
 
-		for (int i = n; i >= 0; i--) {
+		for (int i = n; i >= 0; --i) {
 			final param pm = p[i];
 			if ((pm != null) && (pm.m != null))
 				m = prem(m, p_copy(pm.m));

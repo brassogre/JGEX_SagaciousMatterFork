@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.dom.*;
 
 /**
@@ -22,8 +23,8 @@ public class GECircle extends GraphicEntity implements Pointed {
     int circle_type = PCircle;
 
     public GEPoint o = new GEPoint(); // o represents the center of the circle
-    public ArrayList<GEPoint> points = new ArrayList<GEPoint>(); // contains points that are on the circumference.
-    ArrayList<Constraint> cons = new ArrayList<Constraint>();
+    public final @NonNull ArrayList<GEPoint> points = new ArrayList<GEPoint>(); // contains points that are on the circumference.
+    final @NonNull ArrayList<Constraint> cons = new ArrayList<Constraint>();
     private HashSet<Integer> setConstraintIndices = null;
 
     public GECircle(DrawPanel dp, final Element thisElement, Map<Integer, GraphicEntity> mapGE) {
@@ -102,7 +103,7 @@ public class GECircle extends GraphicEntity implements Pointed {
     
     
     
-    /* (non-Javadoc)
+    /**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -110,7 +111,7 @@ public class GECircle extends GraphicEntity implements Pointed {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + circle_type;
-		result = prime * result + ((cons == null) ? 0 : cons.hashCode());
+		// result = prime * result + ((cons == null) ? 0 : cons.hashCode());
 		result = prime * result + ((o == null) ? 0 : o.hashCode());
 		result = prime * result + ((points == null) ? 0 : points.hashCode());
 		result = prime
@@ -451,12 +452,22 @@ public class GECircle extends GraphicEntity implements Pointed {
     }
 
     public boolean hasPoint(GEPoint p) {
-        for (int i = 0; i < points.size(); i++) {
-            if (p.hasSameCoordinatesAs(points.get(i))) return true;
+        for (GEPoint pt : points) {
+            if (p.hasSameCoordinatesAs(pt))
+            	return true;
         }
         return false;
     }
 
+    public GEPoint getPointOtherThan(GEPoint t) {
+        GEPoint p = null;
+        for (GEPoint pt : points) {
+            if (pt != t && (p == null || p.x1.xindex > pt.x1.xindex))
+                p = pt;
+        }
+        return p;
+    }
+    
     public void add(GEPoint p) {
         if (!points.contains(p))
             points.add(p);

@@ -10,6 +10,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import maths.param;
 
 public class DrawPanelExtended extends DrawPanel {
@@ -458,7 +460,7 @@ public class DrawPanelExtended extends DrawPanel {
                     GEPoint p, p1;
                     p = p1 = null;
                     cp = getPt(pp[0]);
-                    for (int i = 0; i < ln.points.size(); i++) {
+                    for (int i = 0; i < ln.getPtsSize(); i++) {
                         Object obj = ln.points.get(i);
                         if (c.points.contains(obj)) {
                             if (p == null) {
@@ -1473,31 +1475,20 @@ public class DrawPanelExtended extends DrawPanel {
     }
 
 
-    public GEPoint llmeet(GELine ln, GELine ln1) {
-        for (int i = 0; i < ln.points.size(); i++) {
-            GEPoint t = ln.points.get(i);
-            if (ln1.points.contains(t)) {
-                return t;
-            }
-        }
-        return null;
+    public static GEPoint llmeet(@NonNull GELine ln, @NonNull GELine ln1) {
+    	Collection<GEPoint> collectionPoints = new HashSet<GEPoint>();
+    	return ln.getCommonPoints(ln1, collectionPoints);
     }
 
     public GEPoint lcmeet(GECircle c, GELine ln) {
-        for (int i = 0; i < c.points.size(); i++) {
-            GEPoint t = c.points.get(i);
-
-            if (ln.points.contains(t)) {
-                return t;
-            }
-        }
-        return null;
+    	Collection<GEPoint> collectionPoints = new HashSet<GEPoint>();
+    	return ln.getCommonPoints(c, collectionPoints);
     }
 
     public GEPoint lcmeet(GECircle c, GELine ln, GEPoint p1) {
         for (int i = 0; i < c.points.size(); i++) {
             GEPoint t = c.points.get(i);
-            if (t != p1 && ln.points.contains(t)) {
+            if (t != p1 && ln.isCoincidentWith(t)) {
                 return t;
             }
         }

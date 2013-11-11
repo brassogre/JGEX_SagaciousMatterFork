@@ -313,7 +313,7 @@ public class GEAngle extends GraphicEntity {
             double x = p1.getx();
             double y = p1.gety();
             GEPoint p11 = null;
-            for (int i = 0; i < l1.points.size(); i++) {
+            for (int i = 0; i < l1.getPtsSize(); i++) {
                 GEPoint p = l1.points.get(i);
                 if ((p.getx() - r[0]) * (x - r[0]) + (p.gety() - r[1]) * (y - r[1]) > UtilityMiscellaneous.ZERO) {
                     if (p11 == null)
@@ -325,12 +325,12 @@ public class GEAngle extends GraphicEntity {
             }
             pstart = p11;
             if (pstart == null)
-                pstart = l1.points.get(0);
+                pstart = l1.getFirstPoint();
             x = p2.getx();
             y = p2.gety();
             p11 = null;
 
-            for (int i = 0; i < l2.points.size(); i++) {
+            for (int i = 0; i < l2.getPtsSize(); i++) {
                 GEPoint p = l2.points.get(i);
                 if ((p.getx() - r[0]) * (x - r[0]) + (p.gety() - r[1]) * (y - r[1]) > UtilityMiscellaneous.ZERO) {
                     if (p11 == null)
@@ -341,7 +341,7 @@ public class GEAngle extends GraphicEntity {
             }
             pend = p11;
             if (pend == null)
-                pend = l2.points.get(0);
+                pend = l2.getFirstPoint();
         }
         if (pstart == null || pend == null) {
             UtilityMiscellaneous.print("CAngle contruction error");
@@ -419,10 +419,10 @@ public class GEAngle extends GraphicEntity {
         GEPoint pa = GELine.commonPoint(ln1, ln2);
         GEPoint pb = GELine.commonPoint(ln3, ln4);
         if (pa == null || pb == null) return null;
-        GEPoint p1 = ln1.getSecondPoint(pa);
-        GEPoint p2 = ln2.getSecondPoint(pa);
-        GEPoint p3 = ln3.getSecondPoint(pb);
-        GEPoint p4 = ln4.getSecondPoint(pb);
+        GEPoint p1 = ln1.getPointOtherThan(pa);
+        GEPoint p2 = ln2.getPointOtherThan(pa);
+        GEPoint p3 = ln3.getPointOtherThan(pb);
+        GEPoint p4 = ln4.getPointOtherThan(pb);
         if (p1 == null || p2 == null || p3 == null || p4 == null) return null;
         GEPoint p = p1;
         if (p.x1.xindex < p2.x1.xindex)

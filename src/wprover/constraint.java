@@ -20,7 +20,7 @@ public class Constraint {
     final public static int EQDISTANCE = 4;                    // eqdistance PC
 
     final public static int COLLINEAR = 1;
-    final public static int PERPBISECT = 5; // Line that bisects a line segment and is perpendicular to it.
+    final public static int PERPBISECT = 5; // The perpendicular bisector of a given line segment (defined by two endpoints)
 
     final public static int MIDPOINT = 6;      // midpoint
 
@@ -29,12 +29,12 @@ public class Constraint {
     final public static int CCTANGENT = 10; // Circle tangent to a circle
 
     final public static int LRATIO = 19;
-    final public static int RCIRCLE = 20; 
+    final public static int RCIRCLE = 20; // Circle of a given radius
     final public static int CIRCUMCENTER = 21; // Center of the circle that passes through three given points.
-    final public static int BARYCENTER = 22;
+    final public static int BARYCENTER = 22; // Intersection of the three medians of a triangle.
     final public static int ORTHOCENTER = 37; // Intersection of the three altitudes of a triangle.
-    final public static int INCENTER = 44; // Intersection of the three medians (angle bisectors) of a triangle.
-    final public static int BISECT = 13;
+    final public static int INCENTER = 44; // Intersection of the three interior angle bisectors of a triangle.
+    final public static int BISECT = 13; // 
     final public static int CCLine = 14; // Line joining the centers of two circles
     final public static int TRATIO = 15;
 
@@ -76,7 +76,7 @@ public class Constraint {
     final public static int RECTANGLE = 58;
     final public static int PENTAGON = 60;
     final public static int POLYGON = 64;
-    final public static int SANGLE = 65;
+    final public static int SANGLE = 65; // Line that is a reflection
     final public static int ANGLE_BISECTOR = 66;   // Line that bisects a given angle
     final public static int BLINE = 67;
     final public static int TCLINE = 68; // Line that is tangent to a circle?
@@ -120,6 +120,18 @@ public class Constraint {
         }
     }
 
+    /**
+     * Constructs a <code>Constraint</code> from the XML DOM element <param>thisElement</param>
+     * using <param>mapGE</param> as a source of all objects that have been loaded from the XML doc and
+     * are available to be constrained.
+     * 
+     * This method should only be called after all of the non-constraint elements in the XML doc have
+     * been placed in <param>mapGE</param>. If a constraint is loaded that refers to an element not present
+     * in <param>mapGE</param>, the constraint should be set to an empty value.
+     * @param dp The DrawPanel that is loading the (.gex.xml) XML file.
+     * @param thisElement The XML DOM element containing information needed to construct this <code>Constraint</code>.
+     * @param mapGE The map of all non-Constraint objects (indexed by the integer in the XML file by the non-Constraint object's <param>id</param> parameter).
+     */
 	public Constraint(DrawPanel dp, Element thisElement, final Map<Integer, GraphicEntity> mapGE) {
 		assert(thisElement != null);
 		bIsValidEntity = false;
@@ -172,7 +184,7 @@ public class Constraint {
 	 **/
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int prime = 47;
 		int result = 1;
 		result = prime * result + ConstraintType;
 		result = prime * result + (bIsValidEntity ? 1231 : 1237);
@@ -211,16 +223,16 @@ public class Constraint {
 				return false;
 		} else if (!csd1.equals(other.csd1))
 			return false;
-		if (elementlist == null) {
-			if (other.elementlist != null)
-				return false;
-		} else if (!elementlist.equals(other.elementlist))
-			return false;
 		if (id != other.id)
 			return false;
 		if (bPolyGenerate != other.bPolyGenerate)
 			return false;
 		if (proportion != other.proportion)
+			return false;
+		if (elementlist == null) {
+			if (other.elementlist != null)
+				return false;
+		} else if (!elementlist.equals(other.elementlist))
 			return false;
 		return true;
 	}
@@ -246,7 +258,7 @@ public class Constraint {
         else if (type == PERPENDICULAR && objlist.length >=2) {
             GELine line1 = (GELine) (objlist[0]);
             GELine line2 = (GELine) (objlist[1]);
-            if (line1.points.size() >= 2 && line2.points.size() >= 2)
+            if (line1.getPtsSize() >= 2 && line2.getPtsSize() >= 2)
                 PolyGenerate();
         }
     }
@@ -307,9 +319,9 @@ public class Constraint {
         return null;
     }
 
-    public boolean cotainPoints(GEPoint p1, GEPoint p2) {
-        return elementlist.contains(p1) && elementlist.contains(p2);
-    }
+//    public boolean containsPoints(GEPoint p1, GEPoint p2) {
+//        return elementlist.contains(p1) && elementlist.contains(p2);
+//    }
 
     public void getAllElements(Collection<Object> v) {
         if (v != null)
@@ -396,7 +408,7 @@ public class Constraint {
             case LRATIO:
                 return "";
             case CIRCUMCENTER:
-                return e1.TypeString() + "is the circumcenter of " + e2.getname() + e3.getname() + e4.getname();
+                return e1.TypeString() + " is the circumcenter of " + e2.getname() + e3.getname() + e4.getname();
             case BARYCENTER:
                 return e1.TypeString() + " is the barycenter of " + e2.getname() + e3.getname() + e4.getname();
             case LCTANGENT:
@@ -808,7 +820,7 @@ public class Constraint {
         GEPoint p2 = (GEPoint) elementlist.get(1);
         GEPoint p3 = (GEPoint) elementlist.get(2);
         GELine ln = (GELine) elementlist.get(3);
-        GEPoint p = ln.getSecondPoint(p2);
+        GEPoint p = ln.getPointOtherThan(p2);
         if (p != null) {
             add_des(gib.C_ANGLE_BISECTOR, p, p1, p2, p3);
 
@@ -1036,13 +1048,16 @@ public class Constraint {
 
         if (obj instanceof GELine) {
             GELine line = (GELine) obj;
-            GEPoint[] pl = line.getTwoPointsOfLine();
-            GEPoint p3 = pl[0];
-            GEPoint p4 = pl[1];
-
-            add_des(gib.C_SYM, p1, p2, p3, p4);
-            return GeoPoly.mirrorPL(p1.x1.xindex, p1.y1.xindex, p2.x1.xindex, p2.y1.xindex, p3.x1.xindex, p3.y1.xindex,
-                    p4.x1.xindex, p4.y1.xindex);
+            GEPoint[] pl = line.getTwoPointsOfLine(); // XXX Bug. Some lines only have one point in their definition. This function should be replaced so that it finds an extra point on the line.
+            if (pl == null) 
+            	throw new NullPointerException();
+            else {
+            	GEPoint p3 = pl[0];
+                GEPoint p4 = pl[1];
+                add_des(gib.C_SYM, p1, p2, p3, p4);
+                return GeoPoly.mirrorPL(p1.x1.xindex, p1.y1.xindex, p2.x1.xindex, p2.y1.xindex, p3.x1.xindex, p3.y1.xindex,
+                        p4.x1.xindex, p4.y1.xindex);
+            }            
         } else {
             GEPoint p3 = (GEPoint) elementlist.get(2);
             GEPoint p4 = (GEPoint) elementlist.get(3);
@@ -1117,7 +1132,7 @@ public class Constraint {
         GEPoint[] l2 = ln2.getTwoPointsOfLine();
         GEPoint[] l3 = ln3.getTwoPointsOfLine();
         if (l1 == null || l2 == null || l3 == null) return null;
-        GEPoint c = ln.getfirstPoint();
+        GEPoint c = ln.getFirstPoint();
         if (c == pt) return null;
         return GeoPoly.eqangle(l1[0].x1.xindex, l1[0].y1.xindex, l1[1].x1.xindex, l1[1].y1.xindex,
                 l2[0].x1.xindex, l2[0].y1.xindex, l2[1].x1.xindex, l2[1].y1.xindex,
@@ -1251,10 +1266,10 @@ public class Constraint {
             GEPoint pa = GELine.commonPoint(ln1, ln2);
             GEPoint pb = GELine.commonPoint(ln3, ln4);
 
-            GEPoint pa1 = ln1.getSecondPoint(pa);
-            GEPoint pa2 = ln2.getSecondPoint(pa);
-            GEPoint pb1 = ln3.getSecondPoint(pb);
-            GEPoint pb2 = ln4.getSecondPoint(pb);
+            GEPoint pa1 = ln1.getPointOtherThan(pa);
+            GEPoint pa2 = ln2.getPointOtherThan(pa);
+            GEPoint pb1 = ln3.getPointOtherThan(pb);
+            GEPoint pb2 = ln4.getPointOtherThan(pb);
 
             GEPoint[] lp1 = ln1.getTwoPointsOfLine();
             GEPoint[] lp2 = ln2.getTwoPointsOfLine();
@@ -1425,7 +1440,7 @@ public class Constraint {
         y = p.y1.xindex;
 
         if (line.linetype == GELine.CCLine) {
-            Constraint cs = line.getcons(0);
+            Constraint cs = line.getFirstConstraint();
 
             GECircle c1 = (GECircle) cs.getelement(1);
             GECircle c2 = (GECircle) cs.getelement(2);
@@ -1532,7 +1547,7 @@ public class Constraint {
 
         if (p2 != null && p1.x1.xindex > p2.x1.xindex) {
             add_des(gib.C_I_LC, p1, np[0], np[1], c.o, c.getSidePoint());
-            GEPoint pl = ln.getSecondPoint(p2);
+            GEPoint pl = ln.getPointOtherThan(p2);
             return GeoPoly.LCMeet(o.x1.xindex, o.y1.xindex, p2.x1.xindex,
                     p2.y1.xindex, pl.x1.xindex, pl.y1.xindex, p1.x1.xindex, p1.y1.xindex);
         }
@@ -1584,19 +1599,14 @@ public class Constraint {
 
     TPoly PolyLCMeet() {
 
-        GEPoint pl = null;
         GEPoint p = (GEPoint) getelement(0);
         GEPoint pc = (GEPoint) getelement(1);
         GELine ln = (GELine) getelement(2);
         GECircle c = (GECircle) getelement(3);
         GEPoint o = c.o;
-        ArrayList<GEPoint> pts = ln.points;
-        for (int i = 0; i < pts.size(); i++)
-            if (pts.get(i) != pc) {
-                pl = pts.get(i);
-                break;
-            }
-        if (pl == null) return null;
+        GEPoint pl = ln.getPointOtherThan(pc);
+        if (pl == null)
+        	return null;
         add_des(gib.C_I_LC, p, pc, pl, o, pc);
         return GeoPoly.LCMeet(o.x1.xindex, o.y1.xindex, pc.x1.xindex, pc.y1.xindex, pl.x1.xindex, pl.y1.xindex, p.x1.xindex, p.y1.xindex);
     }
@@ -1643,7 +1653,7 @@ public class Constraint {
             GELine line1 = (GELine) getelement(0);
             GELine line2 = (GELine) getelement(1);
 
-            if (line1.points.size() < 2)
+            if (line1.getPtsSize() < 2)
                 return null;
             GEPoint[] pl1 = line1.getTwoPointsOfLine();
             GEPoint[] pl2 = line2.getTwoPointsOfLine();
@@ -1692,7 +1702,7 @@ public class Constraint {
         GELine line1 = (GELine) getelement(0);
         GELine line2 = (GELine) getelement(1);
 
-        if (line1.points.size() < 2)
+        if (line1.getPtsSize() < 2)
             return null;
         GEPoint[] pl1 = line1.getTwoPointsOfLine();
         GEPoint[] pl2 = line2.getTwoPointsOfLine();
@@ -1822,7 +1832,11 @@ public class Constraint {
 	    			Element elemInt = doc.createElement("integer");
 	    			elemInt.setTextContent(String.valueOf(obj));
 	    			thisElement.appendChild(elemInt);
-	            } else {
+	            } else if (obj instanceof ArrayList) {
+	    			Element elemList = doc.createElement("list");
+	    			elemList.setTextContent(obj.toString());
+	    			thisElement.appendChild(elemList);
+	    		} else {
 	    			Element elemGE = doc.createElement("graphic_entity");
 	    			elemGE.setTextContent(String.valueOf(((GraphicEntity) obj).m_id));
 	    			thisElement.appendChild(elemGE);
@@ -2000,7 +2014,7 @@ public class Constraint {
     }
 
     public static boolean compareLN(GELine ln1, GELine ln2) {
-        return (ln1.getfirstPoint().m_id > ln2.getfirstPoint().m_id);
+        return (ln1.getFirstPoint().m_id > ln2.getFirstPoint().m_id);
     }
 
     public static TMono parseTMonoString(String name, String func, int x) {

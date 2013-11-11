@@ -9,27 +9,25 @@ import java.util.*;
 
 import javax.swing.*;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.dom.*;
 
 /**
  * Created by IntelliJ IDEA.
  * User: ${Yezheng}
  * Date: 2004-12-9
- * Time: 12:25:19
- * To change this template use File | Settings | File Templates.
  */
 public class GELine extends GraphicEntity implements Pointed {
-    final public static int LLine = 0;
-    final public static int PLine = 1;
-    final public static int TLine = 2;
-    final public static int BLine = 3;
-    final public static int CCLine = 4;
-    final public static int NTALine = 5;
-    final public static int ALine = 6;
-    final public static int SALine = 7;
-    final public static int ABLine = 8; // Angle bisector?
+    final public static int LLine = 0; // Line between two points
+    final public static int PLine = 1; // Parallel to another designated line.
+    final public static int TLine = 2; // Perpendicular to another designated line.
+    final public static int BLine = 3; // Perpendicular bisector: defined by the two endpoints of the line to be bisected.
+    final public static int CCLine = 4; // Line between the centers of two circles
+    final public static int NTALine = 5; // Not referenced in this class. Introduced in DrawPanel when the action "eqanle added" takes place. Similar to ALine.
+    final public static int ALine = 6; // The ALine of lines (e,f,g) is the line that has an angle with respect to g that matches the angle from f to e and starts from the initial endpoint of g.
+    final public static int SLine = 7; // Line that is a specified angle from another designated line.
+    final public static int ABLine = 8; // Angle bisector
     final public static int TCLine = 9; // Tangent to a circle
-
 
     final public static int ET_NORMAL = 0;
     final public static int ET_EXTENSION = 1;
@@ -40,9 +38,9 @@ public class GELine extends GraphicEntity implements Pointed {
     int extent = UtilityMiscellaneous.LINDE_DRAW_EXT;
 
 
-    ArrayList<GEPoint> points = new ArrayList<GEPoint>();
-    private ArrayList<Constraint> cons = new ArrayList<Constraint>();
-    private HashSet<Integer> setConstraintIndices = new HashSet<Integer>();
+    final @NonNull ArrayList<GEPoint> points = new ArrayList<GEPoint>();
+    private final @NonNull Set<Constraint> cons = new HashSet<Constraint>();
+    private final @NonNull HashSet<Integer> setConstraintIndices = new HashSet<Integer>();
 
     final static int Width = 3000;
     final static int Height = 2000; // should be modified here.
@@ -54,7 +52,7 @@ public class GELine extends GraphicEntity implements Pointed {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((cons == null) ? 0 : cons.hashCode());
+		//result = prime * result + ((cons == null) ? 0 : cons.hashCode());
 		result = prime * result + ext_type;
 		result = prime * result + extent;
 		result = prime * result + linetype;
@@ -201,7 +199,7 @@ public class GELine extends GraphicEntity implements Pointed {
             case GELine.ALine:
                 drawALine(this, g2);
                 break;
-            case GELine.SALine:
+            case GELine.SLine:
                 drawSLine(this, g2);
                 break;
             case GELine.ABLine:
@@ -250,43 +248,39 @@ public class GELine extends GraphicEntity implements Pointed {
         extent = n;
     }
 
-//    public int getExtent() {
-//        return extent;
-//    }
-
     ///////////////////////////////////////////////////////////////////////////////
     public static void drawALine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        if (line.getPtsSize() >= 2) {
             drawLLine(line, g2);
             return;
         }
-        double k = line.getK();
-        GEPoint pt = line.getfirstPoint();
+        double k = line.getSlope();
+        GEPoint pt = line.getFirstPoint();
         drawXLine(pt.getx(), pt.gety(), k, g2);
     }
 
     public static void drawABLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        if (line.getPtsSize() >= 2) {
             drawLLine(line, g2);
             return;
         }
-        double k = line.getK();
-        GEPoint pt = line.getfirstPoint();
+        double k = line.getSlope();
+        GEPoint pt = line.getFirstPoint();
         drawXLine(pt.getx(), pt.gety(), k, g2);
     }
 
     public static void drawTCLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        if (line.getPtsSize() >= 2) {
             drawLLine(line, g2);
             return;
         }
-        double k = line.getK();
-        GEPoint pt = line.getfirstPoint();
+        double k = line.getSlope();
+        GEPoint pt = line.getFirstPoint();
         drawXLine(pt.getx(), pt.gety(), k, g2);
     }
 
     public static void drawBLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        if (line.getPtsSize() >= 2) {
             drawLLine(line, g2);
             return;
         }
@@ -294,24 +288,20 @@ public class GELine extends GraphicEntity implements Pointed {
         GEPoint p1 = (GEPoint) cs.getelement(1);
         GEPoint p2 = (GEPoint) cs.getelement(2);
 
-        double k = line.getK();
+        double k = line.getSlope();
         double x = (p1.getx() + p2.getx()) / 2.0;
         double y = (p1.gety() + p2.gety()) / 2.0;
         drawXLine(x, y, k, g2);
     }
 
     public static void drawCCLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        if (line.getPtsSize() >= 2) {
             drawLLine(line, g2);
             return;
         }
-        Constraint cs = null;
-        for (int i = 0; i < line.cons.size(); i++) {
-            cs = line.getcons(i);
-            if (cs.GetConstraintType() == Constraint.CCLine)
-                break;
-        }
-        if (cs == null) return;
+        Constraint cs = line.getFirstConstraintOfType(Constraint.CCLine);
+        if (cs == null)
+        	return;
         GECircle c1 = (GECircle) cs.getelement(1);
         GECircle c2 = (GECircle) cs.getelement(2);
         GEPoint p1 = c1.o;
@@ -345,28 +335,35 @@ public class GELine extends GraphicEntity implements Pointed {
     }
 
     public static void drawSLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        if (line.getPtsSize() >= 2) {
             drawLLine(line, g2);
             return;
         }
-        Constraint cs = line.getcons(0);
+        Constraint cs = line.getFirstConstraint();
         //GELine l = (GELine) cs.getelement(0);
         GELine l1 = (GELine) cs.getelement(1);
-        GEPoint p = l1.getfirstPoint();
+        GEPoint p = l1.getFirstPoint();
 
-        double k = line.getK();
+        double k = line.getSlope();
         drawXLine(p.getx(), p.gety(), k, g2);
     }
 
+    /**
+     * Draws a line on the screen at the point (x0,y0) with slope k.
+     * @param x0 The x-coordinate of one point on the line.
+     * @param y0 The y-coordinate of one point on the line.
+     * @param k The slope of the line to be drawn.
+     * @param g2 The Graphics2D context in which to draw the line.
+     */
     public static void drawXLine(double x0, double y0, double k, Graphics2D g2) {
         if (Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
-            double x = x0;
-            double y1 = 0;
-            double y2 = Height;
-            g2.drawLine((int) x, (int) y1, (int) x, (int) y2);
+        	// Draw a vertical line.
+            g2.drawLine((int) x0, 0, (int) x0, Height);
         } else if (Math.abs(k) < UtilityMiscellaneous.ZERO) {
+        	// Draw a horizontal line.
             g2.drawLine(0, (int) y0, Width, (int) y0);
         } else {
+        	// Draw a slanted line.
             double y1 = 0;
             double y2 = Height;
             double x1 = (y1 - y0 + k * x0) / k;
@@ -376,31 +373,39 @@ public class GELine extends GraphicEntity implements Pointed {
     }
 
     public static void drawTLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        int nPointCount = line.getPtsSize();
+        
+        if (nPointCount == 0)
+            return;
+
+        if (nPointCount >= 2) {
             drawLLine(line, g2);
             return;
         }
 
-        Constraint cs = line.getcons(0);
+        Constraint cs = line.getFirstConstraint();
         GELine l = (GELine) cs.getelement(1);
-        GEPoint p = line.points.get(0);
-        double k = l.getK();
+        GEPoint p = line.getFirstPoint();
+        double k = l.getSlope();
         drawXLine(p.getx(), p.gety(), -1 / k, g2);
     }
 
     public static void drawPLine(GELine line, Graphics2D g2) {
-        if (line.points.size() >= 2) {
+        int nPointCount = line.getPtsSize();
+        
+        if (nPointCount == 0)
+            return;
+
+        if (nPointCount >= 2) {
             drawLLine(line, g2);
             return;
         }
 
-        Constraint cs = line.getcons(0);
+        Constraint cs = line.getFirstConstraint();
         GELine l = (GELine) cs.getelement(1);
-        if (line.points.size() == 0)
-            return;
 
-        GEPoint p = line.points.get(0);
-        drawXLine(p.getx(), p.gety(), l.getK(), g2);
+        GEPoint p = line.getFirstPoint();
+        drawXLine(p.getx(), p.gety(), l.getSlope(), g2);
     }
 
     public static void drawLLine(GELine line, Graphics2D g2) {
@@ -443,7 +448,7 @@ public class GELine extends GraphicEntity implements Pointed {
             g2.drawLine((int) x, (int) y1, (int) x, (int) y2);
 
         } else {
-            double k = line.getK();
+            double k = line.getSlope();
             double x1 = 0;
             double x2 = Width;
             double y1 = k * (0 - pt.getx()) + pt.gety();
@@ -461,7 +466,7 @@ public class GELine extends GraphicEntity implements Pointed {
         } else if (line.isVertical()) {
             g2.drawLine(0, (int) pt.gety(), Width, (int) pt.gety());
         } else {
-            double k = line.getK();
+            double k = line.getSlope();
             k = -1.0 / k;
             double y1 = 0;
             double y2 = Height;
@@ -482,7 +487,7 @@ public class GELine extends GraphicEntity implements Pointed {
         return s;
     }
 
-    public GEPoint getSecondPoint(GEPoint t) {
+    public GEPoint getPointOtherThan(GEPoint t) {
         GEPoint p = null;
         for (GEPoint pt : points) {
             if (pt != t && (p == null || p.x1.xindex > pt.x1.xindex))
@@ -491,7 +496,7 @@ public class GELine extends GraphicEntity implements Pointed {
         return p;
     }
 
-    public GEPoint getfirstPoint() {
+    public GEPoint getFirstPoint() {
         GEPoint p = null;
         for (GEPoint pt : points) {
             if (p == null || p.x1.xindex > pt.x1.xindex)
@@ -679,10 +684,20 @@ public class GELine extends GraphicEntity implements Pointed {
         return pl;
     }
 
-    public Constraint getcons(int i) {
-    	return (i >= 0 && cons != null && i < cons.size()) ? cons.get(i) : null;
+    public Constraint getFirstConstraint() {
+    	if (cons.isEmpty())
+    		return null;
+    	return cons.iterator().next();
     }
-
+    
+    public Constraint getFirstConstraintOfType(int cType) {
+    	for (Constraint c : cons)
+    		if (c.GetConstraintType() == cType)
+    			return c;
+    	return null;
+    }
+    
+    
     public Constraint getConstraintByType(int t) {
         for (Constraint c : cons) {
             if (c.GetConstraintType() == t)
@@ -691,18 +706,25 @@ public class GELine extends GraphicEntity implements Pointed {
         return null;
     }
 
-    public final boolean containPTs(GEPoint p1, GEPoint p2) {
-        return points.contains(p1) && points.contains(p2);
+    public final boolean containsPoints(GEPoint...p) {
+    	for (int i = 0; i < p.length; ++i)
+    		if (!points.contains(p[i]))
+    			return false;
+    	return true;
     }
 
-    public final boolean containPT(GEPoint p) {
-        return points.contains(p);
-    }
-
+    /**
+     * Returns the number of constraints imposed on this line.
+     * @return The number of constraints attached to this line.
+     */
     public final int getconsSize() {
         return cons.size();
     }
 
+    /**
+     * Returns the number of points in this line.
+     * @return The number of points explicitly associated with this line.
+     */
     public final int getPtsSize() {
         return points.size();
     }
@@ -776,7 +798,7 @@ public class GELine extends GraphicEntity implements Pointed {
 /**
  *     Returns the slope of this line.
  */
-    public double getK() {
+    public double getSlope() {
     	if (points != null && points.size() >= 2) {
             GEPoint p1 = points.get(0);
             GEPoint p2 = points.get(1);
@@ -787,11 +809,11 @@ public class GELine extends GraphicEntity implements Pointed {
             switch (cs.GetConstraintType()) {
                 case Constraint.PARALLEL: {
                     GELine line = (GELine) cs.getelement(1);
-                    return line.getK();
+                    return line.getSlope();
                 }
                 case Constraint.PERPENDICULAR: {
                     GELine line = (GELine) cs.getelement(1);
-                    return -1.0 / line.getK();
+                    return -1.0 / line.getSlope();
                 }
                 case Constraint.CCLine: {
                     GECircle c1 = (GECircle) cs.getelement(1);
@@ -815,18 +837,18 @@ public class GELine extends GraphicEntity implements Pointed {
                     GEPoint[] l2 = ln1.getTwoPointsOfLine();
                     GEPoint[] l3 = ln2.getTwoPointsOfLine();
                     if (l1 == null || l2 == null || l3 == null) break;
-                    GEPoint c = ln3.getfirstPoint();
+                    GEPoint c = ln3.getFirstPoint();
                     if (c == pt) break;
-                    double k1 = ln.getK();
-                    double k2 = ln1.getK();
-                    double k3 = ln2.getK();
+                    double k1 = ln.getSlope();
+                    double k2 = ln1.getSlope();
+                    double k3 = ln2.getSlope();
                     double k = (k3 * k2 * k1 + k3 + k2 - k1) / (1 + k3 * k1 + k2 * k1 - k3 * k2);
                     return k;
                 }
                 case Constraint.SANGLE: {
                     GELine ln = (GELine) cs.getelement(0);
                     Integer I = (Integer) cs.getelement(2);
-                    double k = ln.getK();
+                    double k = ln.getSlope();
                     int v = I.intValue();
                     double k1 = -Constraint.getSpecifiedAnglesMagnitude(v);
                     if (ln.isVertical()) {
@@ -917,22 +939,14 @@ public class GELine extends GraphicEntity implements Pointed {
         return t1 / t2;
     }
 
-    public void add(GEPoint a) {
-        if (a != null) {
-        	if (points == null)
-        		points = new ArrayList<GEPoint>();
-        	if (!points.contains(a)) // TODO: Should convert points to a set because they are not kept in linear order.
-        		points.add(a);
-        }
+    public void add(@NonNull GEPoint a) {
+    	if (!points.contains(a)) // TODO: Should convert points to a set because they are not kept in linear order.
+    		points.add(a);
     }
 
-    public void addConstraint(Constraint cs) {
-        if (cs != null) {
-        	if (cons == null)
-        		cons = new ArrayList<Constraint>();
-        	if (!cons.contains(cs))
-                cons.add(cs);
-        }
+    public void addConstraint(@NonNull Constraint cs) {
+    	if (!cons.contains(cs))
+    		cons.add(cs);
     }
 
     public void clearpoints() {
@@ -942,7 +956,7 @@ public class GELine extends GraphicEntity implements Pointed {
     public GELine(int t, GEPoint...gepoints) {
         super(GraphicEntity.LINE);
         linetype = t;
-        points = new ArrayList<GEPoint>();
+        points.clear();
         if (gepoints != null) {
             for (GEPoint p : gepoints) {
             	if (p != null && !points.contains(p))
@@ -954,7 +968,7 @@ public class GELine extends GraphicEntity implements Pointed {
     public GELine(GEPoint...gepoints) {
         super(GraphicEntity.LINE);
         linetype = LLine;
-        points = new ArrayList<GEPoint>();
+        points.clear();
         if (gepoints != null) {
             for (GEPoint p : gepoints) {
             	if (p != null && !points.contains(p))
@@ -1089,7 +1103,7 @@ public class GELine extends GraphicEntity implements Pointed {
                 double x0 = (p1.getx() + p2.getx()) / 2;
                 double y0 = (p1.gety() + p2.gety()) / 2;
 
-                double k = -ln.getK();
+                double k = -ln.getSlope();
                 if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
                     return Math.abs(x - x0);
                 }
@@ -1098,11 +1112,11 @@ public class GELine extends GraphicEntity implements Pointed {
             }
         }
 
-        GEPoint pt = ln.getfirstPoint();
+        GEPoint pt = ln.getFirstPoint();
         if (pt == null) {
             return Double.MAX_VALUE;
         }
-        double k = -ln.getK();
+        double k = -ln.getSlope();
 
         if (Math.abs(k) > UtilityMiscellaneous.ZERO && Math.abs(1 / k) < UtilityMiscellaneous.ZERO) {
             return Math.abs(x - pt.getx());
@@ -1274,7 +1288,7 @@ public class GELine extends GraphicEntity implements Pointed {
 
         double x1, y1, x3, y3, xt, yt;
 
-        GEPoint p = this.getfirstPoint();
+        GEPoint p = this.getFirstPoint();
         x1 = y1 = 0;
         if (p == null) {
             if (linetype == BLine) {
@@ -1301,7 +1315,7 @@ public class GELine extends GraphicEntity implements Pointed {
                 xt = x3;
                 yt = y1;
             } else {
-                double k = this.getK();
+                double k = this.getSlope();
                 xt = ((y3 - y1) * k + x1 * k * k + x3) / (1 + k * k);
                 yt = y1 + (xt - x1) * k;
             }
@@ -1310,7 +1324,7 @@ public class GELine extends GraphicEntity implements Pointed {
                 xt = x1;
                 yt = y3;
             } else {
-                double k = this.getK();
+                double k = this.getSlope();
 
                 double x0 = pt.getx();
                 double y0 = pt.gety();
@@ -1405,8 +1419,8 @@ public class GELine extends GraphicEntity implements Pointed {
     public static boolean isPerp(GELine line0, GELine line1) {
         if (line0 == null || line1 == null)
             return false;
-        double k0 = line0.getK();
-        double k1 = line1.getK();
+        double k0 = line0.getSlope();
+        double k1 = line1.getSlope();
         if (Math.abs(k0) < UtilityMiscellaneous.ZERO) {
             return Math.abs(k1) > 99;
         }
@@ -1420,13 +1434,13 @@ public class GELine extends GraphicEntity implements Pointed {
             return null;
 
         double result[] = new double[2];
-        double k0 = line0.getK();
-        double k1 = line1.getK();
+        double k0 = line0.getSlope();
+        double k1 = line1.getSlope();
 
         if (line0.isVertical() || isVerticalSlop(k0)) {
             if (line1.isVertical() || isVerticalSlop(k1))
                 return null;
-            double k = line1.getK();
+            double k = line1.getSlope();
             GEPoint p0 = line0.points.get(0);
             GEPoint p1 = line1.points.get(0);
             result[0] = p0.getx();
@@ -1436,15 +1450,15 @@ public class GELine extends GraphicEntity implements Pointed {
 
 
         if (line1.isVertical() || isVerticalSlop(k1)) {
-            GEPoint p1 = line0.getfirstPoint();
-            GEPoint p = line1.getfirstPoint();
+            GEPoint p1 = line0.getFirstPoint();
+            GEPoint p = line1.getFirstPoint();
             result[0] = p.getx();
             result[1] = k0 * (p.getx() - p1.getx()) + p1.gety();
             return result;
         }
 
-        GEPoint p0 = line0.getfirstPoint();
-        GEPoint p1 = line1.getfirstPoint();
+        GEPoint p0 = line0.getFirstPoint();
+        GEPoint p1 = line1.getFirstPoint();
         if (Math.abs(k0 - k1) > UtilityMiscellaneous.ZERO) {
             double x = (p1.gety() - p0.gety() + k0 * p0.getx() - k1 * p1.getx()) / (k0 - k1);
             double y = k0 * (x - p0.getx()) + p0.gety();

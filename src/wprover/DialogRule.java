@@ -24,14 +24,14 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
 	 */
 	private static final long serialVersionUID = -2025805803172152292L;
 	private DrawPanelFrame gxInstance;
-    private JTree tree, treef;
+    private JTree treeGDD, treeFA;
     private JTabbedPane pane;
 
     public DialogRule(DrawPanelFrame owner) {
         super(owner.getFrame());
 
         gxInstance = owner;
-        this.setTitle("Rules for GDD method");
+        this.setTitle("GDD method");
 
         Object rootNodes[] = new Object[6];
         int i = 0;
@@ -46,34 +46,34 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
         rootNodes[5] = createNameVector("Other rules", vrule, ++i, i += 5);
 
         NamedVector rootVector = new NamedVector("Root", rootNodes);
-        tree = new JTree(rootVector.toArray());
+        treeGDD = new JTree(rootVector.toArray());
 
         CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-        tree.setCellRenderer(renderer);
+        treeGDD.setCellRenderer(renderer);
 
 //        tree.setCellEditor(new CheckBoxNodeEditor(tree));
-        tree.setEditable(false);
-        tree.addMouseListener(this);
+        treeGDD.setEditable(false);
+        treeGDD.addMouseListener(this);
 
-        JScrollPane scrollPane = new JScrollPane(tree);
+        JScrollPane scrollPane = new JScrollPane(treeGDD);
         pane = new JTabbedPane(JTabbedPane.BOTTOM);
-        pane.addTab("Rules for GDD Method", scrollPane);
+        pane.addTab("GDD Method", scrollPane);
         pane.addChangeListener(this);
 
         ArrayList<Rule> vfull = new ArrayList<Rule>();
         RuleList.getAllFullRules(vfull);
         Object rNodes[] = new Object[1];
-        rNodes[0] = createNameVector("Rules for Full Angle Method", vfull, 0, 28);
-        treef = new JTree((new NamedVector("Root", rNodes)).toArray());
-        treef.setCellRenderer(renderer);
-        treef.addMouseListener(this);
+        rNodes[0] = createNameVector("Full Angle Method", vfull, 0, 28);
+        treeFA = new JTree((new NamedVector("Root", rNodes)).toArray());
+        treeFA.setCellRenderer(renderer);
+        treeFA.addMouseListener(this);
 
-        JScrollPane scrollPane1 = new JScrollPane(treef);
-        pane.addTab("Rules for Full Angle Method", scrollPane1);
+        JScrollPane scrollPane1 = new JScrollPane(treeFA);
+        pane.addTab("Full Angle Method", scrollPane1);
 
-        this.getContentPane().add(pane, BorderLayout.CENTER);
+        getContentPane().add(pane, BorderLayout.CENTER);
         expandAll();
-        this.setSize(600, owner.getHeight());
+        setSize(600, owner.getHeight());
     }
 
     public void setSelected(int n) {
@@ -85,7 +85,6 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
             this.setTitle(pane.getTitleAt(pane.getSelectedIndex()));
         }
     }
-
 
     private NamedVector createNameVector(String n, ArrayList<Rule> vlist, int t1, int t2) {
         CheckBoxNode[] list1 = new CheckBoxNode[t2 - t1 + 1];
@@ -110,16 +109,16 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
     }
 
     private void expandAll() {
-        int n = tree.getRowCount();
+        int n = treeGDD.getRowCount();
         for (int i = n - 1; i >= 0; i--)
-            tree.expandRow(i);
-        n = treef.getRowCount();
+            treeGDD.expandRow(i);
+        n = treeFA.getRowCount();
         for (int i = n - 1; i >= 0; i--)
-            treef.expandRow(i);
+            treeFA.expandRow(i);
     }
 
     public Rule getSelectedRule() {
-        JTree tt = (pane.getSelectedIndex() == 0) ? tree : treef;
+        JTree tt = (pane.getSelectedIndex() == 0) ? treeGDD : treeFA;
         DefaultMutableTreeNode nd = (DefaultMutableTreeNode) tt.getLastSelectedPathComponent();
 
         if (nd != null) {
@@ -136,21 +135,19 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-            //DefaultMutableTreeNode nd = null;
-            JTree tt = (pane.getSelectedIndex() == 0) ? tree : treef;
+            JTree tt = (pane.getSelectedIndex() == 0) ? treeGDD : treeFA;
 
-            Rule r = this.getSelectedRule();
+            Rule r = getSelectedRule();
             if (r != null) {
                 ppMenu m = new ppMenu(r);
                 m.show(tt, e.getX(), e.getY());
             }
         } else {
             if (e.getClickCount() > 1) {
-                Rule r = this.getSelectedRule();
-                this.showRuleDialog(r);
+                Rule r = getSelectedRule();
+                showRuleDialog(r);
             }
         }
-
     }
 
     @Override
@@ -370,10 +367,7 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
     }
 
     class NamedVector extends Vector<Object> {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = -4901889422519392481L;
+    	private static final long serialVersionUID = -4901889422519392481L;
 		String name;
 
         public NamedVector(String name) {
@@ -394,7 +388,7 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
             }
         }
 
-	@Override
+        @Override
         public String toString() {
             return name;
         }
@@ -423,9 +417,6 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
 
     class ppMenu extends JPopupMenu {
 
-        /**
-		 * 
-		 */
 		private static final long serialVersionUID = -3810121691461178959L;
 		private Rule rule;
 
@@ -450,7 +441,7 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
             it.setEnabled(false);
             add(it);
             addSeparator();
-            it = new JMenuItem("Help..");
+            it = new JMenuItem("Help...");
             it.addActionListener(DialogRule.this);
             it.setEnabled(false);
             add(it);

@@ -11,4 +11,5 @@ public abstract interface Pointed {
     public abstract GEPoint getCommonPoints(Pointed pointedEntity, Collection<GEPoint> collectionPoints);
     public abstract GEPoint getCommonPoints(ArrayList<GEPoint> pList, Collection<GEPoint> collectionPoints);
     public abstract GEPoint getCommonPoints(GEPoint pp, Collection<GEPoint> collectionPoints);
+    public abstract GEPoint getPointOtherThan(GEPoint pp);
 }
