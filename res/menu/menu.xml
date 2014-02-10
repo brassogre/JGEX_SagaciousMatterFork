@@ -1,0 +1,70 @@
+<menu>
+
+    <group text="@string/menugroup_file">
+        <command id="@id/new" text="@string/new"  image="@images/new.gif"  keyhint="N" key="VK_NEW" />
+        <command id="@id/open" text="@string/open" image="@images/open.gif" keyhint="O" key="VK_OPEN" />
+       <group text="@string/menugroup_examples">
+           </group>
+        <separation />
+        <command id="@id/save" text="@string/save" image="@images/save.gif" keyhint="S" key="VK_SAVE" />
+		<command id="@id/saveas" text="@string/saveas" />
+		<separation />
+		<group text="@string/menugroup_export">
+		    <command id="@id/postscriptsave" id="@string/postscriptsave" />
+		    <command id="@id/pdfsave" id="@string/pdfsave" />
+		    <command id="@id/svgsave" id="@string/svgsave" />
+		    </group>
+		<separation />
+		<command id="@id/print" text="@images/print.gif" />
+		<separation />
+		<command id="@id/quit" text="@images/quit.gif" />
+		</group>
+
+    <group text="@string/menugroup_edit">
+        <command id="@id/undo" text="@string/undo" image="@images/undo.gif" />
+        <command id="@id/redo" text="@string/redo" />
+        <separation />
+        <command id="@id/cut" text="@string/cut" />
+        <command id="@id/copy" text="@string/copy" />
+		<command id="@id/paste" text="@string/paste" />
+        <separation />
+        <command id="@id/move" text="@string/move" />
+		</group>
+
+    <group text="@string/menugroup_view">
+        <command id="@id/zoomin" text="@string/zoomin" />
+        <command id="@id/zoomout" text="@string/zoomout" />
+        <separation />
+		<command id="@id/showgrid" text="@string/showgrid" />
+		<command id="@id/increasegrid" text="@string/increasegrid" />
+		<command id="@id/decreasegrid" text="@string/decreasegrid" />
+		<separation />
+		<command id="@id/showstepbar" text="@string/showstepbar" />
+		<separation />
+		<command id="@id/constructionhistory" text="@string/constructionhistory" />
+		</group>
+
+    <group text="@string/menugroup_construct">
+        <command id="@id/orientedsegment" text="@string/orientedsegment" />
+        <command id="@id/orientedtsegment" text="@string/orientedtsegment" />
+		</group>
+
+    <group text="@string/menugroup_constrain">
+		<group text="@string/menugroup_angles">
+		    <command id="@id/eqangle" id="@string/eqangle" />
+		    <command id="@id/fixedangle" id="@string/fixedangle" />
+		    </group>
+		<group text="@string/menugroup_segments">
+		    <command id="@id/eqratio" id="@string/eqratio" />
+		    <command id="@id/eqdistance" id="@string/eqdistance" />
+		    </group>
+		</group>
+
+    <group text="@string/menugroup_help">
+		<command id="@id/about" id="@string/about" />
+		<command id="@id/preferences" id="@string/preferences" keyhint="," key="VK_COMMA" />
+		<separation />
+		<command id="@id/tutorial" id="@string/tutorial" />
+		</group>
+
+</menu>

@@ -2,40 +2,138 @@
 <resources>
 
     <string name="jgex">Java Geometry Expert</string>
-    <string name="postscriptsave">Export as PS...</string>
-    <string name="pdfsave">Export As PDF...</string>
-    <string name="imagesave">Export As SVG...</string>
-    <string name="animationsave">Export Animation As GIF...</string>
-    <string name="constructionhistory">Construct History</string>
-    <string name="save">Save</string>
-    <string name="saveas">Save As</string>
-    <string name="open">Open...</string>
-    <string name="new">New...</string>
-    <string name="print">Print</string>
-    <string name="help">Help</string>
-    <string name="autoanimate">Auto-animate</string>
-    <string name="toggleproofbar">Proof Bar</string>
-    <string name="autoshowstep">Show Step</string>
     <string name="preferences">Preferences...</string>
     <string name="about">About JGEX</string>
-
+    
+    <string name="menugroup_file">File</string>
+    <string name="menugroup_edit">Edit</string>
+    <string name="menugroup_construct">Construct</string>
+    <string name="menugroup_constrain">Constrain</string>
+    <string name="menugroup_action">Action</string>
+    <string name="menugroup_prove">Prove</string>
+    <string name="menugroup_help">Help</string>
+     
+    <string name="menugroup_export">Export As</string>
+        
+    <string name="postscriptsave">PostScript...</string>
+    <string name="pdfsave">PDF...</string>
+    <string name="imagesave">SVG...</string>
+    <string name="animationsave">Save Animation...</string>
+    <string name="constructionhistory">Construction History...</string>
+    <string name="save">Save</string>
+    <string name="saveas">Save As...</string>
+    <string name="open">Open...</string>
+    <string name="new">New...</string>
+    <string name="print">Print...</string>
+    <string name="tutorial">Tutorial...</string>
+    
+    <string name="autoanimate">Auto-animate</string>
+    <string name="autoshowstep">Show Step</string>
+    <string name="toggleproofbar">Show Proof Bar</string>
+    <string name="autoshowstep">Show Proof-Step</string>
+    
     <string name="togglegrid">Show Grid</string>
     <string name="togglesnaptogrid">Snap to Grid</string>
     <string name="viewelement">View Element</string>
-    <string name="moregrid">Enter a message</string>
-    <string name="lessgrid">Send</string>
-    <string name="postscriptsave">DUMMY\nCONTENT</string>
-    <string name="save">Dummy Button</string>
-    <string name="saveas">Enter a message</string>
-    <string name="open">Send</string>
-    <string name="new">Java Geometry Expert</string>
-    <string name="open">DUMMY\nCONTENT</string>
-    <string name="print">Dummy Button</string>
-    <string name="help">Enter a message</string>
-    <string name="autoanimate">Send</string>
-    <string name="toggleproofbar">DUMMY\nCONTENT</string>
-    <string name="autoshowstep">Dummy Button</string>
-    <string name="preferences">Enter a message</string>
-    <string name="about">About JGEX</string>
+    <string name="increasegrid">Increase Grid</string>
+    <string name="decreasegrid">Decrease Grid</string>
+    
+    <string name="eqdistance">To Have a Fixed Length...</string>
+    <string name="eqratio">To Have Same Length...</string>
+    <string name="menugroup_segments">Segments</string>
+    <string name="menugroup_angles">Angles</string>
+    <string name="fixedangle">To Have Fixed Magnitude...</string>
+    <string name="eqangle">To Be Equal...</string>
+    <string name="orientedsegment">Oriented Segment</string>
+    <string name="orientedtsegment">Oriented T-Segment</string>
 
 </resources>
+
+//public class SClass {
+//
+//    public static String[][] ActionString=
+//    {   // command ,            imagename,          tooltips ,                          altText
+//        {"new",                 "new",              "start new view to construction",   "New"},
+//        {"save",                "save",             "save therom",                      "Save"},
+//        {"load",                "load",             "load new theorem",                  "Up"},
+//
+//        {"",                    "Separator"},
+//
+//        {"select",              "select",           "select mode",                      "Select"},
+//        {"single-add",          "single-add",       "add a single point",               "Single-add"},
+//        {"multi-add-middle",    "middle",           "Forward to something-or-other",    "Next"},
+//        {"multi-add-line",      "multi-add-line",   "draw connecting lines",            "Multi-add-line"},
+//        {"parallel",            "parallel",         "draw parallel line",               "parallel"},
+//        {"parallel",            "parallel",         "draw parallel line",               "parallel"},
+//        {"perp",                "perp",             "draw perpdicular line",            "perp"},
+//        {"perp2",               "perp2",            "draw perpdicular line with a foot","perp2"},
+//        {"multi-add-circle",    "multi-add-circle", "draw two points and a circle",     "Multi-add-circle"},
+//        {"circle-by-radius",    "circle-by-radius", "draw a circle around a point",     "circle-by-radius"},
+//        {"circle-by-3",         "circle-by-3",      "draw a circle around a point",     "circle-by-3"},
+//        {"",                    "Separator"},
+//        {"meet",                "meet",             "meet to decide a point",           "Meet"},
+//        {"empty",               "empty",            "empty the view",                   "Empty"},
+//        {"",                    "Separator"},
+//        {"animation",           "animation",        "animate construction",             "Animation"}
+//
+//    };
+//    
+//    public static String[][] RightToolBarString =
+//            {
+//                {"printps",     "printPS",      "generate postscript code",     "Printps"},
+//                {"",            "Separator"},
+//                {"translate",   "translate",    "translate view",               "Translate"},
+//                {"zoom-in",     "zoom-in",      "Zoom in view",                 "Zoom-in"},
+//                {"zoom-out",    "zoom-out",     "Zoom out view",                "Zoom-out"},
+//                {"fetch",       "fetch",        "Zoom to view all points",      "Fetch"},
+//                {"lessmesh",    "lessMesh",     "make the mesh less dense",     "LessMesh"},
+//                {"moremesh",    "moreMesh",     "make the mesh more dense",     "MoreMesh"},
+//                {"axes",        "axes",         "draw coordinate axes",         "Axes"},
+//                {"mesh",        "mesh",         "draw the rectangle grid",      "Mesh"},
+//                {"snap",        "snap",         "snap to the grid",             "Snap"}
+//            };
+//    
+//    public static String[][] MenuString =
+//            {
+//                {"Open",    "Open..",  "Open a file to read.."},
+//                {"Exit",    "Exit",    "Exit the program" },
+//
+//            };
+//    public static String[][] BasicPopupMenu =
+//            {
+//                {"select",      "Select",       "select mode"},
+//                {"",            "Separator"},
+//                {"translate",   "Translate",    "translate view"},
+//                {"zoom-in",     "Zoom-in",      "Zoom in view"},
+//                {"zoom-out",    "Zoom-out",     "Zoom out view"},
+//                {"fetch",       "Fetch",        "Zoom to view all points"},
+//                {"",            "Separator"},
+//                {"property",    "Property",     "the property of the view"}
+//            } ;
+//    public static String[][] ActionTip =
+//            {
+//                {"select",          "Select elements by clicking on them"},
+//                {"single-add",      "Add a single point by clicking the mouse"},
+//                {"multi-add-middle","Construct two points to define their middle point"},
+//                {"multi-add-line",  "Construct two points to define a line"},
+//                {"parallel",        "Select a line and drag to define a parallel line"},
+//                {"perp",            "Select a line and drag to define a perpedicular line"},
+//                {"perp2",           "Drag to a line to define a perpedicular line"},
+//                {"multi-add-circle","Construct two points to define a circle "},
+//                {"circle-by-radius","Select two points to construct a circle"},
+//                {"circle-by-3",     "Select three points to construct a circle"},
+//                {"angle",           "Select two lines to define an angle"},
+//                {"polygon",         "Click multiple locations to construct a polygon"},
+//                {"text",            "Click to locate the text"},
+//                {"meet",            "Select two elements to define where they meet"},
+//                {"mirror",          "Select two elements to define mirror"},
+//                {"clear",           "Clear all elements"},
+//                {"track",           "Select a point and an element as contrail"},
+//                {"eqangle",         "Select two angles to define equation"},
+//                {"square",          "Drag a line to define a square"},
+//                {"iso_angle",       "Drag a line to define an isoceles triangle"},
+//                {"pfoot",           "Select two points to define a perpedicular foot"},
+//                {"defpoly",         "Click points to define a polygon"},
+//                {"ccline",          "Select two circles to define their common line"}
+//            };
+//}

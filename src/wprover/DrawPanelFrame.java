@@ -456,7 +456,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 
 	public JFileChooser getFileChooser() {
 		if (filechooser == null) {
-			filechooser = new JFileChooser();
+			filechooser = new JFileChooser(); // Null Pointer Exception in ShellFolder.()
 			final String dr = getUserDir();
 			filechooser.setCurrentDirectory(new File(dr));
 			filechooser.setFileFilter(new UtilityFileFilter("gex.xml"));
@@ -1427,20 +1427,11 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 				lp.reload();
 			setBKState();
 			d.repaint();
-		} else if (command.equals("Online Help"))
-			openURL(("http://woody.cs.wichita.edu/help/index.html"));
-		else if (command.equals("JGEX Homepage"))
-			openURL(("http://woody.cs.wichita.edu"));
-		else if (command.equals("Contact Us"))
-			openURL(("mailto:yezheng@gmail.com"));
+		}
 		else if (command.equals("ff")) {
 			dp.redo();
 			setBKState();
 			d.repaint();
-			/*
-			 * } else if (command.equalsIgnoreCase("Check for Update")) {
-			 * updateJGEX();
-			 */
 		} else if (command.equals("fr")) {
 			dp.Undo();
 			setBKState();

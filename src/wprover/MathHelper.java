@@ -1,5 +1,7 @@
 package wprover;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import maths.TMono;
 
 /**
@@ -7,7 +9,6 @@ import maths.TMono;
  * User: Ye
  * Date: 2005-7-28
  * Time: 13:31:13
- * To change this template use File | Settings | File Templates.
  */
 public class MathHelper {
 
@@ -391,17 +392,21 @@ public class MathHelper {
         return s;
     }*/
 
-    public static double roud3(double r) {
+    /**
+     * Rounds off a double to three decimal places.
+     * @param r a double representing the quantity to be rounded off.
+     * @return the value of r rounded off to three decimal places.
+     */
+    public static double round3(double r) {
         return Math.round(r * 1000 + 0.1) / 1000.0;
     }
 
     public void calculate(DrawPanel dp) {
-        double r = calvalue(this, dp);
-        this.dvalue = roud3(r);
+        double r = calcValue(this, dp);
+        dvalue = round3(r);
     }
 
-    public static double calvalue(MathHelper ct, DrawPanel dp) {
-        if (ct == null) return 0.0;
+    public static double calcValue(@NonNull MathHelper ct, @NonNull DrawPanel dp) {
         return dp.calculate(ct);
     }
 
@@ -409,7 +414,7 @@ public class MathHelper {
 
     //            "abs", "sqrt", "ln", "log", "sgn", "round", "trunc"}
 
-    public static double cal_func(int n, double v) {
+    public static double calcFunction(int n, double v) {
         switch (n) {
             case 0:
                 return Math.sin(v);

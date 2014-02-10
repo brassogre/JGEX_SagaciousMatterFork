@@ -1908,7 +1908,6 @@ public class Constraint {
     }
 
     public void add_des(int t, GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4) {
-
         cons csd = new cons(t);
         csd.setId(id);
         csd.add_pt(p1);
@@ -2005,8 +2004,8 @@ public class Constraint {
         return r1 * r2 > 0;
     }
 
-    public static double dr_pr(double x1, double y1, double x2, double y2, double x, double y) {
-        return (y2 - y1) * (x - x2) - (y - y2) * (x2 - x1);
+    public static double dr_pr(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return (y2 - y1) * (x3 - x2) - (y3 - y2) * (x2 - x1);
     }
 
     public static TMono eqdistance(GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4) {

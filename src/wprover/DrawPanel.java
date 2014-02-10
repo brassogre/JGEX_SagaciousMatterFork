@@ -9743,7 +9743,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 		case MathHelper.E:
 			return Math.E;
 		case MathHelper.FUNC:
-			return MathHelper.cal_func(ct.value, calculate(ct.left));
+			return MathHelper.calcFunction(ct.value, calculate(ct.left));
 		case MathHelper.PARAM: {
 			final MathHelper t = fd_para(ct.sname);
 			if (t == null)

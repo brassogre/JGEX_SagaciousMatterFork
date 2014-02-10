@@ -6,28 +6,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.SortedSet;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
- * Created by IntelliJ IDEA.
- * User: Administrator
- * Date: 2005-3-2
- * Time: 20:40:39
- * To change this template use File | Settings | File Templates.
+ * Encapsulates data concerning the various colors, pen thicknesses, dash lengths, etc.
+ *
  */
 public class DrawData {
-    public static int RED = 3;
-    public static int DASH8 = 15;
-    public static int WIDTH2 = 2;
-    public static int LIGHTCOLOR = 18;
+    public final static int RED = 3;
+    public final static int DASH8 = 15;
+    public final static int WIDTH2 = 2;
+    public final static int LIGHTCOLOR = 18;
 
-    private static DrawData dd = new DrawData();
-//    private static int cnum;
+    private static @NonNull DrawData dd = new DrawData();
 
-    public ArrayList<Color> colorlist = new ArrayList<Color>();
-    public ArrayList<Double> dashlist = new ArrayList<Double>();
-    public ArrayList<Double> widthlist = new ArrayList<Double>();
+    public final @NonNull ArrayList<Color> colorlist = new ArrayList<Color>();
+    public final @NonNull ArrayList<Double> dashlist = new ArrayList<Double>();
+    public final @NonNull ArrayList<Double> widthlist = new ArrayList<Double>();
 
     int default_color_num;
-
 
     private DrawData() {
         Color[] color = {
@@ -59,8 +56,7 @@ public class DrawData {
         };
 
         default_color_num = color.length;
-        //cnum = this.default_color_num;
-
+ 
         for (int i = 0; i < color.length; i++) {
             colorlist.add(color[i]);
         }
@@ -104,7 +100,6 @@ public class DrawData {
         return dd.dashlist.get(index).doubleValue();
     }
 
-
     public static int getColorCounter() {
         return dd.colorlist.size();
     }
@@ -113,22 +108,23 @@ public class DrawData {
         return n % getColorCounter();
     }
 
-    public static Color getColorSinceRed(int n) {
+    public static @NonNull Color getColorSinceRed(int n) {
         return getColor(anglecolor + n);
     }
 
-    public static Color getColor(int index) {
+    public static @NonNull Color getColor(int index) {
         int n = dd.colorlist.size();
-        if (index < 0 ) return null;
-        return (dd.colorlist.get(index % n));
+        if (index < 0 )
+        	throw new NullPointerException();
+        return dd.colorlist.get(index % n);
     }
 
-    public static Color getCtColor(int index) {
-        Color c = (dd.colorlist.get(index));
+    public static @NonNull Color getCtColor(int index) {
+        Color c = dd.colorlist.get(index);
         return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
     }
 
-    public static int addColor(Color co) {
+    public static int addColor(@NonNull Color co) {
         for (int i = 0; i < dd.colorlist.size(); i++) {
             Color c = dd.colorlist.get(i);
             if (c.getRGB() == co.getRGB())
@@ -180,7 +176,7 @@ public class DrawData {
         cindex = id;
     }
 
-    public static int getColorIndex(Color color) {
+    public static int getColorIndex(@NonNull Color color) {
         for (int i = 0; i < dd.colorlist.size(); i++) {
             Color c = dd.colorlist.get(i);
             if (c.getRGB() == color.getRGB())
@@ -256,59 +252,6 @@ public class DrawData {
             fp.write(s.getBytes());
         }
     }
-
-
-//    public static void Save(DataOutputStream out) throws IOException {
-//        int size = dd.colorlist.size();
-//        out.writeInt(size);
-//        if (size > cnum) {
-//            for (int i = cnum; i < size; i++) {
-//                Color c = dd.colorlist.get(i);
-//                int cv = c.getRGB();
-//                out.writeInt(cv);
-//            }
-//        }
-//    }
-//
-//    public static void Load(DataInputStream in, drawProcess dp) throws IOException {
-//        if (CMisc.version_load_now < 0.01) {
-//            int size = in.readInt();
-//            dd = new drawData();
-//
-//            if (size > 11) {
-//                for (int i = 11; i < size; i++) {
-//                    int len = in.readInt();
-//                    byte[] s = new byte[len];
-//                    in.read(s, 0, len);
-//                    //String name = new String(s);
-//                    //dd.namelist.add(name);
-//
-//                    int cv = in.readInt();
-//                    Color c = new Color(cv);
-//                    dd.colorlist.add(c);
-//                }
-//                CCoBox.reGenerateAll();
-//            }
-//        } else {
-//            int size = in.readInt();
-//            dd = new drawData();
-//
-//            int colorNumber;
-//            if (CMisc.version_load_now >= 0.031)
-//                colorNumber = cnum;
-//            else
-//                colorNumber = cnum - 6;
-//
-//            if (size > colorNumber) {
-//                for (int i = colorNumber; i < size; i++) {
-//                    int cv = in.readInt();
-//                    Color c = new Color(cv);
-//                    dd.colorlist.add(c);
-//                }
-//                CCoBox.reGenerateAll();
-//            }
-//        }
-//    }
 
 }
 

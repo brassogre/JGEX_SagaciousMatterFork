@@ -211,8 +211,8 @@ public class DialogTextValueEditor extends DialogBase implements ActionListener,
             pane1.setText("");
         } else {
             value = MathHelper.parseString(s);
-            double r = MathHelper.calvalue(value, gxInstance.dp);
-            r = MathHelper.roud3(r);
+            double r = MathHelper.calcValue(value, gxInstance.dp);
+            r = MathHelper.round3(r);
             pane1.setText(Double.toString(r));
             StyledDocument doc = pane1.getStyledDocument();
             try {

@@ -1558,7 +1558,6 @@ public class gib {
     /// auxpoint list
 
     static long gcd(long l1, long l2) { // Euclid's method for calculating the greatest common divisor of l1 and l2
-        long l;
         if (l1 < 0L) {
             l1 = -l1;
         }
@@ -1566,20 +1565,20 @@ public class gib {
             l2 = -l2;
         }
         if (l1 > l2) {
-            l = l1;
+        	long l = l1;
             l1 = l2;
             l2 = l;
         }
         while (l1 != 0L) {
-            l = l2 % l1;
+        	long l = l2 % l1;
             l2 = l1;
             l1 = l;
         }
         return l2;
     }
 
-    protected ArrayList<auxpt> vauxpts = new ArrayList<auxpt>();
-    protected ArrayList<auxpt> vauxptf = new ArrayList<auxpt>();
+    protected final ArrayList<auxpt> vauxpts = new ArrayList<auxpt>();
+    protected final ArrayList<auxpt> vauxptf = new ArrayList<auxpt>();
 
     int get_auxptn() {
         return vauxpts.size();

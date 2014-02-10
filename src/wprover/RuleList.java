@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import org.w3c.dom.*;
 
 /**
- * This class contains the textual representations for presentation of the rules used 
+ * This class encapsulates the textual representations for presentation of the rules used 
  * for the Geometry Deductive Database (GDD) and Full Angle techniques for automated theorem proving.
  */
 public class RuleList {
@@ -55,73 +55,80 @@ public class RuleList {
 	}
 
 	private static void loadRulesFromXML(boolean bFull) {
+		// XXX There is a bug resulting from the byte-order information at the beginning of the xml files.
 		String path = jgex_IO.getWorkingDirectory() + (bFull ? "full_angle_rules.xml" : "gdd_rules.xml");
 		final Document document = jgex_IO.openXMLfile(path);
-		document.normalize();
-		final Element docElement = document.getDocumentElement();
-		final NodeList listDictionary = docElement.getElementsByTagName("dict");
-		if (listDictionary != null) {
-			for (int j = 0; j < listDictionary.getLength(); ++j) {
-				final Node nDictionary = listDictionary.item(j);
-				if (nDictionary != null) {
-					NodeList nlist = nDictionary.getChildNodes();
-					Integer keyInt = null;
-					String name = "";
-					String description = "";
-					String example = "";
-					for (int i = 0; i < nlist.getLength(); ++i) {
-						final Node nn = nlist.item(i);					
-						if ((nn != null) && (nn instanceof Element)) {
-							Element ee = (Element)nn;
-							final String sEntry = nn.getNodeName();
-							if (sEntry.equals("key")) {
-								String keyStr = ee.getTextContent();
-								try {
-									keyInt = Integer.parseInt(keyStr);
-								} catch (NumberFormatException e) {
-								}
-							}
-							String typeStr = nn.getNodeName();
-
-							if (typeStr.equals("name")) {
-								name = ee.getTextContent();
-							}
-							if (typeStr.equals("string")) {
-								description = ee.getTextContent();
-							}
-							if (typeStr.equals("example")) {
-								example = ee.getTextContent();
-							}
-							if (typeStr.equals("array")) { // TODO: Cut out all this code by getting rid of <array> in the xml dtd
-								final NodeList nnlist = ee.getChildNodes();
-								for (int ii = 0; ii < nnlist.getLength(); ++ii) {
-									Node nnnn = nnlist.item(ii);
-									if ((nnnn != null) && (nnnn instanceof Element)) {
-										Element eeee = (Element)nnnn;
-										typeStr = nnnn.getNodeName();
-										if (typeStr.equals("name")) {
-											name = eeee.getTextContent();
-										}
-										if (typeStr.equals("string")) {
-											description = eeee.getTextContent();
-										}
-										if (typeStr.equals("example")) {
-											example = eeee.getTextContent();
-										}
+		if (document == null)
+			path = jgex_IO.getWorkingDirectory() + (!bFull ? "full_angle_rules.xml" : "gdd_rules.xml");
+		if (document == null) {
+			System.err.println("Listing of axioms is missing from the JGEX package.");
+		} else {
+			document.normalize();
+			final Element docElement = document.getDocumentElement();
+			final NodeList listDictionary = docElement.getElementsByTagName("dict");
+			if (listDictionary != null) {
+				for (int j = 0; j < listDictionary.getLength(); ++j) {
+					final Node nDictionary = listDictionary.item(j);
+					if (nDictionary != null) {
+						NodeList nlist = nDictionary.getChildNodes();
+						Integer keyInt = null;
+						String name = "";
+						String description = "";
+						String example = "";
+						for (int i = 0; i < nlist.getLength(); ++i) {
+							final Node nn = nlist.item(i);					
+							if ((nn != null) && (nn instanceof Element)) {
+								Element ee = (Element)nn;
+								final String sEntry = nn.getNodeName();
+								if (sEntry.equals("key")) {
+									String keyStr = ee.getTextContent();
+									try {
+										keyInt = Integer.parseInt(keyStr);
+									} catch (NumberFormatException e) {
 									}
 								}
-							}								
+								String typeStr = nn.getNodeName();
 
-							if (keyInt != null && keyInt > 0 && (!name.isEmpty() || !description.isEmpty() || !example.isEmpty())) {
-								Rule g = new Rule(keyInt, name, description, example, bFull);
-								if (bFull)
-									mapFull.put(keyInt, g);
-								else
-									mapGDD.put(keyInt, g);
-								keyInt = null;
-								name = "";
-								description = "";
-								example = "";
+								if (typeStr.equals("name")) {
+									name = ee.getTextContent();
+								}
+								if (typeStr.equals("string")) {
+									description = ee.getTextContent();
+								}
+								if (typeStr.equals("example")) {
+									example = ee.getTextContent();
+								}
+								if (typeStr.equals("array")) { // TODO: Cut out all this code by getting rid of <array> in the xml dtd
+									final NodeList nnlist = ee.getChildNodes();
+									for (int ii = 0; ii < nnlist.getLength(); ++ii) {
+										Node nnnn = nnlist.item(ii);
+										if ((nnnn != null) && (nnnn instanceof Element)) {
+											Element eeee = (Element)nnnn;
+											typeStr = nnnn.getNodeName();
+											if (typeStr.equals("name")) {
+												name = eeee.getTextContent();
+											}
+											if (typeStr.equals("string")) {
+												description = eeee.getTextContent();
+											}
+											if (typeStr.equals("example")) {
+												example = eeee.getTextContent();
+											}
+										}
+									}
+								}								
+
+								if (keyInt != null && keyInt > 0 && (!name.isEmpty() || !description.isEmpty() || !example.isEmpty())) {
+									Rule g = new Rule(keyInt, name, description, example, bFull);
+									if (bFull)
+										mapFull.put(keyInt, g);
+									else
+										mapGDD.put(keyInt, g);
+									keyInt = null;
+									name = "";
+									description = "";
+									example = "";
+								}
 							}
 						}
 					}

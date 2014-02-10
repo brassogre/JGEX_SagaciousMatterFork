@@ -960,12 +960,10 @@ public class PolyBasic {
 	}
 
 	public static int deg(final TMono p) {
-		assert(p != null);
 		return (p != null) ? p.deg : 0;
 	}
 
 	public static int lv(final TMono p) {
-		assert(p != null);
 		return (p != null) ? p.x : 0;
 	}
 
