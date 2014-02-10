@@ -1,2 +1,0 @@
-gprover.ustruct
-gprover.cond
