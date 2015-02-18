@@ -221,13 +221,13 @@ public class cons {
         return sd;
     }
 
-    public String trim(String st, int len) {
+    public static String trim(String st, int len) {
         if (st.length() > len)
             return st.substring(0, len) + "...";
         return st;
     }
 
-    public String trim(String st) {
+    public static String trim(String st) {
         return trim(st, 32);
     }
 

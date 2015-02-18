@@ -843,7 +843,7 @@ public class PolyBasic {
 		return false;
 	}
 
-	public void dprint(final TMono p, final int dx) {
+	public static void dprint(final TMono p, final int dx) {
 		upValueTM(p, -dx);
 		final String s = getExpandedPrint(p);
 		System.out.println(s);
@@ -1004,7 +1004,7 @@ public class PolyBasic {
 		return poly;
 	}
 
-	TPoly addPolytoList(TPoly pl, TPoly pp) {
+	static TPoly addPolytoList(TPoly pl, TPoly pp) {
 		if (pl == null)
 			return pp;
 
@@ -1350,7 +1350,7 @@ public class PolyBasic {
 		return pp_times(p1, p2);
 	}
 
-	public TMono pQtimer(final TMono t1, final TMono t2, final TMono t3,
+	public static TMono pQtimer(final TMono t1, final TMono t2, final TMono t3,
 			final TMono t4) {
 		return PolyBasic.pp_times(p_copy(t1),
 				pp_times(p_copy(t2), pp_times(p_copy(t3), p_copy(t4))));
@@ -2343,7 +2343,7 @@ public class PolyBasic {
 		return isConstant(m.coef);
 	}
 
-	public void nn_reduce(TPoly poly) {
+	public static void nn_reduce(TPoly poly) {
 		while (poly != null) {
 			TMono m = poly.poly;
 			if (n2dv(m))
@@ -2355,7 +2355,7 @@ public class PolyBasic {
 		}
 	}
 
-	public void nn_div1(final int x, TPoly poly) {
+	public static void nn_div1(final int x, TPoly poly) {
 
 		while (poly != null) {
 			final TMono m = poly.poly;
@@ -2446,7 +2446,7 @@ public class PolyBasic {
 		return vlist;
 	}
 
-	public void divm(final TMono m1, TMono m) {
+	public static void divm(final TMono m1, TMono m) {
 		if ((m1 == null) || (m == null) || (m1.x <= m.x))
 			return;
 
@@ -2462,7 +2462,7 @@ public class PolyBasic {
 		}
 	}
 
-	public int get_n_paraent(TMono m) {
+	public static int get_n_paraent(TMono m) {
 		if (m == null)
 			return 0;
 		final int n = 0;
@@ -2471,7 +2471,7 @@ public class PolyBasic {
 		return n;
 	}
 
-	public TMono sp_reduce(TMono m1, final TMono m2) { // m1.x == m2.x
+	public static TMono sp_reduce(TMono m1, final TMono m2) { // m1.x == m2.x
 
 		while (true) {
 
@@ -3049,7 +3049,7 @@ public class PolyBasic {
 		}
 	}
 
-	public int getMaxX(final ArrayList<TMono> v) {
+	public static int getMaxX(final ArrayList<TMono> v) {
 		int x = 0;
 
 		for (int i = 0; i < v.size(); i++) {
@@ -3498,7 +3498,7 @@ public class PolyBasic {
 		return xd;
 	}
 
-	public void d_reduce(final TDono d1, final ArrayList<TMono> vlist) {
+	public static void d_reduce(final TDono d1, final ArrayList<TMono> vlist) {
 		if (d1 == null)
 			return;
 
@@ -3558,7 +3558,7 @@ public class PolyBasic {
 		return tx;
 	}
 
-	public TDono splitDono(final TMono m, final int dx) {
+	public static TDono splitDono(final TMono m, final int dx) {
 		TMono m1 = m;
 		TMono c = null;
 
@@ -3607,7 +3607,7 @@ public class PolyBasic {
 	 * }
 	 */
 
-	public TMono getMono(final TDono d) {
+	public static TMono getMono(final TDono d) {
 		TMono m = padd(pp_times(p_copy(d.p1), p_copy(d.p2)), p_copy(d.c));
 		coefgcd(m);
 

@@ -54,8 +54,6 @@ public class jgex_IO {
 			//config.setParameter("schema-location", "catalog.xsd");
 			config.setParameter("charset-overrides-xml-encoding", false);
 
-			FileInputStream inStream = null;
-			InputStreamReader inReader = null;
 			LSInput in = null;
 			Document document = null;
 			
@@ -63,9 +61,8 @@ public class jgex_IO {
 			boolean bKeepTrying = true;
 			
 			while (bKeepTrying) {
-				try {
-					inStream = new FileInputStream(path);
-					inReader = new InputStreamReader(inStream, sEncoding);
+				try (FileInputStream inStream = new FileInputStream(path); 
+						InputStreamReader inReader = new InputStreamReader(inStream, sEncoding) ) {
 					in = domImplLS.createLSInput();
 					in.setEncoding(sEncoding);
 					in.setCharacterStream(inReader);
@@ -75,11 +72,6 @@ public class jgex_IO {
 					document = parser.parse(in);
 					bKeepTrying = false;
 				} catch (LSException e) { 
-					if (inReader != null)
-						inReader.close();
-					if (inStream != null)
-						inStream.close();
-					
 					// System.out.println("LSException " + e.getMessage());
 					if (sEncoding.equals("UNICODE"))
 						sEncoding = "UTF-8";
@@ -91,11 +83,7 @@ public class jgex_IO {
 						bKeepTrying = false;
 				}
 			}
-			
-			if (inReader != null)
-				inReader.close();
-			if (inStream != null)
-				inStream.close();
+
 			if (document != null)
 				System.out.println("XML document loaded");					
 			

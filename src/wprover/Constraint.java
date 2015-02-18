@@ -1781,7 +1781,7 @@ public class Constraint {
         return true;
     }
 
-    public TPoly NewTPoly(TMono m1, TMono m2) {
+    public static TPoly NewTPoly(TMono m1, TMono m2) {
         TPoly poly = new TPoly();
         poly.setPoly(m1);
         TPoly poly2 = new TPoly();
@@ -1926,15 +1926,15 @@ public class Constraint {
     	add_des(csd);
     }
 
-    int pidx(GEPoint p) {
+    static int pidx(GEPoint p) {
         return p.x1.xindex;
     }
 
-    int pidy(GEPoint p) {
+    static int pidy(GEPoint p) {
         return p.y1.xindex;
     }
 
-    TPoly mpoly(TMono m1, TMono m2) {
+    static TPoly mpoly(TMono m1, TMono m2) {
         TPoly p1 = new TPoly();
         p1.setPoly(m1);
         TPoly p2 = new TPoly();

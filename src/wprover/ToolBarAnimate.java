@@ -1,10 +1,12 @@
 package wprover;
 
 import UI.EntityButtonUI;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.net.URL;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -35,7 +37,7 @@ public class ToolBarAnimate extends JToolBar implements ActionListener, ChangeLi
         this.d = pn;
         this.dp = d;
 
-        this.setOrientation(JToolBar.VERTICAL);
+        this.setOrientation(SwingConstants.VERTICAL);
         this.setFloatable(false);
 
         JPanel panel = new JPanel();
@@ -50,7 +52,7 @@ public class ToolBarAnimate extends JToolBar implements ActionListener, ChangeLi
         bx2 = makeAButton("stop", "stop", "stop the animation", "stop");
         panel.add(bx2);
 
-        framesPerSecond = new JSlider(JSlider.HORIZONTAL, 5, 30, 15);
+        framesPerSecond = new JSlider(SwingConstants.HORIZONTAL, 5, 30, 15);
 
         framesPerSecond.setMajorTickSpacing(10);
         framesPerSecond.setPaintTicks(false);

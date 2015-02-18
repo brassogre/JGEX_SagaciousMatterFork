@@ -34,7 +34,7 @@ public class ListTree extends JTabbedPane
 
 
     public ListTree(DrawPanelFrame gx) {
-        super(JTabbedPane.BOTTOM);
+        super(SwingConstants.BOTTOM);
 
         JPanel pane1 = new JPanel();
         pane1.setLayout(new BoxLayout(pane1, BoxLayout.Y_AXIS));

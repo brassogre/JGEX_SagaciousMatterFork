@@ -3,13 +3,12 @@ package wprover;
 import gprover.cons;
 import gprover.gib;
 import gprover.gterm;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.JDialog;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
@@ -160,8 +159,8 @@ public abstract class PanelAlgebraic extends JScrollPane implements Runnable, Ac
         JDialog dlg = new JDialog(gxInstance.getFrame());
         dlg.setTitle("Remainder");
         dlg.setSize(400, 300);
-        dlg.getContentPane().add(new JScrollPane(a, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+        dlg.getContentPane().add(new JScrollPane(a, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
         gxInstance.centerDialog(dlg);
         dlg.setVisible(true);
     }
@@ -209,7 +208,7 @@ public abstract class PanelAlgebraic extends JScrollPane implements Runnable, Ac
         return pp;
     }
 
-    public ArrayList<TMono> get_ndgsx(int param, ArrayList<TMono> vlist) {
+    public static ArrayList<TMono> get_ndgsx(int param, ArrayList<TMono> vlist) {
 
         ArrayList<TMono> pp = new ArrayList<TMono>();
         for (int i = 0; i < vlist.size(); i++) {
@@ -220,7 +219,7 @@ public abstract class PanelAlgebraic extends JScrollPane implements Runnable, Ac
         return pp;
     }
 
-    public TMono get_ndg(int z, int t, GEPoint[] pp) {
+    public static TMono get_ndg(int z, int t, GEPoint[] pp) {
         switch (t) {
             case gib.C_I_LL:  // AB // CD.
                 return GeoPoly.n_ndg(GeoPoly.parallel(pp[1], pp[2], pp[3], pp[4]), z);

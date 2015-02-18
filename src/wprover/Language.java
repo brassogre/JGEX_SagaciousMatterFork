@@ -37,11 +37,9 @@ public class Language {
 
     public void load(File f) {
 
-        try {
+        try (InputStreamReader read = new InputStreamReader(new FileInputStream(f), "UTF-8");
+        		BufferedReader reader = new BufferedReader(read) ) {
             //  OutputStreamWriter writer = this.outputBlank(f);
-
-            InputStreamReader read = new InputStreamReader(new FileInputStream(f), "UTF-8");//����UNICODE,UTF-16
-            BufferedReader reader = new BufferedReader(read);
             String h = reader.readLine();
             stype = h.trim();
             h = readFont(reader);
@@ -254,7 +252,7 @@ public class Language {
     }
 
 
-    public OutputStreamWriter outputBlank(File f) throws IOException {
+    public static OutputStreamWriter outputBlank(File f) throws IOException {
         String path = f.getPath();
         //String name = f.getName();
 
@@ -266,8 +264,7 @@ public class Language {
     }
 
     public void writeFile(File f) {
-        try {
-            OutputStreamWriter writer = this.outputBlank(f);
+        try (OutputStreamWriter writer = outputBlank(f)) {
             writer.write("Font: " + font.getFontName() + " # " + font.getStyle() + " # " + font.getSize());
             for (int i = 0; i < ndlist.length; i++) {
                 if (ndlist[i] == null)
@@ -276,9 +273,6 @@ public class Language {
                 ln.write(writer);
 
             }
-            writer.close();
-
-
         } catch (IOException ee) {
         }
 
@@ -286,7 +280,7 @@ public class Language {
     }
 
 
-    public void writeOut(OutputStreamWriter writer, String[] ss) throws IOException {
+    public static void writeOut(OutputStreamWriter writer, String[] ss) throws IOException {
         if (ss.length == 0)
             writer.write("\n");
         else {

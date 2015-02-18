@@ -80,7 +80,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
 
         UIManager.put("Tree.line", Color.LIGHT_GRAY);
-        this.setTabPlacement(JTabbedPane.BOTTOM);
+        this.setTabPlacement(SwingConstants.BOTTOM);
         condPane = new Conspanel();
 
         JScrollPane scroll = new JScrollPane(condPane);
@@ -695,8 +695,8 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
         mpPanel = new JPanel();
         mpPanel.setLayout(new BoxLayout(mpPanel, BoxLayout.Y_AXIS));
         JScrollPane pane = new JScrollPane((tree_mp = new TreeMProof(gxInstance, dpane, dp)),
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         pane.setBackground(Color.white);
         pane.setForeground(Color.white);
@@ -2317,7 +2317,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
                 pmenu.add(item);
 
             }
-            label = new JLabel("GDD", DrawPanelFrame.createImageIcon("images/ptree/downsel.gif"), JLabel.HORIZONTAL) {
+            label = new JLabel("GDD", DrawPanelFrame.createImageIcon("images/ptree/downsel.gif"), SwingConstants.HORIZONTAL) {
                 /**
 				 * 
 				 */
@@ -2561,7 +2561,7 @@ public class ProofPanel extends JTabbedPane implements ChangeListener {
 
             listx.setSelectionModel(listSelectionModel);
             this.setTopComponent(new JScrollPane(list));
-            tipbar = new JToolBar(JToolBar.HORIZONTAL);
+            tipbar = new JToolBar(SwingConstants.HORIZONTAL);
             tipbar.setFloatable(false);
             tiptext = new JTextPane() {
                 /**

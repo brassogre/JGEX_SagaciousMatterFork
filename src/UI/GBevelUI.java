@@ -1,10 +1,12 @@
 package UI;
 
 import java.awt.Graphics;
+
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
 import javax.swing.JComponent;
+import javax.swing.border.BevelBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
@@ -16,8 +18,8 @@ import javax.swing.plaf.basic.BasicButtonUI;
  */
 public class GBevelUI extends BasicButtonUI {
 
-    GBevelBorder border1 = new GBevelBorder(GBevelBorder.RAISED);
-    GBevelBorder border2 = new GBevelBorder(GBevelBorder.LOWERED);
+    GBevelBorder border1 = new GBevelBorder(BevelBorder.RAISED);
+    GBevelBorder border2 = new GBevelBorder(BevelBorder.LOWERED);
 
     public GBevelUI() {
         super();

@@ -40,3 +40,5 @@ bin/*
 .Trashes
 ehthumbs.db
 Thumbs.db
+/bin/
+/.apt_generated/

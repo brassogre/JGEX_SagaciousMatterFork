@@ -2,16 +2,16 @@ package wprover;
 
 import UI.EntityButtonUI;
 import gprover.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.*;
 
 public class DialogRuleApplication extends DialogBase implements ComponentListener, ActionListener, WindowListener {
 
@@ -229,7 +229,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
 		private ArrayList<itemLabel> vlist = new ArrayList<itemLabel>();
 
         public ruleViewPanel() {
-            super(JToolBar.HORIZONTAL);
+            super(SwingConstants.HORIZONTAL);
             this.setFloatable(false);
             this.addMouseListener(listener);
         }
@@ -290,7 +290,7 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
 		private ArrayList<itemLabel> vlist = new ArrayList<itemLabel>();
 
         public ruleAppPanel() {
-            super(JToolBar.HORIZONTAL);
+            super(SwingConstants.HORIZONTAL);
             this.setFloatable(false);
             this.addMouseListener(listener);
         }
@@ -955,8 +955,8 @@ public class DialogRuleApplication extends DialogBase implements ComponentListen
 		private static final long serialVersionUID = 8785018726683521402L;
 		private int RULE;
         private int type;
-        private Border border2 = new SoftBevelBorder(SoftBevelBorder.LOWERED);
-        private Border border1 = new SoftBevelBorder(SoftBevelBorder.RAISED);
+        private Border border2 = new SoftBevelBorder(BevelBorder.LOWERED);
+        private Border border1 = new SoftBevelBorder(BevelBorder.RAISED);
         private String str = null;
 
 

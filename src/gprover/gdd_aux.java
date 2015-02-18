@@ -66,7 +66,7 @@ public class gdd_aux extends gdd {
     }
 
 
-    public boolean time_over() {
+    public static boolean time_over() {
         long t = System.currentTimeMillis() - time;
         if (t > 200000) return true;
         return false;

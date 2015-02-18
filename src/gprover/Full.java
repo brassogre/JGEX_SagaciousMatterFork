@@ -127,11 +127,6 @@ public class Full extends elim {
 		}
 	}
 
-	@Override
-	boolean npoly(xterm p) {
-		return (p.var == null);
-	}
-
 	void print_t() {
 		if (print_conc)
 			gprint(Cm.s2300);
@@ -1900,7 +1895,7 @@ public class Full extends elim {
 		}
 	}
 
-	boolean chord_p(xterm p) {
+	static boolean chord_p(xterm p) {
 		var v;
 		if (npoly(p))
 			return (true);
@@ -1909,7 +1904,7 @@ public class Full extends elim {
 	}
 
 	// /////////////////////////////////
-	ArrayList<xterm> getAllterms(xterm p1) {
+	static ArrayList<xterm> getAllterms(xterm p1) {
 
 		final ArrayList<xterm> list = new ArrayList<xterm>();
 		if (p1 == null)
@@ -1960,7 +1955,7 @@ public class Full extends elim {
 			myprint_p1(dp2.p, false);
 	}
 
-	gr_term mk_el_gr(el_term el) {
+	static gr_term mk_el_gr(el_term el) {
 		// gr_term gr1 = mk_gr(mk_num(1L), get_dt(1, p1, null), mk_num(0L),
 		// null, 99, null);
 		//
@@ -1994,7 +1989,7 @@ public class Full extends elim {
 		return t;
 	}
 
-	boolean var_reOrder(var v) {
+	static boolean var_reOrder(var v) {
 		int p1, p2, p3, p4, p;
 		boolean sr = false;
 		p1 = v.pt[0];
@@ -2064,7 +2059,7 @@ public class Full extends elim {
 	// V2. Initial NDGS
 	// V3. Simplified.
 	// V4 Final NDGS.
-	public boolean isConstructionType(int type) {
+	public static boolean isConstructionType(int type) {
 		return (((type > 0) && (type < 50)) || ((type > 100) && (type < 150)))
 				&& !freeCS(type);
 	}
@@ -2436,7 +2431,7 @@ public class Full extends elim {
 		return p1;
 	}
 
-	protected void filter_ndg(ArrayList<cndg> v4) {
+	protected static void filter_ndg(ArrayList<cndg> v4) {
 
 		for (int i = 0; i < v4.size(); i++) {
 			final cndg d = v4.get(i);
@@ -2458,7 +2453,7 @@ public class Full extends elim {
 
 	}
 
-	protected void filter_ndg(ArrayList<cndg> v2, ArrayList<cndg> v3) {
+	protected static void filter_ndg(ArrayList<cndg> v2, ArrayList<cndg> v3) {
 
 		for (int i = 0; i < v2.size(); i++) {
 			final cndg d = v2.get(i);
@@ -2496,7 +2491,7 @@ public class Full extends elim {
 		vlist.add(d);
 	}
 
-	protected boolean ndg_less(cndg n1, cndg n2) {
+	protected static boolean ndg_less(cndg n1, cndg n2) {
 		if ((n1.type == NDG_NEQ) || (n1.type == NDG_NON_ISOTROPIC))
 			if (n2.type == NDG_COLL)
 				if (n2.contain(n1.p[0]) && n2.contain(n1.p[1]))
@@ -2504,7 +2499,7 @@ public class Full extends elim {
 		return false;
 	}
 
-	protected boolean ndg_eq(cndg n1, cndg n2) {
+	protected static boolean ndg_eq(cndg n1, cndg n2) {
 		if (n1.type != n2.type)
 			if (((n1.type == NDG_NEQ) || (n1.type == NDG_NON_ISOTROPIC))
 					&& ((n2.type == NDG_NEQ) || (n2.type == NDG_NON_ISOTROPIC))) {
@@ -2571,7 +2566,7 @@ public class Full extends elim {
 		}
 	}
 
-	protected cndg add_ndg_triplePI(var v) {
+	protected static cndg add_ndg_triplePI(var v) {
 		final cndg n = new cndg();
 		n.type = NDG_TRIPLEPI;
 
@@ -2638,7 +2633,7 @@ public class Full extends elim {
 
 	}
 
-	protected void reorder2(cndg n) {
+	protected static void reorder2(cndg n) {
 		if (n.p[0] > n.p[1]) {
 			final int d = n.p[0];
 			n.p[0] = n.p[1];
@@ -2646,7 +2641,7 @@ public class Full extends elim {
 		}
 	}
 
-	protected void reorder3(cndg n) {
+	protected static void reorder3(cndg n) {
 		for (int i = 0; i < 2; i++) {
 
 			final int d = n.p[i];
@@ -2658,7 +2653,7 @@ public class Full extends elim {
 		}
 	}
 
-	protected void reorder22(cndg n) {
+	protected static void reorder22(cndg n) {
 		if (n.p[0] > n.p[1]) {
 			final int d = n.p[0];
 			n.p[0] = n.p[1];
@@ -2816,7 +2811,7 @@ public class Full extends elim {
 				|| (t == C_CIRCLE);
 	}
 
-	protected cndg add_ndg_coll(int a, int b, int c) {
+	protected static cndg add_ndg_coll(int a, int b, int c) {
 		final cndg n = new cndg();
 		n.type = NDG_COLL;
 
@@ -2831,7 +2826,7 @@ public class Full extends elim {
 			return n;
 	}
 
-	protected cndg add_ndg_cong(int a, int b, int c, int d) {
+	protected static cndg add_ndg_cong(int a, int b, int c, int d) {
 		final cndg n = new cndg();
 		n.type = NDG_CONG;
 
@@ -2847,11 +2842,11 @@ public class Full extends elim {
 			return null;
 	}
 
-	protected cndg add_ndg_para(var v) {
+	protected static cndg add_ndg_para(var v) {
 		return add_ndg_para(v.pt[0], v.pt[1], v.pt[2], v.pt[3]);
 	}
 
-	protected cndg add_ndg_para(int a, int b, int c, int d) {
+	protected static cndg add_ndg_para(int a, int b, int c, int d) {
 		final cndg n = new cndg();
 		n.type = NDG_PARA;
 
@@ -2879,11 +2874,11 @@ public class Full extends elim {
 		return n;
 	}
 
-	protected cndg add_ndg_perp(var v) {
+	protected static cndg add_ndg_perp(var v) {
 		return add_ndg_perp(v.pt[0], v.pt[1], v.pt[2], v.pt[3]);
 	}
 
-	protected cndg add_ndg_perp(int a, int b, int c, int d) {
+	protected static cndg add_ndg_perp(int a, int b, int c, int d) {
 		final cndg n = new cndg();
 		n.type = NDG_PERP;
 
@@ -3080,7 +3075,7 @@ public class Full extends elim {
 		return 0;
 	}
 
-	public void sortVector(ArrayList<cndg> v4) {
+	public static void sortVector(ArrayList<cndg> v4) {
 		for (int i = 1; i < v4.size(); i++) {
 			final cndg d = v4.get(i);
 			for (int j = 0; j < i; j++) {
@@ -3124,7 +3119,7 @@ public class Full extends elim {
 				add_ndgs(d, vndgs);
 		}
 
-		this.filter_ndg(vndgs);
+		Full.filter_ndg(vndgs);
 	}
 
 	private void updateSD(ndgcs dd) {

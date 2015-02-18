@@ -2,9 +2,8 @@ package UI;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
-import javax.swing.JComponent;
+
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
@@ -35,8 +34,8 @@ public class BlueishButtonUI extends BasicButtonUI
             AbstractButton b = (AbstractButton) c;
             b.setRolloverEnabled(true);
             b.setOpaque(false);
-            b.setHorizontalTextPosition(JButton.CENTER);
-            b.setVerticalTextPosition(JButton.BOTTOM);
+            b.setHorizontalTextPosition(SwingConstants.CENTER);
+            b.setVerticalTextPosition(SwingConstants.BOTTOM);
 
       }
 

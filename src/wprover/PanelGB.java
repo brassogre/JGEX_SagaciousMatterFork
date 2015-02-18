@@ -132,7 +132,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 	public static int addMM(TMono m, ArrayList<TMono> v, int param) {
 		if (PolyBasic.plength(m) == 1) {
 			while (m != null && m.deg > 0 && m.x > 0) {
-				TMono m1 = GeoPoly.pth(m.x, 1, 1);
+				TMono m1 = PolyBasic.pth(m.x, 1, 1);
 				m1 = GeoPoly.n_ndg(m1, param--);
 				v.add(m1);
 				m = m.coef;
@@ -147,8 +147,8 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 	}
 
 	//    private boolean is_ndg_set() {
-		//        return gt != null && gt.getNcons().size() > 0;
-		//    }
+	//        return gt != null && gt.getNcons().size() > 0;
+	//    }
 
 	public void getNDGS(ArrayList<TMono> v3) {
 		int t = 3;
@@ -191,7 +191,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 		}
 
 		//        /if (is_ndg_set())
-			//            this.gbasis1();
+		//            this.gbasis1();
 		//        else
 		gbasis();
 
@@ -347,7 +347,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 		}
 	}
 
-	public boolean gb_finished(ArrayList<TMono> v) {
+	public static boolean gb_finished(ArrayList<TMono> v) {
 		for (TMono m : v) {
 			if (PolyBasic.plength(m) == 1 && m.x == 0)
 				return true;
@@ -405,7 +405,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 		}
 	}
 
-	public void dbasis(ArrayList<TMono> pp) {
+	public static void dbasis(ArrayList<TMono> pp) {
 
 		ArrayList<TMono> v = new ArrayList<TMono>();
 		int size = pp.size();
@@ -496,9 +496,9 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 				PolyBasic.upValueTM(vg, dd);
 				//
 				//                if(false)
-					//                {
-					//                    Vector vtp = basic.specialTreatment(m1, m2, param + dd);
-					//                    if (vtp.size() != 0) {
+				//                {
+				//                    Vector vtp = basic.specialTreatment(m1, m2, param + dd);
+				//                    if (vtp.size() != 0) {
 				//                        vg.clear();
 				//                        for (int i = 0; i < vtp.size(); i++)
 				//                            basic.ppush((TMono) vtp.get(i), vg);
@@ -527,7 +527,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 			m = PolyBasic.b_reduce(PolyBasic.p_copy(m), vrs);
 			if (!running)
 				return null;
-			TDono d = basic.splitDono(m, dx);
+			TDono d = PolyBasic.splitDono(m, dx);
 
 			if (d != null)
 				vnn.add(d);
@@ -583,7 +583,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 		return mc;
 	}
 
-	public void printVectorExpanded(ArrayList<TMono> vrs, int dx) {
+	public static void printVectorExpanded(ArrayList<TMono> vrs, int dx) {
 		PolyBasic.upValueTM(vrs, -dx);
 		for (int i = 0; i < vrs.size(); i++) {
 			TMono ma = vrs.get(i);
@@ -622,7 +622,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 
 	}
 
-	public void printVDD(final ArrayList<TDono> v) {
+	public static void printVDD(final ArrayList<TDono> v) {
 		for (final TDono d : v) {
 			PolyBasic.sprint(d.p1);
 			System.out.print("*( ");
@@ -636,7 +636,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 	}
 
 	public void gbasis() {
-		GeoPoly basic = GeoPoly.getPoly();
+		//GeoPoly basic = GeoPoly.getPoly();
 		String sc = gt.getConcText();
 		cons cc = gt.getConclusion();
 		TMono mc = getTMono(cc);
@@ -681,7 +681,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 		//        addString2("GB = ");
 		ArrayList<TMono> v = dp.getPBMono();
 
-		int x = basic.getMaxX(v);
+		int x = PolyBasic.getMaxX(v);
 		int dx = x / 2 + 2;
 		PolyBasic.upValueTM(mc, dx);
 
@@ -745,9 +745,9 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 				} else {
 					f.createNewFile();
 				}
-				FileOutputStream fos = new FileOutputStream(f, bExists);
-				writeMaple(fos);
-				fos.close();
+				try (FileOutputStream fos = new FileOutputStream(f, bExists)) {
+					writeMaple(fos);
+				}
 			} catch (IOException ee) {
 				JOptionPane.showMessageDialog(this, ee.getMessage(),
 						"Save Failed", JOptionPane.ERROR_MESSAGE);
@@ -757,7 +757,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 	}
 
 	public void writeMaple(FileOutputStream out) throws IOException {
-		GeoPoly basic = GeoPoly.getPoly();
+		//GeoPoly basic = GeoPoly.getPoly();
 		cons cc = gt.getConclusion();
 		TMono mc = getTMono(cc);
 
@@ -781,7 +781,7 @@ public class PanelGB extends PanelAlgebraic implements MouseListener {
 
 
 		ArrayList<TMono> v = dp.getPBMono();
-		int x = basic.getMaxX(v);
+		int x = PolyBasic.getMaxX(v);
 
 		ArrayList<TMono> vg = new ArrayList<TMono>();
 		int nn = x;

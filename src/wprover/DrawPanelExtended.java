@@ -147,7 +147,7 @@ public class DrawPanelExtended extends DrawPanel {
 
     }
 
-    public void decoratePointAsRecentlyConstructed(GEPoint pt) {
+    public static void decoratePointAsRecentlyConstructed(GEPoint pt) {
         pt.setRadius(6);
         pt.setColor(8);
     }
@@ -242,7 +242,7 @@ public class DrawPanelExtended extends DrawPanel {
 
     public void pointAdded(cons pt, int type, int[] pp, boolean cc, int index, double x, double y, GEPoint cp, Object[] pss) {
         switch (pt.type) {
-            case gddbase.C_POINT: {
+            case gib.C_POINT: {
 
                 if (!addFreePt(pt)) {
                     nd++;
@@ -250,7 +250,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_FOOT: {
+            case gib.C_FOOT: {
                 if (!addGTPt(pt)) {
                     Constraint cs = new Constraint(Constraint.PFOOT, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]), getPt(pp[3]));
                     addConstraintToList(cs);
@@ -263,7 +263,7 @@ public class DrawPanelExtended extends DrawPanel {
             }
             break;
             case gib.CO_MIDP:
-            case gddbase.C_MIDPOINT: {
+            case gib.C_MIDPOINT: {
                 if (!addGTPt(pt)) {
                     addLn(pp[1], pp[2]);
                     Constraint cs = new Constraint(Constraint.MIDPOINT, getPt(pp[0]), getPt(pp[1]), getPt(pp[2]));
@@ -275,7 +275,7 @@ public class DrawPanelExtended extends DrawPanel {
             }
             break;
 
-            case gddbase.C_O_C: {
+            case gib.C_O_C: {
                 if (!addGTPt(pt)) {
                     GECircle c = null;
                     if ((c = fd_circle(pp[1], pp[2])) == null) { // add circle
@@ -292,7 +292,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_O_P: {
+            case gib.C_O_P: {
                 if (!addGTPt(pt)) {
                     GELine lp = null;
                     if ((lp = fd_p_line(pp[1], pp[2], pp[3])) == null) {
@@ -315,7 +315,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_O_L: {
+            case gib.C_O_L: {
                 if (!addGTPt(pt)) {
                     GELine ln = addLn(pp[1], pp[2]);
                     cp = getPt(pp[0]);
@@ -355,7 +355,7 @@ public class DrawPanelExtended extends DrawPanel {
             }
             break;
 
-            case gddbase.C_I_LL: {
+            case gib.C_I_LL: {
                 if (!addGTPt(pt)) {
                     cp = getPt(pp[0]);
                     GELine ln = addLn(pp[1], pp[2]);
@@ -373,7 +373,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_I_LP: {
+            case gib.C_I_LP: {
                 GELine ln = addLn(pp[1], pp[2]);
                 GELine lp;
                 if ((lp = fd_p_line(pp[3], pp[4], pp[5])) == null) {
@@ -392,7 +392,7 @@ public class DrawPanelExtended extends DrawPanel {
             }
             break;
 
-            case gddbase.C_I_PP: {
+            case gib.C_I_PP: {
                 GELine lp1, lp2;
                 if ((lp1 = fd_p_line(pp[1], pp[2], pp[3])) == null) {
                     addPLn(pp[1], pp[2], pp[3]);
@@ -409,7 +409,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_CIRCUM: {
+            case gib.C_CIRCUM: {
                 if (!addGTPt(pt)) {
                     GEPoint p1 = getPt(pp[1]);
                     GEPoint p2 = getPt(pp[2]);
@@ -425,7 +425,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_I_CC: {
+            case gib.C_I_CC: {
                 if (!addGTPt(pt)) {
                     cp = getPt(pp[0]);
                     GECircle c1 = ad_circle(pp[1], pp[2]);
@@ -453,7 +453,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_I_LC: {
+            case gib.C_I_LC: {
                 if (!addGTPt(pt)) {
                     GELine ln = addLn(pp[1], pp[2]);
                     GECircle c = ad_circle(pp[3], pp[4]);
@@ -493,7 +493,7 @@ public class DrawPanelExtended extends DrawPanel {
                 }
             }
             break;
-            case gddbase.C_I_LT: {
+            case gib.C_I_LT: {
                 if (!addGTPt(pt)) {
                     GELine ln = addLn(pp[1], pp[2]);
                     //CLine ln1 = addLn(pp[4], pp[5]);
@@ -1480,12 +1480,12 @@ public class DrawPanelExtended extends DrawPanel {
     	return ln.getCommonPoints(ln1, collectionPoints);
     }
 
-    public GEPoint lcmeet(GECircle c, GELine ln) {
+    public static GEPoint lcmeet(GECircle c, GELine ln) {
     	Collection<GEPoint> collectionPoints = new HashSet<GEPoint>();
     	return ln.getCommonPoints(c, collectionPoints);
     }
 
-    public GEPoint lcmeet(GECircle c, GELine ln, GEPoint p1) {
+    public static GEPoint lcmeet(GECircle c, GELine ln, GEPoint p1) {
         for (int i = 0; i < c.points.size(); i++) {
             GEPoint t = c.points.get(i);
             if (t != p1 && ln.isCoincidentWith(t)) {
@@ -2489,7 +2489,7 @@ public class DrawPanelExtended extends DrawPanel {
             return;
         }
         switch (co.pred) {
-            case gddbase.CO_COLL: {
+            case gib.CO_COLL: {
                 int[] p = new int[3];
                 for (int i = 0; i < 3; i++) {
                     p[i] = co.p[i];
@@ -2497,9 +2497,9 @@ public class DrawPanelExtended extends DrawPanel {
                 //  proveFlash(1, p, null);
                 break;
             }
-            case gddbase.CO_PARA:
-            case gddbase.CO_PERP:
-            case gddbase.CO_CONG: {
+            case gib.CO_PARA:
+            case gib.CO_PERP:
+            case gib.CO_CONG: {
                 int[] p1 = new int[2];
                 for (int i = 0; i < 2; i++) {
                     p1[i] = co.p[i];
@@ -2508,9 +2508,9 @@ public class DrawPanelExtended extends DrawPanel {
                 for (int i = 2; i < 4; i++) {
                     p2[i - 2] = co.p[i];
                 }
-                if (co.pred == gddbase.CO_PARA) {
-                } else if (co.pred == gddbase.CO_PERP) { // proveFlash(2, p1, p2);
-                } else if (co.pred == gddbase.CO_CONG) { //proveFlash(3, p1, p2);
+                if (co.pred == gib.CO_PARA) {
+                } else if (co.pred == gib.CO_PERP) { // proveFlash(2, p1, p2);
+                } else if (co.pred == gib.CO_CONG) { //proveFlash(3, p1, p2);
                     if (p1[0] == p2[0] && p1[1] == p2[1] ||
                             p1[0] == p2[1] && p1[1] == p2[0]) {
                     } else {
@@ -2531,7 +2531,7 @@ public class DrawPanelExtended extends DrawPanel {
                 addLn(p2[0], p2[1]);
             }
             break;
-            case gddbase.CO_ACONG: {
+            case gib.CO_ACONG: {
                 //int[] vp = co.p;
                 /*if (vp[0] != 0 && false) {
                     CLine ln1 = addLn(co.p[0], co.p[1]);
@@ -2588,7 +2588,7 @@ public class DrawPanelExtended extends DrawPanel {
 
             }
             break;
-            case gddbase.CO_CTRI: {
+            case gib.CO_CTRI: {
                 GEPolygon poly1 = new GEPolygon();
                 aux_polygon++;
                 poly1.setColor(aux_polygon + 2);
@@ -2612,7 +2612,7 @@ public class DrawPanelExtended extends DrawPanel {
                 flashStep(v);
             }
             break;
-            case gddbase.CO_CYCLIC: {
+            case gib.CO_CYCLIC: {
                 int[] p = new int[4];
                 int k = 0;
                 for (int i = 0; i < 10; i++) {

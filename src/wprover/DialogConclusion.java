@@ -3,9 +3,11 @@ package wprover;
 import gprover.CST;
 import gprover.cons;
 import gprover.gib;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class DialogConclusion extends DialogBase implements ActionListener, ItemListener {
@@ -69,7 +71,7 @@ public class DialogConclusion extends DialogBase implements ActionListener, Item
         bok.addActionListener(ls);
     }
 
-    public String getLanguage(int n, String s) {
+    public static String getLanguage(int n, String s) {
         return DrawPanelFrame.getLanguage(n, s);
     }
 
@@ -139,7 +141,7 @@ public class DialogConclusion extends DialogBase implements ActionListener, Item
         int len = ts.length;
         String[] ss = new String[len];
         for (int i = 0; i < len; i++)
-            ss[i] = this.getLanguage(200 + i, ts[i]);
+            ss[i] = DialogConclusion.getLanguage(200 + i, ts[i]);
 
         bt = new JComboBox<String>(ss) {
             /**
@@ -192,7 +194,7 @@ public class DialogConclusion extends DialogBase implements ActionListener, Item
 
         ltext1 = new JLabel(getLanguage(230, "true"));
         ltext1.setIcon(ic1);
-        ltext1.setHorizontalTextPosition(JLabel.LEFT);
+        ltext1.setHorizontalTextPosition(SwingConstants.LEFT);
         ltext1.setVisible(!model);
 
         setLtext1Value(0);

@@ -3,6 +3,7 @@ package wprover;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.*;
 
 /**
@@ -47,15 +48,15 @@ public class PanelSplash extends JPanel implements MouseListener {
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
 
         JLabel lv = new JLabel("Java Geometry Expert" + UtilityVersion.getVersionf());
-        lv.setHorizontalTextPosition(JLabel.LEFT);
+        lv.setHorizontalTextPosition(SwingConstants.LEFT);
         panel2.add(lv);
 
         lv = new JLabel("Built on " + UtilityVersion.getData());
-        lv.setHorizontalTextPosition(JLabel.RIGHT);
+        lv.setHorizontalTextPosition(SwingConstants.RIGHT);
         panel2.add(lv);
 
         lv = new JLabel("JDK Version: 1.6.0 or higher");
-        lv.setHorizontalTextPosition(JLabel.LEFT);
+        lv.setHorizontalTextPosition(SwingConstants.LEFT);
         panel2.add(lv);
 
 

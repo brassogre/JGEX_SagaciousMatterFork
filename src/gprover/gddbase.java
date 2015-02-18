@@ -72,7 +72,7 @@ public class gddbase extends gib {
         return (i);
     }
 
-    final boolean ch_dep(long id) {
+    final static boolean ch_dep(long id) {
         return id < depth || isPFull();
     }
 
@@ -1001,7 +1001,7 @@ public class gddbase extends gib {
     }
 
 
-    boolean ln_less(l_line l1, l_line l2) {
+    static boolean ln_less(l_line l1, l_line l2) {
         if (l1 == l2) return (false);
         if (l1.pt[1] < l2.pt[1]) return (true);
         if (l1.pt[1] > l2.pt[1]) return (false);
@@ -1009,7 +1009,7 @@ public class gddbase extends gib {
         return (false);
     }
 
-    boolean l2_less(l_line l1, l_line l2, l_line l3, l_line l4) {
+    static boolean l2_less(l_line l1, l_line l2, l_line l3, l_line l4) {
         l_line ln;
         if (ln_less(l2, l1)) {
             ln = l1;
@@ -1076,7 +1076,7 @@ public class gddbase extends gib {
         return (0);
     }
 
-    int inter_lc(l_line l1, a_cir c1) {
+    static int inter_lc(l_line l1, a_cir c1) {
         char i, j;
         if (l1 == null || c1 == null) return (0);
         for (i = 0; i <= l1.no; i++)
@@ -1086,7 +1086,7 @@ public class gddbase extends gib {
         return (0);
     }
 
-    int inter_lc1(l_line l1, a_cir c1, int p1) {
+    static int inter_lc1(l_line l1, a_cir c1, int p1) {
 
         if (l1 == null || c1 == null) return (0);
         for (int i = 0; i <= l1.no; i++)
@@ -1096,7 +1096,7 @@ public class gddbase extends gib {
         return (0);
     }
 
-    int inter_cc(a_cir c1, a_cir c2) {
+    static int inter_cc(a_cir c1, a_cir c2) {
         char i, j;
         for (i = 0; i <= c1.no; i++)
             for (j = 0; j <= c2.no; j++) {
@@ -1105,7 +1105,7 @@ public class gddbase extends gib {
         return (0);
     }
 
-    int inter_cc1(a_cir c1, a_cir c2, int p1) {
+    static int inter_cc1(a_cir c1, a_cir c2, int p1) {
         char i, j;
         for (i = 0; i <= c1.no; i++)
             for (j = 0; j <= c2.no; j++) {
@@ -1264,7 +1264,7 @@ public class gddbase extends gib {
         return (null);
     }
 
-    l_line fd_ln_pn1(p_line pn, int p) {
+    static l_line fd_ln_pn1(p_line pn, int p) {
         int i;
         if (pn == null) return (null);
         for (i = 0; i <= pn.no; i++) if (on_ln(p, pn.ln[i])) return (pn.ln[i]);
@@ -1592,7 +1592,7 @@ public class gddbase extends gib {
         last_nd.u.ln = ln2;
     }
 
-    boolean on_pn(l_line ln, p_line pn) {
+    static boolean on_pn(l_line ln, p_line pn) {
         int i;
         for (i = 0; i <= pn.no; i++) if (pn.ln[i] == ln) return (true);
         return (false);
@@ -1651,7 +1651,7 @@ public class gddbase extends gib {
         return (pn1);
     }
 
-    final void pn_un(p_line pn1, p_line pn2) {
+    final static void pn_un(p_line pn1, p_line pn2) {
         for (int i = 0; i <= pn2.no; i++)
             if (!on_pn(pn2.ln[i], pn1)) {
                 pn1.no += 1;
@@ -1736,7 +1736,7 @@ public class gddbase extends gib {
     }
 
 
-    boolean on_tn(l_line ln, t_line tn) {
+    static boolean on_tn(l_line ln, t_line tn) {
         if ((ln == tn.l1) || (ln == tn.l2)) return (true);
         return (false);
     }
@@ -2095,7 +2095,7 @@ public class gddbase extends gib {
     }
 
 
-    boolean onl_as(l_line l1, l_line l2, angles as) {
+    static boolean onl_as(l_line l1, l_line l2, angles as) {
         if (l1 == as.l1 && l2 == as.l2) return (true);
         if (l1 == as.l3 && l2 == as.l4) return (true);
         return (false);
@@ -2571,7 +2571,7 @@ public class gddbase extends gib {
     }
 
 
-    boolean on_st(int p1, int p2, int p3, int p, int q, int r, sim_tri st) {                         //??????????????????
+    static boolean on_st(int p1, int p2, int p3, int p, int q, int r, sim_tri st) {                         //??????????????????
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 if (i != j)
@@ -3222,7 +3222,7 @@ public class gddbase extends gib {
             add_ra(lm, 1, o, c, c, a, o, d, d, b);
     }
 
-    boolean meq_pt(int p1, int p2) {
+    static boolean meq_pt(int p1, int p2) {
         return p1 == p2;
     }
 
@@ -4375,7 +4375,7 @@ public class gddbase extends gib {
         return null;
     }
 
-    boolean on_ln(int p, int q, l_line ln) {
+    static boolean on_ln(int p, int q, l_line ln) {
 
         int i, n;
         n = 0;
@@ -4802,7 +4802,7 @@ public class gddbase extends gib {
 
         if (d_base == 1) return;
         if (!valid(lm)) return;
-        if (this.isPFull()) {
+        if (gib.isPFull()) {
             this.add_ea_pt(lm, a, b, c, p, q, r);
             return;
         }
@@ -4877,7 +4877,7 @@ public class gddbase extends gib {
     }
 
 
-    public anglet new_at(int v, int p, l_line l1, l_line l2) {
+    public static anglet new_at(int v, int p, l_line l1, l_line l2) {
         anglet at = new anglet();
         at.v = v;
         at.p = p;
@@ -5235,7 +5235,7 @@ public class gddbase extends gib {
         return 0;
     }
 
-    public boolean search_only_exists_ln() {
+    public static boolean search_only_exists_ln() {
         return (!R_SEARCH_ALL_LN);// && depth != 0);
     }
 
@@ -5251,7 +5251,7 @@ public class gddbase extends gib {
         return (!R_SEARCH_ALL_LN) && (fd_ln(a, b) == null || fd_ln(c, d) == null || fd_ln(e, f) == null);
     }
 
-    public boolean search_only_exists_ln(l_line l1, l_line l2, l_line l3, l_line l4) {
+    public static boolean search_only_exists_ln(l_line l1, l_line l2, l_line l3, l_line l4) {
         if (!R_AG_ALL && (inter_lls(l1, l2) == 0 || inter_lls(l3, l4) == 0))
             return false;
         return true;
@@ -5316,7 +5316,7 @@ public class gddbase extends gib {
         return false;
     }
 
-    public boolean eq_list(l_list ls, l_list ls1) {
+    public static boolean eq_list(l_list ls, l_list ls1) {
         if (ls.nd != ls1.nd) return false;
         for (int i = 0; i < ls.nd; i++) {
             if (!eq_mnde(ls.md[i], ls1.md[i])) return false;

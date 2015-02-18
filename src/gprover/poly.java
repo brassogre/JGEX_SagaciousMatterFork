@@ -26,15 +26,15 @@ public class poly extends MathBase {
         init_poly();
     }
 
-    xterm get_x() {
+    static xterm get_x() {
         return (new xterm());
     }
 
-    dterm get_d() {
+    static dterm get_d() {
         return (new dterm());
     }
 
-    xterm get_n(long n) {
+    static xterm get_n(long n) {
         xterm p1;
         p1 = get_x();
         p1.var = null;
@@ -42,7 +42,7 @@ public class poly extends MathBase {
         return (p1);
     }
 
-    xterm get_num(long n) {
+    static xterm get_num(long n) {
         xterm p1;
         p1 = get_x();
         p1.var = null;
@@ -50,7 +50,7 @@ public class poly extends MathBase {
         return (p1);
     }
 
-    xterm get_xt(var v, dterm dp1) {
+    static xterm get_xt(var v, dterm dp1) {
         xterm xp1;
         xp1 = get_x();
         xp1.var = v;
@@ -62,7 +62,7 @@ public class poly extends MathBase {
         return (get_m(mk_svar(ch)));
     }
 
-    xterm get_m(var vn) {
+    static xterm get_m(var vn) {
         dterm dp1;
         xterm xp1;
         if (vn == null)
@@ -74,7 +74,7 @@ public class poly extends MathBase {
         }
     }
 
-    xterm get_v(var v, int d, xterm p) {
+    static xterm get_v(var v, int d, xterm p) {
         dterm dp1;
         xterm xp1;
         if (v == null)
@@ -89,7 +89,7 @@ public class poly extends MathBase {
     }
 
 
-    dterm get_dt(int d, xterm xp1, dterm dp1) {
+    static dterm get_dt(int d, xterm xp1, dterm dp1) {
         dterm d1;
         d1 = get_d();
         d1.deg = d;
@@ -134,7 +134,7 @@ public class poly extends MathBase {
 
 /* xtermnomials */
 
-    boolean num_eq(long c1, long c2) {
+    static boolean num_eq(long c1, long c2) {
         return c1 == c2;
     }
 
@@ -179,7 +179,7 @@ public class poly extends MathBase {
         return (dt2.nx);
     }
 
-    xterm pzero() {
+    static xterm pzero() {
         return (get_n(0L));
     }
 
@@ -190,7 +190,7 @@ xterm *p;
  else		  return(p.var);
 } */
 
-    int ldeg(xterm p)
+    static int ldeg(xterm p)
 //xterm p;
     {
         dterm dp1;
@@ -236,7 +236,7 @@ xterm *p;
     }
 
 
-    long lcc(xterm p) {
+    static long lcc(xterm p) {
         dterm dp1;
         while (p.var != null) {
             dp1 = p.ps;
@@ -246,7 +246,7 @@ xterm *p;
     }
 
 
-    long fcc(xterm p) {
+    static long fcc(xterm p) {
         return (lcc(p));
     }
 
@@ -272,7 +272,7 @@ xterm *p;
         }
     }
 
-    xterm init(xterm p) {
+    static xterm init(xterm p) {
         dterm dp1;
         if (p.var == null) return (null);
         dp1 = p.ps;
@@ -358,7 +358,7 @@ xterm *p;
         return (psimp(p, dp2));
     }
 
-    int mono_pol(xterm p) {
+    static int mono_pol(xterm p) {
         dterm ps;
         while (p.var != null) {
             ps = p.ps;
@@ -368,7 +368,7 @@ xterm *p;
         return (1);
     }
 
-    int tlength(xterm p) {
+    static int tlength(xterm p) {
         dterm dp1;
         int count = 0;
         if (p.var == null)
@@ -383,7 +383,7 @@ xterm *p;
         return (count);
     }
 
-    int mlength(xterm p) {
+    static int mlength(xterm p) {
         dterm dp1;
         int count = 0;
         if (p.var != null) {
@@ -970,7 +970,7 @@ xterm *p;
         return (p1);
     }
 
-    void xerror(char ch)
+    static void xerror(char ch)
 //char *ch;
     {
         Cm.print("\n\n Syntax error:\n\n");
@@ -1199,7 +1199,7 @@ xterm *p;
 
     static var svar = new var();
 
-    boolean eq_var(var v1, var v2) {
+    static boolean eq_var(var v1, var v2) {
         int i;
         if (v1.nm == 0 || v1.nm == 99) {
             if (!(v2.nm == 0 || v2.nm == 99)) return false;
@@ -1280,7 +1280,7 @@ xterm *p;
     }
 
 
-    int ials(int a1[], int a2[], int n) {
+    static int ials(int a1[], int a2[], int n) {
         char i;
         for (i = 0; i <= n; ++i) {
             if (a1[i] < a2[i])
@@ -1290,7 +1290,7 @@ xterm *p;
         return (0);
     }
 
-    int lpt(var v) {
+    static int lpt(var v) {
         int k = v.pt[0];
         if (v.nm == 1) {
             if (v.pt[2] > v.pt[0]) k = v.pt[2];
@@ -1300,7 +1300,7 @@ xterm *p;
         return (k);
     }
 
-    boolean vless(var v1, var v2) {
+    static boolean vless(var v1, var v2) {
         int m, l1, l2;
 
         if ((v1.nm == 0) && (v2.nm == 0)) {

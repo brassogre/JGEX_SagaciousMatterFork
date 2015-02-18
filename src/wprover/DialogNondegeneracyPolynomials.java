@@ -2,9 +2,11 @@ package wprover;
 
 import gprover.cons;
 import gprover.gterm;
+
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -29,7 +31,7 @@ public class DialogNondegeneracyPolynomials extends DialogBase implements Action
 
         this.gt = gt;
 
-        tt = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.WRAP_TAB_LAYOUT);
+        tt = new JTabbedPane(SwingConstants.BOTTOM, JTabbedPane.WRAP_TAB_LAYOUT);
 
         model1 = new DefaultListModel<String>();
         model2 = new DefaultListModel<String>();
@@ -117,7 +119,7 @@ public class DialogNondegeneracyPolynomials extends DialogBase implements Action
         ArrayList<cons> vFrom = gt.pc();
         ArrayList<cons> vTo = new ArrayList<cons>();
         
-        gt.generateAllNondegeneracies(vFrom, vTo);
+        gterm.generateAllNondegeneracies(vFrom, vTo);
 
         model2.removeAllElements();
         model22.removeAllElements();

@@ -200,7 +200,7 @@ public class DrawPanelBase {
         return -1;
     }
 
-    public int getPoolA(int a, int index) {
+    public static int getPoolA(int a, int index) {
         for (int i = 0; i < POOL.length; i++) {
             if (POOL[i][0] == a) {
                 if (POOL[i].length > index)
@@ -236,7 +236,7 @@ public class DrawPanelBase {
     final public static GEPoint createTempPoint(double x, double y) {
         param p1 = new param(-1, x);
         param p2 = new param(-1, y);
-        return new GEPoint(GEPoint.TEMP_POINT, p1, p2);
+        return new GEPoint(GraphicEntity.TEMP_POINT, p1, p2);
     }
 
     public GELine findLineGivenTwoPoints(GEPoint p1, GEPoint p2) {
@@ -505,7 +505,7 @@ public class DrawPanelBase {
         g2.drawString(getLanguage(232, "Intersection"), x + 10, y);
     }
 
-    public void drawTipRect(int x, int y, Graphics2D g2) {
+    public static void drawTipRect(int x, int y, Graphics2D g2) {
         g2.setColor(Color.red);
         DrawPanelBase.drawRect(x - 5, y - 5, x + 5, y + 5, g2);
     }
@@ -1100,7 +1100,7 @@ public class DrawPanelBase {
     }
 
 
-    double[] get_pt_dmcr(double x1, double y1, double x2, double y2, double x, double y) {
+    static double[] get_pt_dmcr(double x1, double y1, double x2, double y2, double x, double y) {
 
         double dis = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
         double xx = (x1 + x2) / 2;
@@ -1181,7 +1181,7 @@ public class DrawPanelBase {
         }
     }
 
-    public double[] intersect_ll(GELine ln1, GELine ln2) {
+    public static double[] intersect_ll(GELine ln1, GELine ln2) {
         GEPoint p1 = ln1.getFirstPoint();
         double k1 = ln1.getSlope();
         GEPoint p2 = ln2.getFirstPoint();
@@ -1208,7 +1208,7 @@ public class DrawPanelBase {
         return r;
     }
 
-    public double[] intersect_cc(GECircle c1, GECircle c2) {
+    public static double[] intersect_cc(GECircle c1, GECircle c2) {
         double r1 = c1.getRadius();
         GEPoint o1 = c1.o;
         double r2 = c2.getRadius();
@@ -1407,11 +1407,11 @@ public class DrawPanelBase {
 
         UtilityMiscellaneous.print("======================");
         PolyBasic.printpoly(m1);
-        this.printPoly(polylist);
+        DrawPanelBase.printPoly(polylist);
         return false;
     }
 
-    public void printPoly(TPoly p) {
+    public static void printPoly(TPoly p) {
         while (p != null) {
             PolyBasic.printpoly(p.getPoly());
             p = p.getNext();
@@ -1419,7 +1419,7 @@ public class DrawPanelBase {
     }
 
 
-    public boolean verify_ndg(TMono m) {
+    public static boolean verify_ndg(TMono m) {
         if (m == null)
             return true;
         //TPoly p1 = polylist;

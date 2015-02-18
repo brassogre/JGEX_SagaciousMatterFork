@@ -1,10 +1,12 @@
 package wprover;
 
 import gprover.*;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -165,7 +167,7 @@ class BookCellRenderer extends PanelvcellRender implements TreeCellRenderer {
                 cond c = (cond) userObject;
                 int k = 0;
                 int nt = c.getNo();
-                if (nt != 0 && nt == BookCellEditor.cond_no)
+                if (nt != 0 && nt == BasicCellEditor.cond_no)
                     crsp = true;
 
                 if (c.getNo() != 0) {
@@ -565,7 +567,7 @@ class itemLabel extends JLabel {
             this.setText(null);
         } else if (type == 6) {
             cond c = (cond) obj;
-            this.setHorizontalTextPosition(JLabel.LEFT);
+            this.setHorizontalTextPosition(SwingConstants.LEFT);
             this.setIcon(icon);
             this.setText("   DR" + c.getRule());
         } else {

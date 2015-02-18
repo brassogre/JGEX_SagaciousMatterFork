@@ -872,7 +872,7 @@ public class GEPolygon extends GraphicEntity implements Pointed {
 			for (int i = 0; i < vp.size() / 2; i++) {
 				Point p1 = vp.get(2 * i);
 				Point p2 = vp.get(2 * i + 1);
-				st += GEPolygon.getPSLineString((int) p1.getX(), -(int) p1.getY(), (int) p2.getX(), -(int) p2.getY());
+				st += GraphicEntity.getPSLineString((int) p1.getX(), -(int) p1.getY(), (int) p2.getX(), -(int) p2.getY());
 				if (i % 3 == 0)
 					st += "\n";
 			}

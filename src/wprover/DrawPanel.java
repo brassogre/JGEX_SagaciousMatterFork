@@ -527,7 +527,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			final ArrayList<TMono> v1 = new ArrayList<TMono>();
 			for (int i = 0; i < v.size(); i++) {
 				TMono m = v.get(i);
-				m = GeoPoly.simplify(m, parameter);
+				m = PolyBasic.simplify(m, parameter);
 				if (m != null)
 					v1.add(m);
 			}
@@ -1371,9 +1371,9 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			assert(cp.x1.value == cp.x1.value);
 			assert(cp.y1.value == cp.y1.value);
 			if (v == 1)
-				r = GeoPoly.calculate_online(m2, parameter, cp.x1.xindex, cp.y1.xindex);
+				r = PolyBasic.calculate_online(m2, parameter, cp.x1.xindex, cp.y1.xindex);
 			else if (v == 2)
-				r = GeoPoly.calculate_oncr(m2, parameter, cp.x1.xindex, cp.y1.xindex);
+				r = PolyBasic.calculate_oncr(m2, parameter, cp.x1.xindex, cp.y1.xindex);
 			if (r != null) {
 				cp.x1.value = r[0];
 				cp.y1.value = r[1];
@@ -1555,7 +1555,7 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				if (m1 == null)
 					m = m2;
 
-				final double[] r = GeoPoly.calculv_2v(m, parameter);
+				final double[] r = PolyBasic.calculv_2v(m, parameter);
 				if ((r != null) && (r.length != 0))
 					parameter[lva - 2].value = r[0];
 				return null;
@@ -6752,8 +6752,8 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 				GEPoint p3 = null;
 				if (n == 2) {
 					// if (CatchList.size() == 1) {
-						// CClass c = (CClass) CatchList.get(0);
-						// if (c instanceof CPoint)
+					// CClass c = (CClass) CatchList.get(0);
+					// if (c instanceof CPoint)
 					// p3 = (CPoint) c;
 					// }
 				} else if (n == 3)
@@ -7026,20 +7026,20 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 					drawCatchRect(g2);
 			} else { // 1
 				final GEPoint pt = (GEPoint) SelectList.get(0);
-			final GEPoint pt1 = (GEPoint) SelectList.get(1);
-			final GEPoint pt2 = (GEPoint) SelectList.get(2);
-			final double x = CatchPoint.getx();
-			final double y = (((pt.gety() - pt1.gety()) * (x - pt2.getx())) / (pt
-					.getx() - pt1.getx())) + pt2.gety();
+				final GEPoint pt1 = (GEPoint) SelectList.get(1);
+				final GEPoint pt2 = (GEPoint) SelectList.get(2);
+				final double x = CatchPoint.getx();
+				final double y = (((pt.gety() - pt1.gety()) * (x - pt2.getx())) / (pt
+						.getx() - pt1.getx())) + pt2.gety();
 
-			g2.setColor(Color.red);
-			g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) pt1.getx(),
-					(int) pt1.gety());
-			g2.drawLine((int) pt2.getx(), (int) pt2.gety(),
-					(int) pt1.getx(), (int) pt1.gety());
-			g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) x, (int) y);
-			g2.drawLine((int) pt2.getx(), (int) pt2.gety(), (int) x,
-					(int) y);
+				g2.setColor(Color.red);
+				g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) pt1.getx(),
+						(int) pt1.gety());
+				g2.drawLine((int) pt2.getx(), (int) pt2.gety(),
+						(int) pt1.getx(), (int) pt1.gety());
+				g2.drawLine((int) pt.getx(), (int) pt.gety(), (int) x, (int) y);
+				g2.drawLine((int) pt2.getx(), (int) pt2.gety(), (int) x,
+						(int) y);
 			}
 		}
 		break;
@@ -8586,60 +8586,61 @@ public class DrawPanel extends DrawPanelBase implements Printable, ActionListene
 			f.delete();
 		else
 			f.createNewFile();
-		final FileOutputStream fp = new FileOutputStream(f, bExists);
+		try (final FileOutputStream fp = new FileOutputStream(f, bExists)) {
 
-		final Calendar c = Calendar.getInstance();
-		final String stime = "%Create Time: " + c.getTime().toString() + "\n";
-		final String sversion = "%Created By: " + UtilityVersion.getNameAndVersion()
-				+ "\n";
+			final Calendar c = Calendar.getInstance();
+			final String stime = "%Create Time: " + c.getTime().toString() + "\n";
+			final String sversion = "%Created By: " + UtilityVersion.getNameAndVersion()
+					+ "\n";
 
-		String s = "%!PS-Adobe-2.0\n"
-				+ stime
-				+ sversion
-				+ "\n"
-				+ "%%BoundingBox: 0 500 400 650\n"
-				+ "0.7 setlinewidth\n"
-				+ "gsave\n20 700 translate\n.5 .5 scale\n"
-				+ "/dash {[4 6] 0 setdash stroke [] 0 setdash} def\n"
-				+ "/cir {0 360 arc} def\n"
-				+ "/cirfill {0 360 arc 1.0 1.0 1.0 setrgbcolor [] 0 setdash} def\n"
-				+ "/arcfill{arc 1.0 1.0 1.0 setrgbcolor [] 0 setdash} def\n"
-				+ "/rm {moveto 4 4 rmoveto} def\n"
-				+ "/circle {0 360 arc} def\n"
-				+ "/black {0.0 0.0 0.0 setrgbcolor} def\n"
-				+ "/mf {/Times-Roman findfont 15.71 scalefont setfont 0.0 0.0 0.0 setrgbcolor} def\n"
-				+ "/nf {/Times-Roman findfont 11.00 scalefont setfont 0.0 0.0 0.0 setrgbcolor} def\n\n";
+			String s = "%!PS-Adobe-2.0\n"
+					+ stime
+					+ sversion
+					+ "\n"
+					+ "%%BoundingBox: 0 500 400 650\n"
+					+ "0.7 setlinewidth\n"
+					+ "gsave\n20 700 translate\n.5 .5 scale\n"
+					+ "/dash {[4 6] 0 setdash stroke [] 0 setdash} def\n"
+					+ "/cir {0 360 arc} def\n"
+					+ "/cirfill {0 360 arc 1.0 1.0 1.0 setrgbcolor [] 0 setdash} def\n"
+					+ "/arcfill{arc 1.0 1.0 1.0 setrgbcolor [] 0 setdash} def\n"
+					+ "/rm {moveto 4 4 rmoveto} def\n"
+					+ "/circle {0 360 arc} def\n"
+					+ "/black {0.0 0.0 0.0 setrgbcolor} def\n"
+					+ "/mf {/Times-Roman findfont 15.71 scalefont setfont 0.0 0.0 0.0 setrgbcolor} def\n"
+					+ "/nf {/Times-Roman findfont 11.00 scalefont setfont 0.0 0.0 0.0 setrgbcolor} def\n\n";
 
-		fp.write(s.getBytes());
-		SaveDrawAttr(fp, stype);
+			fp.write(s.getBytes());
+			SaveDrawAttr(fp, stype);
 
-		fp.write("%define points\n".getBytes());
+			fp.write("%define points\n".getBytes());
 
-		for (final GEPoint pt : pointlist)
-			pt.SavePS_Define_Point(fp);
-
-		write_list_ps(fp, polygonlist, "%-----draw polygons\n", stype);
-		write_list_ps(fp, anglelist, "%-----draw angles\n", stype);
-		write_list_ps(fp, distancelist, "%-----draw measures\n", stype);
-		write_list_ps(fp, otherlist, "%-----draw marks and other\n", stype);
-		write_list_ps(fp, tracelist, "%-----draw trace list\n", stype);
-
-		write_perp_foot(fp, stype);
-		write_list_ps(fp, linelist, "%-----draw lines\n", stype);
-		write_list_ps(fp, circlelist, "%-----draw circles\n", stype);
-		if ((stype == 0) && ptf)
 			for (final GEPoint pt : pointlist)
-				pt.savePSOriginal(fp);
-		else
-			write_list_ps(fp, pointlist, "%-----draw points\n", stype);
+				pt.SavePS_Define_Point(fp);
 
-		write_list_ps(fp, textlist, "%-----draw texts\n", stype);
+			write_list_ps(fp, polygonlist, "%-----draw polygons\n", stype);
+			write_list_ps(fp, anglelist, "%-----draw angles\n", stype);
+			write_list_ps(fp, distancelist, "%-----draw measures\n", stype);
+			write_list_ps(fp, otherlist, "%-----draw marks and other\n", stype);
+			write_list_ps(fp, tracelist, "%-----draw trace list\n", stype);
 
-		if ((cpfield != null) && pts)
-			cpfield.SavePS(fp, stype);
-		s = "grestore\nshowpage\n";
-		fp.write(s.getBytes());
-		fp.close();
+			write_perp_foot(fp, stype);
+			write_list_ps(fp, linelist, "%-----draw lines\n", stype);
+			write_list_ps(fp, circlelist, "%-----draw circles\n", stype);
+			if ((stype == 0) && ptf)
+				for (final GEPoint pt : pointlist)
+					pt.savePSOriginal(fp);
+			else
+				write_list_ps(fp, pointlist, "%-----draw points\n", stype);
+
+			write_list_ps(fp, textlist, "%-----draw texts\n", stype);
+
+			if ((cpfield != null) && pts)
+				cpfield.SavePS(fp, stype);
+			s = "grestore\nshowpage\n";
+			fp.write(s.getBytes());
+			fp.close();
+		}
 		return true;
 	}
 

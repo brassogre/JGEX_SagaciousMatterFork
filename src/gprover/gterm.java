@@ -222,7 +222,7 @@ public class gterm extends Object {
         return gpoints.size();
     }
 
-    public String getConclusions() {
+    public static String getConclusions() {
         return "NO";
     }
 
@@ -1034,7 +1034,7 @@ public class gterm extends Object {
                         int pt = findPt(s);
                         if (pt != 0)
                             c.ps[j] = pt;
-                        else if (this.isStringTypeInt(s)) {
+                        else if (gterm.isStringTypeInt(s)) {
                             c.ps[j] = Integer.parseInt(s);
                         }
                     }
@@ -1137,7 +1137,7 @@ public class gterm extends Object {
         return null;
     }
 
-    boolean isStringTypeInt(String s) {
+    static boolean isStringTypeInt(String s) {
         if (s == null || s.length() == 0) return false;
         int i = 0;
         char c;
@@ -1222,7 +1222,7 @@ public class gterm extends Object {
         return c;
     }
 
-    boolean Save(DataOutputStream out) throws IOException {
+    static boolean Save(DataOutputStream out) throws IOException {
         out.writeChars("\n");
         return true;
     }
@@ -1504,7 +1504,7 @@ public class gterm extends Object {
     }
 
 
-    public cons extractConstraintContainingPoint(int pt, ArrayList<cons> v) {
+    public static cons extractConstraintContainingPoint(int pt, ArrayList<cons> v) {
         for (Iterator<cons> iter = v.iterator(); iter.hasNext(); ) {
             cons c = iter.next();
             if (c.contains(pt)) {
@@ -1515,7 +1515,7 @@ public class gterm extends Object {
         return null;
     }
 
-    public void generateAllNondegeneracies(ArrayList<cons> vFrom, ArrayList<cons> vTo) {
+    public static void generateAllNondegeneracies(ArrayList<cons> vFrom, ArrayList<cons> vTo) {
         if (vFrom != null && vTo != null) {
         	for (cons c : vFrom) {
         		generateCons(c, vTo);
@@ -1523,13 +1523,13 @@ public class gterm extends Object {
         }
     }
 
-    public void generateCons(cons c, ArrayList<cons> v) {
+    public static void generateCons(cons c, ArrayList<cons> v) {
         switch (c.type) {
 
             case gib.C_O_C:
             case gib.C_O_B:
             case gib.C_O_L: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
                 break;
             }
@@ -1537,23 +1537,23 @@ public class gterm extends Object {
                 break;
             }
             case gib.C_O_P: {
-                cons c1 = this.getNDG_NEQ(c.ps[2], c.ps[3], c.pss[2], c.pss[3]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[2], c.ps[3], c.pss[2], c.pss[3]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_O_T: {
                 if (c.pss[0] == c.pss[2]) {
-                    cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[3], c.pss[1], c.pss[3]);
+                    cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[3], c.pss[1], c.pss[3]);
                     addNDG(c1, v);
                 } else {
-                    cons c1 = this.getNDG_NON_ISOTROPIC(c.ps[2], c.ps[3], c.pss[2], c.pss[3]);
+                    cons c1 = gterm.getNDG_NON_ISOTROPIC(c.ps[2], c.ps[3], c.pss[2], c.pss[3]);
                     addNDG(c1, v);
                 }
                 break;
             }
             case gib.C_O_AB:
             case gib.C_O_S: {
-                cons c1 = this.getNDG_COLL(c.ps[1], c.ps[2], c.ps[3], c.pss[1], c.pss[2], c.pss[3]);
+                cons c1 = gterm.getNDG_COLL(c.ps[1], c.ps[2], c.ps[3], c.pss[1], c.pss[2], c.pss[3]);
                 addNDG(c1, v);
             }
             break;
@@ -1562,70 +1562,70 @@ public class gterm extends Object {
                 int n = c.getPts();
                 if (n == 8) {
                     if (c.ps[1] == c.ps[2] && c.ps[5] == c.ps[6]) {
-                        cons c1 = this.getNDG_COLL(c.ps[4], c.ps[6], c.ps[7], c.pss[4], c.pss[6], c.pss[7]);
+                        cons c1 = gterm.getNDG_COLL(c.ps[4], c.ps[6], c.ps[7], c.pss[4], c.pss[6], c.pss[7]);
                         addNDG(c1, v);
-                        c1 = this.getNDG_NEQ(c.ps[1], c.ps[3], c.pss[1], c.pss[3]);
+                        c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[3], c.pss[1], c.pss[3]);
                         addNDG(c1, v);
 
                     }
                 } else if (n == 6) {
-                    cons c1 = this.getNDG_COLL(c.ps[3], c.ps[4], c.ps[5], c.pss[3], c.pss[4], c.pss[5]);
+                    cons c1 = gterm.getNDG_COLL(c.ps[3], c.ps[4], c.ps[5], c.pss[3], c.pss[4], c.pss[5]);
                     addNDG(c1, v);
-                    c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                    c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                     addNDG(c1, v);
                 }
                 break;
             }
             case gib.C_I_LL: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
-                c1 = this.getNDG_NEQ(c.ps[3], c.ps[4], c.pss[3], c.pss[4]);
+                c1 = gterm.getNDG_NEQ(c.ps[3], c.ps[4], c.pss[3], c.pss[4]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_LP: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
-                c1 = this.getNDG_PARA(c.ps[1], c.ps[2], c.ps[4], c.ps[5], c.pss[1], c.pss[2], c.pss[4], c.pss[5]);
+                c1 = gterm.getNDG_PARA(c.ps[1], c.ps[2], c.ps[4], c.ps[5], c.pss[1], c.pss[2], c.pss[4], c.pss[5]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_LC:
                 break;
             case gib.C_I_LB: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
-                c1 = this.getNDG_PERP(c.ps[1], c.ps[2], c.ps[3], c.ps[4], c.pss[1], c.pss[2], c.pss[3], c.pss[4]);
+                c1 = gterm.getNDG_PERP(c.ps[1], c.ps[2], c.ps[3], c.ps[4], c.pss[1], c.pss[2], c.pss[3], c.pss[4]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_LT: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
-                c1 = this.getNDG_PERP(c.ps[1], c.ps[2], c.ps[4], c.ps[5], c.pss[1], c.pss[2], c.pss[4], c.pss[5]);
+                c1 = gterm.getNDG_PERP(c.ps[1], c.ps[2], c.ps[4], c.ps[5], c.pss[1], c.pss[2], c.pss[4], c.pss[5]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_TT:
             case gib.C_I_PP: {
-                cons c1 = this.getNDG_PARA(c.ps[2], c.ps[3], c.ps[5], c.ps[6], c.pss[2], c.pss[3], c.pss[5], c.pss[6]);
+                cons c1 = gterm.getNDG_PARA(c.ps[2], c.ps[3], c.ps[5], c.ps[6], c.pss[2], c.pss[3], c.pss[5], c.pss[6]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_PT: {
-                cons c1 = this.getNDG_PERP(c.ps[2], c.ps[3], c.ps[5], c.ps[6], c.pss[2], c.pss[3], c.pss[5], c.pss[6]);
+                cons c1 = gterm.getNDG_PERP(c.ps[2], c.ps[3], c.ps[5], c.ps[6], c.pss[2], c.pss[3], c.pss[5], c.pss[6]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_PB: {
-                cons c1 = this.getNDG_PERP(c.ps[2], c.ps[3], c.ps[4], c.ps[5], c.pss[2], c.pss[3], c.pss[4], c.pss[5]);
+                cons c1 = gterm.getNDG_PERP(c.ps[2], c.ps[3], c.ps[4], c.ps[5], c.pss[2], c.pss[3], c.pss[4], c.pss[5]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_PC:
                 break;
             case gib.C_I_TB: {
-                cons c1 = this.getNDG_PARA(c.ps[2], c.ps[3], c.ps[4], c.ps[5], c.pss[2], c.pss[3], c.pss[4], c.pss[5]);
+                cons c1 = gterm.getNDG_PARA(c.ps[2], c.ps[3], c.ps[4], c.ps[5], c.pss[2], c.pss[3], c.pss[4], c.pss[5]);
                 addNDG(c1, v);
                 break;
             }
@@ -1637,21 +1637,21 @@ public class gterm extends Object {
             case gib.C_I_RR: {
                 cons c1 = getNDG_NON_ISOTROPIC(c.ps[1], c.ps[4], c.pss[1], c.pss[4]);
                 addNDG(c1, v);
-                c1 = this.getNDG_NEQ(c.ps[2], c.ps[3], c.pss[2], c.pss[3]);
+                c1 = gterm.getNDG_NEQ(c.ps[2], c.ps[3], c.pss[2], c.pss[3]);
                 addNDG(c1, v);
-                c1 = this.getNDG_NEQ(c.ps[5], c.ps[6], c.pss[5], c.pss[6]);
+                c1 = gterm.getNDG_NEQ(c.ps[5], c.ps[6], c.pss[5], c.pss[6]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_BR: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
-                c1 = this.getNDG_NEQ(c.ps[4], c.ps[5], c.pss[4], c.pss[5]);
+                c1 = gterm.getNDG_NEQ(c.ps[4], c.ps[5], c.pss[4], c.pss[5]);
                 addNDG(c1, v);
                 break;
             }
             case gib.C_I_BB: {
-                cons c1 = this.getNDG_PARA(c.ps[1], c.ps[2], c.ps[3], c.ps[4], c.pss[1], c.pss[2], c.pss[3], c.pss[4]);
+                cons c1 = gterm.getNDG_PARA(c.ps[1], c.ps[2], c.ps[3], c.ps[4], c.pss[1], c.pss[2], c.pss[3], c.pss[4]);
                 addNDG(c1, v);
                 break;
             }
@@ -1667,13 +1667,13 @@ public class gterm extends Object {
             case gib.C_RECTANGLE:
 
             {
-                cons c1 = this.getNDG_COLL(c.ps[0], c.ps[1], c.ps[2], c.pss[0], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_COLL(c.ps[0], c.ps[1], c.ps[2], c.pss[0], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
                 break;
             }
 
             case gib.C_R_TRI: {
-                cons c1 = this.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
+                cons c1 = gterm.getNDG_NEQ(c.ps[1], c.ps[2], c.pss[1], c.pss[2]);
                 addNDG(c1, v);
                 break;
             }
@@ -1689,13 +1689,13 @@ public class gterm extends Object {
         }
     }
 
-    public cons getNDG_AA(cons c) {
+    public static cons getNDG_AA(cons c) {
         if (c.type != gib.C_I_AA)
             return null;
         return null;
     }
 
-    public cons getNDG_PARA(int t1, int t2, int t3, int t4, Object o1, Object o2, Object o3, Object o4) {
+    public static cons getNDG_PARA(int t1, int t2, int t3, int t4, Object o1, Object o2, Object o3, Object o4) {
         if (t1 > t2) {
             int t = t1;
             t1 = t2;
@@ -1747,7 +1747,7 @@ public class gterm extends Object {
 
     }
 
-    public cons getNDG_PERP(int t1, int t2, int t3, int t4, Object o1, Object o2, Object o3, Object o4) {
+    public static cons getNDG_PERP(int t1, int t2, int t3, int t4, Object o1, Object o2, Object o3, Object o4) {
         if (t1 > t2) {
             int t = t1;
             t1 = t2;
@@ -1794,7 +1794,7 @@ public class gterm extends Object {
         return c1;
     }
 
-    public cons getNDG_COLL(int t1, int t2, int t3, Object o1, Object o2, Object o3) {
+    public static cons getNDG_COLL(int t1, int t2, int t3, Object o1, Object o2, Object o3) {
         if (t1 == t2 || t1 == t3 || t2 == t3) return null;
         cons c1 = new cons(gib.NDG_COLL);
         if (t1 > t2) {
@@ -1833,7 +1833,7 @@ public class gterm extends Object {
 
     }
 
-    public cons getNDG_NON_ISOTROPIC(int t1, int t2, Object o1, Object o2) {
+    public static cons getNDG_NON_ISOTROPIC(int t1, int t2, Object o1, Object o2) {
         cons c1 = new cons(gib.NDG_NON_ISOTROPIC);
         if (t1 > t2) {
             int t = t1;
@@ -1851,7 +1851,7 @@ public class gterm extends Object {
         return c1;
     }
 
-    public cons getNDG_NEQ(int t1, int t2, Object o1, Object o2) {
+    public static cons getNDG_NEQ(int t1, int t2, Object o1, Object o2) {
         if (t1 > t2) {
             int t = t1;
             t1 = t2;
@@ -1868,7 +1868,7 @@ public class gterm extends Object {
         return c1;
     }
 
-    public void addNDG(cons c, ArrayList<cons> v) {
+    public static void addNDG(cons c, ArrayList<cons> v) {
         if (c == null) return;
 
         for (int i = 0; i < v.size(); i++) {
@@ -1883,7 +1883,7 @@ public class gterm extends Object {
         v.add(c);
     }
 
-    public boolean NDG_Contains(cons c, cons c1) // c < c1
+    public static boolean NDG_Contains(cons c, cons c1) // c < c1
     {
         if (c.type == c1.type) {
             for (int j = 0; j < c.pss.length; j++) {

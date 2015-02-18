@@ -18,22 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -69,7 +54,7 @@ public class DialogMiscellaneous extends DialogBase implements FocusListener, Ac
 //        if (gxInstance != null)
 //            gxInstance.addDependentDialog(this);
 
-        JTabbedPane pane = new JTabbedPane(JTabbedPane.TOP);
+        JTabbedPane pane = new JTabbedPane(SwingConstants.TOP);
         pane.addTab(DrawPanelFrame.getLanguage("Display"), pane1 = createPanelDisply());
 
         pane.addTab(DrawPanelFrame.getLanguage("Mode"), pane2 = new modePanel());

@@ -4,9 +4,11 @@ import gprover.cndg;
 import gprover.cons;
 import gprover.gib;
 import gprover.gterm;
+
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
@@ -42,7 +44,7 @@ public class DialogNondegeneracy extends DialogBase implements ActionListener, M
         //this.gt = gt;
         this.dp = dp;
 
-        tt = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.WRAP_TAB_LAYOUT);
+        tt = new JTabbedPane(SwingConstants.BOTTOM, JTabbedPane.WRAP_TAB_LAYOUT);
 
 
         tt.addChangeListener(this);
@@ -71,7 +73,7 @@ public class DialogNondegeneracy extends DialogBase implements ActionListener, M
 
 //        super.getPreferredSize()
 //        tabel1.setBorder(BorderFactory.createTitledBorder(""));
-        JScrollPane pane = new JScrollPane(tabel1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+        JScrollPane pane = new JScrollPane(tabel1, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
             /**
 			 * 
 			 */
@@ -84,7 +86,7 @@ public class DialogNondegeneracy extends DialogBase implements ActionListener, M
             }
 
         };
-        JScrollPane pane2 = new JScrollPane(tabel2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+        JScrollPane pane2 = new JScrollPane(tabel2, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
             /**
 			 * 
 			 */
@@ -97,7 +99,7 @@ public class DialogNondegeneracy extends DialogBase implements ActionListener, M
             }
 
         };
-        JScrollPane pane3 = new JScrollPane(tabel3, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+        JScrollPane pane3 = new JScrollPane(tabel3, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
             /**
 			 * 
 			 */

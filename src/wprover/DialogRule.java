@@ -2,6 +2,7 @@ package wprover;
 
 
 import gprover.gib;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -56,7 +57,7 @@ public class DialogRule extends DialogBase implements ChangeListener, ActionList
         treeGDD.addMouseListener(this);
 
         JScrollPane scrollPane = new JScrollPane(treeGDD);
-        pane = new JTabbedPane(JTabbedPane.BOTTOM);
+        pane = new JTabbedPane(SwingConstants.BOTTOM);
         pane.addTab("GDD Method", scrollPane);
         pane.addChangeListener(this);
 

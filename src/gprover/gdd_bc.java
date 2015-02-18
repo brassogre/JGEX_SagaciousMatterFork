@@ -79,19 +79,19 @@ public class gdd_bc extends gdd_aux {
     }
 
 
-    int PTY(cond x) {
+    static int PTY(cond x) {
         return x.u.get_type();
     }
 
-    int PLM(cond x) {
+    static int PLM(cond x) {
         return (x.u.get_lemma());
     }
 
-    cond PCO(cond x) {
+    static cond PCO(cond x) {
         return (x.u.get_co());
     }
 
-    int PNO(cond x) {
+    static int PNO(cond x) {
         return (x.u.get_no());
     }
 
@@ -186,7 +186,7 @@ public class gdd_bc extends gdd_aux {
         return (0);
     }
 
-    int finter_ll1(l_line l1, l_line l2, int p1) {
+    static int finter_ll1(l_line l1, l_line l2, int p1) {
         char i, j;
         if (l1 == l2) return (0);
         for (i = 0; i <= l1.no; i++)
@@ -1060,7 +1060,7 @@ public class gdd_bc extends gdd_aux {
         return true;
     }
 
-    l_line[] get_cond_lns(int[] p, l_line l1, l_line s1, l_line l2, l_line l3, l_line s2, l_line l4) {
+    static l_line[] get_cond_lns(int[] p, l_line l1, l_line s1, l_line l2, l_line l3, l_line s2, l_line l4) {
         l_line[] lns = get_cond_ln(p, l1, s1, l2, l3, s2, l4);
         if (lns != null) return lns;
         lns = get_cond_ln(p, l2, s1, l1, l4, s2, l3);
@@ -1072,7 +1072,7 @@ public class gdd_bc extends gdd_aux {
         return null;
     }
 
-    public l_line[] get_cond_ln(int[] p, l_line l1, l_line s1, l_line l2, l_line l3, l_line s2, l_line l4) {
+    public static l_line[] get_cond_ln(int[] p, l_line l1, l_line s1, l_line l2, l_line l3, l_line s2, l_line l4) {
         if (!on_ln4(p, l1, l2, l3, l4)) return null;
         l_line[] ns = new l_line[2];
         ns[0] = s1;
@@ -1080,7 +1080,7 @@ public class gdd_bc extends gdd_aux {
         return ns;
     }
 
-    public boolean on_ln4(int[] p, l_line l1, l_line l2, l_line l3, l_line l4) {
+    public static boolean on_ln4(int[] p, l_line l1, l_line l2, l_line l3, l_line l4) {
         return on_ln(p[0], p[1], l1) && on_ln(p[2], p[3], l2) && on_ln(p[4], p[5], l3) && on_ln(p[6], p[7], l4);
     }
 
@@ -1139,7 +1139,7 @@ public class gdd_bc extends gdd_aux {
         return add_pred(m, n, t1, t2, t3, p5, 0, 0, 0, 0);
     }
 
-    public int get_at2_v(int p1, int p2, int p3, int p4, anglet at1, anglet at2) {
+    public static int get_at2_v(int p1, int p2, int p3, int p4, anglet at1, anglet at2) {
         l_line l1 = at1.l1;
         l_line l2 = at1.l2;
         l_line l3 = at2.l1;
@@ -1155,7 +1155,7 @@ public class gdd_bc extends gdd_aux {
         return 0;
     }
 
-    l_line[] get4lntn(int a, int b, int c, int d, l_line ln1, l_line ln2, l_line ln3, l_line ln4) {
+    static l_line[] get4lntn(int a, int b, int c, int d, l_line ln1, l_line ln2, l_line ln3, l_line ln4) {
         l_line[] ls = new l_line[2];
         if (on_ln(a, b, ln1) && on_ln(c, d, ln2)) {
             ls[0] = ln3;
@@ -1721,7 +1721,7 @@ public class gdd_bc extends gdd_aux {
     }
 
 
-    boolean sdiff(int a, int b, int c, int d, int ps[]) {
+    static boolean sdiff(int a, int b, int c, int d, int ps[]) {
         int i;
         for (i = 0; i <= 7; i++) {
             if (ps[i] == a || ps[i] == b || ps[i] == c || ps[i] == d) continue;
@@ -2069,7 +2069,7 @@ public class gdd_bc extends gdd_aux {
     }
 
     ////////////////////////////////////////////////////////////
-    public void insertVector(cclass obj, ArrayList<cclass> v) {
+    public static void insertVector(cclass obj, ArrayList<cclass> v) {
         if(obj == null)
             return;
         
@@ -2686,7 +2686,7 @@ public class gdd_bc extends gdd_aux {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public boolean check_tValid(cond c) {
+    public static boolean check_tValid(cond c) {
         if (isPFull()) return true;
         if (c.pred != CO_ACONG) return true;
         if (c.p[0] == 0) return true;

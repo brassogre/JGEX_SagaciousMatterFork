@@ -2,9 +2,11 @@ package wprover;
 
 
 import UI.DropShadowBorder;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
@@ -47,15 +49,15 @@ public class PopupMenuAbout extends JPopupMenu implements MouseListener {
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
 
         JLabel lv = new JLabel(DrawPanelFrame.getLanguage(1016, "Java Geometry Expert") + " " + UtilityVersion.getVersion1());
-        lv.setHorizontalTextPosition(JLabel.LEFT);
+        lv.setHorizontalTextPosition(SwingConstants.LEFT);
         panel2.add(lv);
 
         lv = new JLabel(DrawPanelFrame.getLanguage(1017, "Built on") + "" + UtilityVersion.getData());
-        lv.setHorizontalTextPosition(JLabel.RIGHT);
+        lv.setHorizontalTextPosition(SwingConstants.RIGHT);
         panel2.add(lv);
 
         lv = new JLabel(DrawPanelFrame.getLanguage(1018, "JDK Version") + " 1.6.0");
-        lv.setHorizontalTextPosition(JLabel.LEFT);
+        lv.setHorizontalTextPosition(SwingConstants.LEFT);
         panel2.add(lv);
         pane = new TextPaneWuMethod();
         pane.addMouseListener(this);

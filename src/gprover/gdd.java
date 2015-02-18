@@ -2667,7 +2667,7 @@ public class gdd extends gddbase {
     }
 
 
-    public boolean get_at_dr(anglet at, int p1, int p2) {
+    public static boolean get_at_dr(anglet at, int p1, int p2) {
         if (on_ln(p1, at.l1) && on_ln(p2, at.l2)) return true;
         return false;
     }
@@ -2935,7 +2935,7 @@ public class gdd extends gddbase {
 
     protected void search_as_tn_as(int p1, int p2, l_line l1, l_line l2, l_line l3, l_line l4) {
 
-        if (this.isPFull() && d_base == 0) return;
+        if (gib.isPFull() && d_base == 0) return;
 
         if (p1 == 0 || p2 == 0) return;
 

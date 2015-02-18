@@ -491,7 +491,7 @@ public class gib {
         tm_pr1 = new cond();
     }
 
-    boolean valid(int i) {
+    static boolean valid(int i) {
         if (i == 0 || i > 100) return true;
         if (i < 0 || i >= RValue.length) return false;
         return RValue[i - 1];
@@ -773,11 +773,11 @@ public class gib {
             Cm.print(s);
     }
 
-    public boolean isPFull() {
+    public static boolean isPFull() {
         return P_STATUS == 0;
     }
 
-    public boolean isPTra() {
+    public static boolean isPTra() {
         return P_STATUS == 1;
     }
 
@@ -1468,7 +1468,7 @@ public class gib {
     }
 
 
-    int Sqrt(int n) {
+    static int Sqrt(int n) {
         int i = 1;
         while (i * i < n)
             i++;

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
@@ -753,7 +754,7 @@ class TreeCellOpaqueLabel extends JLabel implements MouseListener {
     protected Color borderSelectionColor;
 
     public TreeCellOpaqueLabel() {
-        setHorizontalAlignment(JLabel.LEFT);
+        setHorizontalAlignment(SwingConstants.LEFT);
         // setTextSelectionColor(UIManager.getColor("Tree.selectionForeground"));
         //  setTextNonSelectionColor(UIManager.getColor("Tree.textForeground"));
         setBackgroundSelectionColor(UIManager.getColor("Tree.selectionBackground"));

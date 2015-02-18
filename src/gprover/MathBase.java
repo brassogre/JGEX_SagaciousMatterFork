@@ -8,7 +8,7 @@ package gprover;
  * To change this template use File | Settings | File Templates.
  */
 public class MathBase extends gdd_bc {
-    int strcmp(char[] p1, char[] p2) {
+    static int strcmp(char[] p1, char[] p2) {
         int l1, l2;
         if (p1 == null && p2 == null)
             return 0;
@@ -28,7 +28,7 @@ public class MathBase extends gdd_bc {
         return -1;
     }
 
-    int strcmp(String s1, String s2) {
+    static int strcmp(String s1, String s2) {
         if (s1 != null)
             return s1.compareTo(s2);
         else if (s2 == null)
@@ -37,7 +37,7 @@ public class MathBase extends gdd_bc {
             return -1;
     }
 
-    boolean strcpy(char[] p, char[] s) {
+    static boolean strcpy(char[] p, char[] s) {
         if (s == null) return true;
 
         int len = p.length;
@@ -48,95 +48,95 @@ public class MathBase extends gdd_bc {
         return true;
     }
 
-    boolean numberp(xterm p) {
+    static boolean numberp(xterm p) {
         return (p.var == null);
     }
 
-    boolean npoly(xterm p) {
+    static boolean npoly(xterm p) {
         return (p.var == null);
     }
 
-    boolean pzerop(xterm p) {
+    static boolean pzerop(xterm p) {
         return ((p.var == null) && (num_zop(p.c)));
     }
 
-    boolean unitp(xterm p) {
+    static boolean unitp(xterm p) {
         return ((p.var == null) && (p.c == mk_num(1L)));
     }
 
-    boolean nunitp(xterm p) {
+    static boolean nunitp(xterm p) {
         return ((p.var == null) && (p.c == mk_num(-1L)));
     }
 
-    boolean num_zop(long x) {
+    static boolean num_zop(long x) {
         return (x) == 0L;
     }
 
-    boolean num_posp(long x) {
+    static boolean num_posp(long x) {
         return (x) > 0L;
     }
 
-    boolean num_negp(long x) {
+    static boolean num_negp(long x) {
         return x < 0L;
     }
 
-    long mk_num(long x) {
+    static long mk_num(long x) {
         return x;
     }
 
-    long num_m(long x, long y) {
+    static long num_m(long x, long y) {
         return ((x) - (y));
     }
 
-    long num_p(long x, long y) {
+    static long num_p(long x, long y) {
         return x + y;
     }
 
-    long num_t(long x, long y) {
+    static long num_t(long x, long y) {
         return x * y;
     }
 
-    long num_d(long x, long y) {
+    static long num_d(long x, long y) {
         return x / y;
     }
 
-    long num_neg(long x) {
+    static long num_neg(long x) {
         return -x;
     }
 
-    long num_gcd(long x, long y) {
+    static long num_gcd(long x, long y) {
         return lgcd((x), (y));
     }
 
-    long num_p3(long x, long y, long z) {
+    static long num_p3(long x, long y, long z) {
         return ((x) + (y) + (z));
     }
 
-    long num_t3(long x, long y, long z) {
+    static long num_t3(long x, long y, long z) {
         return ((x) * (y) * (z));
     }
 
-    long num_mod(long x, long y) {
+    static long num_mod(long x, long y) {
         return ((x) % (y));
     }
 
-    long num_modt(long x) {
+    static long num_modt(long x) {
         return ((x) % 2L);
     }
 
-    boolean num_unit(long p) {
+    static boolean num_unit(long p) {
         return (p) == 1L;
     }
 
-    boolean num_nunit(long p) {
+    static boolean num_nunit(long p) {
         return (p) == (-1L);
     }
 
-    double num_to_f(long x) {
+    static double num_to_f(long x) {
         return x;
     }
 
-    long num_digs(long x) {
+    static long num_digs(long x) {
         return int_digs(x);
     }
 
@@ -144,11 +144,11 @@ public class MathBase extends gdd_bc {
         int_show(x);
     }
 
-    int min(int a, int b) {
+    static int min(int a, int b) {
         return ((a < b) ? (a) : (b));
     }
 
-    int int_digs(long x) {
+    static int int_digs(long x) {
     	// Returns the number of digits in a decimal expansion of x
         int i = 0;
         if (x < 0L) x = -x;
@@ -159,7 +159,7 @@ public class MathBase extends gdd_bc {
         return (i);
     }
 
-    int num_int(long c) {
+    static int num_int(long c) {
         return (int) c;
     }
 
@@ -167,7 +167,7 @@ public class MathBase extends gdd_bc {
         gprint(Integer.toString((int) x));
     }
 
-    long lgcd(long l1, long l2) {
+    static long lgcd(long l1, long l2) {
         long l;
         if (l1 < 0L) {
             l1 = -l1;
@@ -189,13 +189,13 @@ public class MathBase extends gdd_bc {
     }
 
 
-    long ngcd(long l1, long l2) {
+    static long ngcd(long l1, long l2) {
         long n = lgcd(l1, l2);
         if (n < 0L) n = -n;
         return (n);
     }
 
-    long lpower(long l, long n) {
+    static long lpower(long l, long n) {
         long d = (1L);
         if (n <= 0)
             return ((1L));

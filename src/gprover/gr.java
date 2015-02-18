@@ -8,7 +8,7 @@ package gprover;
  * To change this template use File | Settings | File Templates.
  */
 public class gr extends poly{
-    el_term rev_elim(el_term v)
+    static el_term rev_elim(el_term v)
     {
         xterm p;
         p = v.p1;
@@ -83,7 +83,7 @@ public class gr extends poly{
         }
     }
 
-    dterm ps_append(dterm ps1, dterm ps2)
+    static dterm ps_append(dterm ps1, dterm ps2)
     {
         dterm ps;
         if (ps1 == null)
@@ -131,7 +131,7 @@ public class gr extends poly{
         return (ps_append(ps1, ps2));
     }
 
-    int ps_term1(dterm dp) {
+    static int ps_term1(dterm dp) {
         int k = 0;
         for (dterm ps = dp; ps != null; ps = ps.nx) {
             if (!npoly(ps.p)) k++;
@@ -182,7 +182,7 @@ public class gr extends poly{
 
 /* gr operations */
 
-    gr_term cp_gr(gr_term gr)
+    static gr_term cp_gr(gr_term gr)
     {
         gr_term gr1 = mk_gr(gr.c1, gr.ps1, gr.c2, gr.ps2, gr.c, gr.nx);
         if (gr.c == 0)
@@ -192,7 +192,7 @@ public class gr extends poly{
         return (gr1);
     }
 
-    gr_term mk_gr(long  c1, dterm ps1, long c2, dterm ps2, int c, gr_term nx) {
+    static gr_term mk_gr(long  c1, dterm ps1, long c2, dterm ps2, int c, gr_term nx) {
         gr_term gr = new gr_term();
         gr.c1 = c1;
         gr.c2 = c2;
@@ -203,7 +203,7 @@ public class gr extends poly{
         return (gr);
     }
 
-    gr_term mk_gr1(long c1, xterm p1, long c2, xterm p2) {
+    static gr_term mk_gr1(long c1, xterm p1, long c2, xterm p2) {
         gr_term gr;
         gr = new gr_term();
         gr.c1 = c1;

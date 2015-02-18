@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -290,7 +291,7 @@ class ProvePane extends JPanel
         panel.setBorder(BorderFactory.createEmptyBorder(GAP / 2, GAP / 2, GAP / 2, GAP / 2));
         panel.setPreferredSize(new Dimension(250, 150));
         JPanel all = new JPanel(new BorderLayout());
-        all.add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
+        all.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.LINE_START);
         all.add(panel, BorderLayout.CENTER);
         return all;
     }
@@ -301,7 +302,7 @@ class ProvePane extends JPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        JLabel label1 = new JLabel("Captain", JLabel.TRAILING);
+        JLabel label1 = new JLabel("Captain", SwingConstants.TRAILING);
         panel.add(label1);
 
         captainField = new JTextField();
@@ -315,7 +316,7 @@ class ProvePane extends JPanel
         panel.add(p);
 
         label1 = new JLabel("Prove",
-                JLabel.TRAILING);
+                SwingConstants.TRAILING);
         panel.add(label1);
         proveField = new JTextArea(5, 20);
         panel.add(new JScrollPane(proveField));

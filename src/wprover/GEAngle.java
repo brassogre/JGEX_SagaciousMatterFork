@@ -223,7 +223,7 @@ public class GEAngle extends GraphicEntity {
         return false;
     }
 
-    public boolean isSame_m(GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4) {
+    public static boolean isSame_m(GEPoint p1, GEPoint p2, GEPoint p3, GEPoint p4) {
         return false;
     }
 
@@ -715,7 +715,7 @@ public class GEAngle extends GraphicEntity {
         }
     }
 
-    public float roundValue(double r) {
+    public static float roundValue(double r) {
         float n = (float) r * 10;
         if (n > 0)
             n = n + 0.5f;
@@ -867,7 +867,7 @@ public class GEAngle extends GraphicEntity {
         this.saveSuper(fp);
     }
 
-    public float round(float r) {
+    public static float round(float r) {
         while (r >= 180)
             r -= 360;
         while (r < -180)

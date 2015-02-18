@@ -19,9 +19,8 @@ package UI;
 
 
 import java.awt.Graphics;
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
-import javax.swing.JComponent;
+
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicButtonUI;
@@ -42,8 +41,8 @@ public class BasicOutlookButtonUI extends BasicButtonUI
             super.installDefaults(b);
             b.setRolloverEnabled(true);
             b.setOpaque(false);
-            b.setHorizontalTextPosition(JButton.CENTER);
-            b.setVerticalTextPosition(JButton.BOTTOM);
+            b.setHorizontalTextPosition(SwingConstants.CENTER);
+            b.setVerticalTextPosition(SwingConstants.BOTTOM);
             b.setBorder(new  EtchedBorder(EtchedBorder.LOWERED) );
       }
 

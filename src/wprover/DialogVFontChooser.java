@@ -4,11 +4,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
+
 import static java.awt.font.TextAttribute.*;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.accessibility.AccessibleContext;
 import javax.accessibility.AccessibleRole;
 import javax.swing.*;
@@ -402,7 +405,7 @@ public class DialogVFontChooser extends DialogBase {
 
         public InputList(String title, int numCols) {
             setLayout(null);
-            label = new OpelListLabel(title, JLabel.LEFT);
+            label = new OpelListLabel(title, SwingConstants.LEFT);
             add(label);
             textfield = new OpelListText(numCols);
             textfield.addActionListener(this);
@@ -613,7 +616,7 @@ public class DialogVFontChooser extends DialogBase {
 		private static final long serialVersionUID = 7017992713463880893L;
 
 		public FontLabel(String text) {
-            super(text, JLabel.CENTER);
+            super(text, SwingConstants.CENTER);
             setBackground(Color.white);
             setForeground(Color.black);
             setOpaque(true);

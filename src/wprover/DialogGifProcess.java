@@ -1,6 +1,7 @@
 package wprover;
 
 import UI.GifEncoder;
+
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import javax.swing.*;
 
 /**
@@ -38,7 +40,7 @@ public class DialogGifProcess extends DialogBase implements ActionListener {
     public DialogGifProcess(Frame f) {
         super(f, false);
         this.setTitle("Building GIF File");
-        progress = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+        progress = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100);
         progress.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         progress.setBorderPainted(true);
         progress.setStringPainted(true);

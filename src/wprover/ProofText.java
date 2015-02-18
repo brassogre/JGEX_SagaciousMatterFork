@@ -366,12 +366,12 @@ public class ProofText {
         this.y = y;
     }
 
-    public String TypeString() {
+    public static String TypeString() {
         return "proof_text";
     }
 
-    public String getDescription() {
-        return this.TypeString();
+    public static String getDescription() {
+        return ProofText.TypeString();
     }
 
     public ProofText selectChild(double x1, double y1, boolean onselect) {
@@ -677,12 +677,12 @@ public class ProofText {
         fp.write(sf.getBytes());
 
         if (head.length() != 0) {
-            this.SavePsColor(chead, fp, stype);
+            ProofText.SavePsColor(chead, fp, stype);
             String sh = " " + x + " " + (-y) + " yoff add moveto (" + head + ") show\n";
             fp.write(sh.getBytes());
         }
 
-        this.SavePsColor(cmsg, fp, stype);
+        ProofText.SavePsColor(cmsg, fp, stype);
         String[] sm = msg.split("\n");
         int sx = (int) (x + whead);
         String s1 = null;
@@ -705,7 +705,7 @@ public class ProofText {
             proofFieldNested.SavePS(fp, stype);
     }
 
-    public void SavePsColor(Color c, FileOutputStream fp, int stype) throws IOException {
+    public static void SavePsColor(Color c, FileOutputStream fp, int stype) throws IOException {
         if (stype == 0)  //color
         {
             double r = ((double) (100 * c.getRed() / 255)) / 100;
@@ -727,19 +727,19 @@ public class ProofText {
         }
     }
 
-    public void WriteString(DataOutputStream out, String s) throws IOException {
+    public static void WriteString(DataOutputStream out, String s) throws IOException {
         out.writeInt(s.length());
         out.writeChars(s);
     }
 
-    public void WriteFont(DataOutputStream out, Font f) throws IOException {
+    public static void WriteFont(DataOutputStream out, Font f) throws IOException {
         String s = f.getName();
         WriteString(out, s);
         out.writeInt(f.getStyle());
         out.writeInt(f.getSize());
     }
 
-    public String ReadString(DataInputStream in) {
+    public static String ReadString(DataInputStream in) {
         String s = new String();
         try {
         	int size = in.readInt();
@@ -751,7 +751,7 @@ public class ProofText {
         return s;
     }
 
-    public Font ReadFont(DataInputStream in) throws IOException {
+    public static Font ReadFont(DataInputStream in) throws IOException {
         String name = ReadString(in);
         int stye = in.readInt();
         int size = in.readInt();
@@ -761,11 +761,11 @@ public class ProofText {
     
 	
 	public void Save(DataOutputStream out) throws IOException {
-        this.WriteString(out, head);
-        this.WriteString(out, rule);
-        this.WriteString(out, rpath);
+        WriteString(out, head);
+        WriteString(out, rule);
+        WriteString(out, rpath);
 
-        this.WriteFont(out, font);
+        WriteFont(out, font);
 
         out.writeInt(chead.getRGB());
         out.writeInt(cmsg.getRGB());
@@ -792,14 +792,14 @@ public class ProofText {
 
     public void Load(DataInputStream in, DrawPanel dp) throws IOException {
 
-        head = this.ReadString(in);
-        msg = this.ReadString(in);
+        head = ProofText.ReadString(in);
+        msg = ProofText.ReadString(in);
         if (UtilityMiscellaneous.version_load_now >= 0.033)
-            rule = this.ReadString(in);
+            rule = ProofText.ReadString(in);
         else
             rule = "";
         if (UtilityMiscellaneous.version_load_now >= 0.034)
-            rpath = this.ReadString(in);
+            rpath = ProofText.ReadString(in);
         else {
             if (rule.length() > 0) {
                 String sp = System.getProperty("file.separator");
@@ -807,7 +807,7 @@ public class ProofText {
             } else
                 rpath = "";
         }
-        font = this.ReadFont(in);
+        font = ProofText.ReadFont(in);
         int c = in.readInt();
         chead = new Color(c);
         c = in.readInt();

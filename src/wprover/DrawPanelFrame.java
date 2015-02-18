@@ -34,7 +34,7 @@ import pdf.PDFJob;
 import UI.*;
 
 public class DrawPanelFrame extends JFrame implements ActionListener, KeyListener,
-		DropTargetListener, WindowListener { // APPLET ONLY.
+DropTargetListener, WindowListener { // APPLET ONLY.
 
 	/**
 	 * 
@@ -106,8 +106,8 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		initKeyMap();
 
 		setDefaultLookAndFeelDecorated(true);
-		if (UtilityOSValidator.isMac())
-			new UtilityAppleUI(this);
+		//if (UtilityOSValidator.isMac())
+		//	new UtilityAppleUI(this);
 
 		dp = new DrawPanelExtended(this);
 		d = new DrawPanelOverlay(this, dp);
@@ -151,8 +151,8 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 		setVisible(true);
 	}
 
-/*	 Some code to detect low memory conditions so that extra memory can be dumped.
- * 
+	/*	 Some code to detect low memory conditions so that extra memory can be dumped.
+	 * 
 	// heuristic to find the tenured pool (largest heap) as seen on http://www.javaspecialists.eu/archive/Issue092.html
 	MemoryPoolMXBean tenuredGenPool = null;
 	for (MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans()) {
@@ -162,7 +162,7 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 	}
 	// we do something when we reached 80% of memory usage
 	tenuredGenPool.setCollectionUsageThreshold((int)Math.floor(tenuredGenPool.getUsage().getMax()*0.8));
-	
+
 	//set a listener
 	MemoryMXBean mbean = ManagementFactory.getMemoryMXBean();
 	NotificationEmitter emitter = (NotificationEmitter) mbean;
@@ -178,9 +178,9 @@ public class DrawPanelFrame extends JFrame implements ActionListener, KeyListene
 Alternative ===>     package org.apache.pig.impl.util;
 http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/util/SpillableMemoryManager.java.html 
 
-*/
-	
-	
+	 */
+
+
 	void handleAbout() {
 		if (adialog == null)
 			adialog = new PopupMenuAbout();
@@ -370,14 +370,14 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 	}
 
 	public DialogRule getRulesDialog(final int n) {
-//		if (rdialog == null) {
-			rdialog = new DialogRule(this);
-			final int w = rdialog.getWidth();
-			int x = getX() - w;
-			if (x < 0)
-				x = 0;
-			rdialog.setLocation(x, getY());
-//		}
+		//		if (rdialog == null) {
+		rdialog = new DialogRule(this);
+		final int w = rdialog.getWidth();
+		int x = getX() - w;
+		if (x < 0)
+			x = 0;
+		rdialog.setLocation(x, getY());
+		//		}
 		rdialog.setSelected(n);
 		rdialog.setVisible(true);
 		return rdialog;
@@ -1293,37 +1293,37 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 
 	public void conductAction(final String sCommand) { // TODO: Fill out this command handler.
 		switch (sCommand) {
-		
+
 		case "postscriptsave":
 			saveAsPostscript();
 			break;
-		
+
 		case "pdfsave":
 			saveAsPDF();
 			break;
-		
+
 		case "imagesave":
 			saveAsImage();
 			break;
-		
+
 		case "animationsave":
 			saveAsGIF();
 			break;
-		
+
 		case "save":
 			saveAFile(false);
 			break;
-		
+
 		case "saveas":
 			saveAFile(true);
 			break;			
 			//
-			
+
 		default:
 			break;
 		}
 	}
-	
+
 	public void sendAction(final String command, final Object src) { // TODO: Revise this method to use a switch. Ensure that all languages are picked out in the menu.
 		String tip = null;
 		String ps = null;
@@ -1398,10 +1398,10 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 		 * 
 		 * } }
 		 */
-		
+
 		else if (command.equals("ps")) {
-		saveAsPostscript();
-	} else if (command.equals("Open"))
+			saveAsPostscript();
+		} else if (command.equals("Open"))
 			try {
 				// final File file = chooser.getSelectedFile();
 				openFromXMLFile(null);
@@ -1859,9 +1859,9 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 							this,
 							getLanguage(1000,
 									"The diagram has been changed, do you want to save it?"),
-							getLanguage("Save"),
-							JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.QUESTION_MESSAGE);
+									getLanguage("Save"),
+									JOptionPane.YES_NO_CANCEL_OPTION,
+									JOptionPane.QUESTION_MESSAGE);
 			if (n == JOptionPane.YES_OPTION) {
 				if (!saveAFile(false))
 					return 2;
@@ -1947,11 +1947,11 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 				.showConfirmDialog(
 						this,
 						name
-								+ getLanguage(1002,
-										" already exists, do you want to overwrite it?"),
-						getLanguage(1001, "File exists"),
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE))
+						+ getLanguage(1002,
+								" already exists, do you want to overwrite it?"),
+								getLanguage(1001, "File exists"),
+								JOptionPane.YES_NO_CANCEL_OPTION,
+								JOptionPane.QUESTION_MESSAGE))
 			return true;
 		return false;
 	}
@@ -2025,16 +2025,16 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 			final Document doc = db.newDocument();
 
 			final Element root = doc.createElementNS(null, "Document"); // Create
-																		// Root
-																		// Element
+			// Root
+			// Element
 			doc.appendChild(root); // Add Root to Document
 			dp.SaveIntoXMLDocument(root);
 
 			final Element item = doc.createElementNS(null, "PProve"); // Create
-																		// another
-																		// Element
+			// another
+			// Element
 			root.appendChild(item); // Attach Element to previous element down
-									// tree
+			// tree
 			panelProof.saveIntoXMLDocument(item);
 
 			final DOMImplementationRegistry registry = DOMImplementationRegistry
@@ -2043,10 +2043,10 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 					.getDOMImplementation("LS");
 
 			final LSSerializer ser = domImplLS.createLSSerializer(); // Create a
-																		// serializer
-																		// for
-																		// the
-																		// DOM
+			// serializer
+			// for
+			// the
+			// DOM
 			final LSOutput out = domImplLS.createLSOutput();
 
 			final DOMConfiguration config = ser.getDomConfig();
@@ -2058,19 +2058,19 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 				f.delete();
 			else
 				f.createNewFile();
-			final FileOutputStream fp = new FileOutputStream(f, bExists);
-			// final DataOutputStream out = new DataOutputStream(fp);
-			final OutputStreamWriter oStream = new OutputStreamWriter(fp,
-					"UNICODE");
-			final BufferedWriter buffOut = new BufferedWriter(oStream);
-			//
-			out.setCharacterStream(buffOut);
-			ser.write(doc, out); // Serialize the DOM
+			try (final FileOutputStream fp = new FileOutputStream(f, bExists);
+					final OutputStreamWriter oStream = new OutputStreamWriter(fp, "UNICODE");
+					final BufferedWriter buffOut = new BufferedWriter(oStream) ) {
+				// final DataOutputStream out = new DataOutputStream(fp);
 
-			buffOut.close();
-			oStream.close();
-			fp.close();
+				//
+				out.setCharacterStream(buffOut);
+				ser.write(doc, out); // Serialize the DOM
 
+				buffOut.close();
+				oStream.close();
+				fp.close();
+			}
 			// Files.newBufferedWriter(file, charset);
 			// System.out.println( "STRXML = " + stringOut.toString() ); // Spit
 			// out the DOM as a String
@@ -2117,9 +2117,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 			p = p + ".gif";
 			ff = new File(p);
 		}
-		try {
-			final DataOutputStream out = DrawPanel.openOutputFile(ff
-					.getPath());
+		try (final DataOutputStream out = DrawPanel.openOutputFile(ff.getPath())) {
 			final GifEncoder e = new GifEncoder();
 			e.setQuality(20);
 			e.start(out);
@@ -2149,12 +2147,12 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 		Animation am = dp.getAnimateC();
 		if (am == null) {
 			JOptionPane
-					.showMessageDialog(
-							this,
-							getLanguage(2301, "No animation has been defined.")
-									+ "\n"
-									+ getLanguage(2302,
-											"Please use the menu \" Action -> Animation \" to define an animation first."),
+			.showMessageDialog(
+					this,
+					getLanguage(2301, "No animation has been defined.")
+					+ "\n"
+					+ getLanguage(2302,
+							"Please use the menu \" Action -> Animation \" to define an animation first."),
 							"GIF", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -2294,9 +2292,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 		}
 
 		if (endfix.equals("gif"))
-			try {
-				final DataOutputStream out = DrawPanel.openOutputFile(ff
-						.getPath());
+			try (final DataOutputStream out = DrawPanel.openOutputFile(ff.getPath())) {
 				final GifEncoder e = new GifEncoder();
 				e.setQuality(1);
 				e.start(out);
@@ -2318,15 +2314,15 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 					.getImageWritersByFormatName(endfix);
 			final ImageWriter writer = iter.next();
 			try {
-				final ImageOutputStream imageOut = ImageIO
-						.createImageOutputStream(ff);
-				writer.setOutput(imageOut);
+				try (final ImageOutputStream imageOut = ImageIO.createImageOutputStream(ff)) {
+					writer.setOutput(imageOut);
 
-				writer.write(new IIOImage(image, null, null));
-				final IIOImage iioImage = new IIOImage(image, null, null);
-				if (writer.canInsertImage(0))
-					writer.writeInsert(0, iioImage, null);
-				imageOut.close();
+					writer.write(new IIOImage(image, null, null));
+					final IIOImage iioImage = new IIOImage(image, null, null);
+					if (writer.canInsertImage(0))
+						writer.writeInsert(0, iioImage, null);
+					imageOut.close();
+				}
 			} catch (final IOException exception) {
 				if (UtilityMiscellaneous.isDebug())
 					exception.printStackTrace();
@@ -2358,7 +2354,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 		return image;
 	}
 
-	public boolean openAOnlineFile(final String path, final String pname) {
+	public static boolean openAOnlineFile(final String path, final String pname) {
 
 		/*
 		 * if (2 == this.Clear()) { return false; // cancel option. }
@@ -2460,7 +2456,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 					if (sEntry.equalsIgnoreCase("DrawProcess"))
 						dp.openFromXMLDocument((Element) nn);
 					if (sEntry.equalsIgnoreCase("PProve"))
-						 panelProof.openFromXMLDocument((Element) nn);
+						panelProof.openFromXMLDocument((Element) nn);
 				}
 			}
 
@@ -2514,7 +2510,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 			}
 		}
 	}
-	
+
 
 	protected void addRightButtons(final JToolBar toolBar) {
 		JToggleButton button = null;
@@ -2806,7 +2802,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 		// button.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
 		return button;
 	}
-	
+
 	protected JToggleButton makeAButton(final String imageName,
 			final String actionCommand, final String toolTipText,
 			final String altText) {
@@ -3032,16 +3028,16 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 					// Open the first file for JGEX and return.
 					return;
 				}
-				// Ok, is it another Java object? Currently not implemented for
-				// this.
+			// Ok, is it another Java object? Currently not implemented for
+			// this.
 				else if (flavor.isFlavorSerializedObjectType()) {
 					dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 					tr.getTransferData(flavor);
 					dtde.dropComplete(true);
 					return;
 				}
-				// How about an input stream? Currently not implemented for
-				// this.
+			// How about an input stream? Currently not implemented for
+			// this.
 				else if (flavor.isRepresentationClassInputStream()) {
 					dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 					dtde.dropComplete(true);
@@ -3090,7 +3086,7 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 	// ///////////////////////////////////////////////////////////////////////////////////////////
 
 	class JPopButtonsPanel extends JPopupMenu implements ActionListener,
-			MouseListener, ItemListener, PopupMenuListener {
+	MouseListener, ItemListener, PopupMenuListener {
 		/**
 		 * 
 		 */
@@ -3346,20 +3342,20 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 			if (file.exists()) {
 				final int n2 = JOptionPane.showConfirmDialog(this,
 						file.getName()
-								+ " already exists, do you want to overwrite?",
+						+ " already exists, do you want to overwrite?",
 						"File Exists", JOptionPane.YES_NO_CANCEL_OPTION);
 				if (n2 != JOptionPane.YES_OPTION)
 					return;
 			}
 
-			final FileOutputStream fileOutputStream = new FileOutputStream(file);
-
-			final PDFJob job = new PDFJob(fileOutputStream);
-			final Graphics pdfGraphics = job.getGraphics();
-			d.paintAll(pdfGraphics);
-			pdfGraphics.dispose();
-			job.end();
-			fileOutputStream.close();
+			try (final FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+				final PDFJob job = new PDFJob(fileOutputStream);
+				final Graphics pdfGraphics = job.getGraphics();
+				d.paintAll(pdfGraphics);
+				pdfGraphics.dispose();
+				job.end();
+				fileOutputStream.close();
+			}
 		} catch (final IOException ee) {
 			JOptionPane.showMessageDialog(this, ee.getMessage());
 		}
@@ -3460,13 +3456,13 @@ http://javasourcecode.org/html/open-source/pig/pig-0.8.1/org/apache/pig/impl/uti
 		for (int i = 0; i < nn; i++)
 			if (i < sz) {
 				final OPoolabel lb = vpoolist.get(i);
-				lb.setType(dp.getPoolA(a, i + 1));
+				lb.setType(DrawPanelBase.getPoolA(a, i + 1));
 				lb.setVisible(true);
 			} else {
 				final OPoolabel lb = new OPoolabel();
 				vpoolist.add(lb);
 				tipanel.add(lb);
-				lb.setType(dp.getPoolA(a, i + 1));
+				lb.setType(DrawPanelBase.getPoolA(a, i + 1));
 			}
 
 		if ((nn > 0) && (nn < sz))

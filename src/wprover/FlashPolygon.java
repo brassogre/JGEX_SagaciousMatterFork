@@ -130,7 +130,7 @@ public class FlashPolygon extends Flash implements ActionListener {
         this.nd = 0;
     }
 
-    public double getCentroidX(ArrayList<GEPoint> v) {
+    public static double getCentroidX(ArrayList<GEPoint> v) {
         double dx1 = 0;
         int n = v.size();
         for (int i = 0; i < n; i++) {
@@ -141,7 +141,7 @@ public class FlashPolygon extends Flash implements ActionListener {
         return dx1;
     }
 
-    public double getCentroidY(ArrayList<GEPoint> v) {
+    public static double getCentroidY(ArrayList<GEPoint> v) {
         double dy1 = 0;
         int n = v.size();
         for (int i = 0; i < n; i++) {

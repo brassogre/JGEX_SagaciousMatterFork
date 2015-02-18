@@ -9,9 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.*;
 import javax.swing.text.StyledDocument;
 
 /**
@@ -80,7 +80,7 @@ public class DialogTextValueEditor extends DialogBase implements ActionListener,
         pane.setEditable(true);
         pt.add(Box.createVerticalStrut(6));
         pt.add(pane);
-        Border bb = new SoftBevelBorder(SoftBevelBorder.LOWERED);
+        Border bb = new SoftBevelBorder(BevelBorder.LOWERED);
         pane1.setBorder(bb);
         pane.setBorder(bb);
         pane.addKeyListener(this);

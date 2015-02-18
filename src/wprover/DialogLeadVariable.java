@@ -7,12 +7,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import maths.*;
 
 public class DialogLeadVariable extends DialogBase implements MouseListener, ActionListener {
@@ -48,7 +50,7 @@ public class DialogLeadVariable extends DialogBase implements MouseListener, Act
         c2.setMaxWidth(60);
         TableColumn c3 = table.getColumnModel().getColumn(2);
         c3.setMaxWidth(60);
-        JScrollPane pane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane pane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -58,7 +60,7 @@ public class DialogLeadVariable extends DialogBase implements MouseListener, Act
             }
 
         });
-        tpane = new JTabbedPane(JTabbedPane.BOTTOM);
+        tpane = new JTabbedPane(SwingConstants.BOTTOM);
         tpane.addTab(getLanguage("Variables"), pane);
         panel.add(tpane);
 
@@ -236,7 +238,7 @@ public class DialogLeadVariable extends DialogBase implements MouseListener, Act
         if (ipane == null) {
             ipane = new InspectPanel();
             tpane.addTab("" + p, new JScrollPane(ipane,
-                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
         } else
             tpane.setTitleAt(1, "" + p);
         ipane.loadValue(n, p, v);

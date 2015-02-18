@@ -192,7 +192,7 @@ public class DialogNumericalCheck extends DialogBase implements DiagramUpdater, 
         return true;
     }
 
-    public String getStringFromPoint(GEPoint p) {
+    public static String getStringFromPoint(GEPoint p) {
         if (p == null) return "      ";
 
         float x = (float) p.getx();

@@ -2,12 +2,14 @@ package wprover;
 
 import UI.BLeveledButtonUI;
 import UI.EntityButtonUI;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -263,14 +265,14 @@ public class PanelMProofInput extends JToolBar implements ActionListener {
         badd = button = new JToggleButton(getLanguage(3201, "Add"), upicon);
         button.setActionCommand("Add");
         button.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        button.setHorizontalTextPosition(AbstractButton.LEFT);
+        button.setHorizontalTextPosition(SwingConstants.LEFT);
         button.addActionListener(this);
         button.setUI(ui);
         ocPanel.add(Box.createHorizontalStrut(2));
         ocPanel.add(button);
         bappend = button = new JToggleButton(getLanguage(3202, "Append"), upicon);
         button.setActionCommand("Append");
-        button.setHorizontalTextPosition(AbstractButton.LEFT);
+        button.setHorizontalTextPosition(SwingConstants.LEFT);
         button.setAlignmentX(Component.RIGHT_ALIGNMENT);
         button.addActionListener(this);
         button.setUI(ui);
@@ -279,7 +281,7 @@ public class PanelMProofInput extends JToolBar implements ActionListener {
         bchild = button = new JToggleButton(getLanguage(3203, "Child"), upicon);
         button.setActionCommand("Child");
         button.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        button.setHorizontalTextPosition(AbstractButton.LEFT);
+        button.setHorizontalTextPosition(SwingConstants.LEFT);
         button.addActionListener(this);
         button.setUI(ui);
         ocPanel.add(Box.createHorizontalStrut(2));
@@ -1104,7 +1106,7 @@ public class PanelMProofInput extends JToolBar implements ActionListener {
 
 		public selectLabel() {
             //  this.setIcon(GExpert.createImageIcon("images/dtree/up.gif"));
-            this.setHorizontalTextPosition(JLabel.LEFT);
+            this.setHorizontalTextPosition(SwingConstants.LEFT);
             this.addMouseListener(this);
             this.addMouseMotionListener(this);
             this.setBorder(border2);
